@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | GCV HOLOGRAPHIC HUD</title>
+    <title>ARC-314 | QUANTUM HOLOGRAPHIC HUD</title>
     <style>
         :root {
             --glow-color: #00f2ff;
             --accent-color: #FFD700;
+            --laser-color: rgba(0, 242, 255, 0.5);
         }
 
         body { 
@@ -24,150 +25,124 @@
         /* MATRIX BG ULTRA-VISIBLE */
         #matrix-bg { 
             position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
+            top: 0; left: 0; width: 100%; height: 100%; 
             z-index: -1; 
-            opacity: 0.8; /* Visibilité maximum */
+            opacity: 0.7; 
         }
 
-        /* EFFET DE BALAYAGE HOLOGRAPHIQUE */
-        body::before {
-            content: " ";
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            z-index: 10;
+        /* EFFET LASER SCAN */
+        #scan-line {
+            position: fixed;
+            top: -100px; left: 0;
+            width: 100%;
+            height: 10px;
+            background: var(--glow-color);
+            box-shadow: 0 0 20px var(--glow-color), 0 0 40px var(--glow-color);
+            z-index: 100;
+            opacity: 0;
             pointer-events: none;
         }
 
+        @keyframes scanning {
+            0% { top: -10%; opacity: 1; }
+            100% { top: 110%; opacity: 1; }
+        }
+
         header { 
-            text-align: center; 
-            padding: 30px; 
-            width: 100%; 
-            background: rgba(0, 15, 30, 0.7);
+            text-align: center; padding: 25px; width: 100%; 
+            background: rgba(0, 15, 30, 0.8);
             border-bottom: 3px solid var(--accent-color);
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
             clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
         }
 
-        h1 { 
-            color: var(--accent-color); 
-            text-shadow: 0 0 20px var(--accent-color); 
-            margin: 0; 
-            font-size: 2.5em;
-            letter-spacing: 6px; 
-        }
-
         .main-layout { 
-            display: flex; 
-            justify-content: space-around; 
-            width: 95%; 
-            margin-top: 50px; 
-            gap: 30px; 
-            z-index: 20;
+            display: flex; justify-content: space-around; 
+            width: 95%; margin-top: 40px; gap: 30px; z-index: 20;
         }
 
         .panel { 
-            background: rgba(0, 20, 40, 0.6); 
+            background: rgba(0, 20, 40, 0.7); 
             border: 2px solid var(--glow-color); 
-            padding: 25px; 
-            flex: 1; 
-            min-height: 400px; 
-            box-shadow: 0 0 25px var(--glow-color), inset 0 0 15px var(--glow-color);
+            padding: 25px; flex: 1; min-height: 400px; 
+            box-shadow: 0 0 20px var(--glow-color), inset 0 0 10px var(--glow-color);
             border-radius: 0 30px 0 30px;
-            backdrop-filter: blur(8px);
-            position: relative;
+            backdrop-filter: blur(10px);
         }
 
-        .panel::after {
-            content: "ARC-314 SYSTEM ACTIVE";
-            position: absolute;
-            top: -10px; right: 20px;
+        /* BOUTON SCAN */
+        .scan-btn {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .scan-btn:hover {
             background: var(--accent-color);
             color: #000;
-            font-size: 10px;
-            padding: 2px 10px;
-            font-weight: bold;
+            box-shadow: 0 0 30px var(--accent-color);
         }
 
-        h3 { color: var(--accent-color); text-transform: uppercase; letter-spacing: 2px; }
-
         input#piAmount { 
-            background: rgba(0, 0, 0, 0.7); 
-            border: 1px solid var(--glow-color); 
-            color: var(--accent-color); 
-            padding: 20px; 
-            width: 85%; 
-            font-size: 2em; 
-            text-align: center; 
-            margin-top: 30px;
-            box-shadow: 0 0 15px var(--glow-color);
+            background: rgba(0, 0, 0, 0.8); border: 1px solid var(--glow-color); 
+            color: var(--accent-color); padding: 15px; width: 80%; 
+            font-size: 1.8em; text-align: center; margin-top: 20px;
         }
 
         #resultUSD { 
-            margin-top: 20px;
-            font-weight: bold; 
-            font-size: 2.5em; 
-            color: var(--accent-color); 
-            text-shadow: 0 0 15px var(--accent-color); 
+            margin-top: 20px; font-weight: bold; font-size: 2.2em; 
+            color: var(--accent-color); text-shadow: 0 0 15px var(--accent-color); 
         }
-
-        #ticker { height: 280px; overflow: hidden; font-size: 1em; }
 
         .tx-line { 
-            padding: 12px; 
-            border-left: 4px solid var(--accent-color);
-            background: rgba(0, 242, 255, 0.1);
-            margin-bottom: 10px;
-            animation: slideIn 0.5s ease-out;
+            padding: 10px; border-left: 4px solid var(--accent-color);
+            background: rgba(0, 242, 255, 0.1); margin-bottom: 8px;
+            font-size: 0.9em;
         }
 
-        @keyframes slideIn { from { opacity: 0; transform: skewX(-20deg); } to { opacity: 1; transform: skewX(0); } }
-
-        footer { 
-            margin-top: auto; 
-            padding: 25px; 
-            color: var(--accent-color); 
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+        footer { margin-top: auto; padding: 20px; color: var(--accent-color); font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div id="scan-line"></div>
     <canvas id="matrix-bg"></canvas>
 
     <header>
         <h1>ARC-314 | QUANTUM HUD</h1>
-        <p>REAL-TIME GCV MONITORING v2.0</p>
+        <p>BLOCKCHAIN COMMAND CENTER - GCV $314,159</p>
+        <button class="scan-btn" onclick="triggerScan()">Initiate Quantum Scan</button>
     </header>
 
     <div class="main-layout">
         <div class="panel">
-            <h3>Quantum Converter</h3>
+            <h3>GCV CONVERTER</h3>
             <input type="number" id="piAmount" placeholder="PI AMOUNT" oninput="calculate()">
             <div id="resultUSD">$ 0.00</div>
         </div>
 
         <div class="panel">
-            <h3>Live Blockchain Feed</h3>
-            <div id="ticker">INITIALIZING SECURE LINK...</div>
+            <h3>LIVE NETWORK FEED</h3>
+            <div id="ticker">WAITING FOR DATA...</div>
         </div>
     </div>
 
     <footer>DESIGNED BY ARC-314 | ARCHITECTURE KOKKALIS</footer>
 
     <script>
+        // MATRIX EFFECT
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const letters = "01ARC314Π$!@#$%^&*";
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "01ARC314Π$π#@%";
         const fontSize = 20;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
@@ -175,12 +150,9 @@
         function drawMatrix() {
             ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             ctx.fillStyle = "#00f2ff";
             ctx.font = "bold " + fontSize + "px monospace";
-            ctx.shadowBlur = 12; // Lueur plus forte
-            ctx.shadowColor = "#00f2ff";
-
+            ctx.shadowBlur = 10; ctx.shadowColor = "#00f2ff";
             for (let i = 0; i < drops.length; i++) {
                 const text = letters.charAt(Math.floor(Math.random() * letters.length));
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -190,31 +162,41 @@
         }
         setInterval(drawMatrix, 40);
 
+        // SCAN ANIMATION
+        function triggerScan() {
+            const line = document.getElementById('scan-line');
+            line.style.animation = 'none';
+            void line.offsetWidth; // Reset animation
+            line.style.animation = 'scanning 2s linear';
+            fetchLiveTX(); // On force aussi une mise à jour des données
+        }
+
+        // CALCULATOR
         function calculate() {
             const val = document.getElementById('piAmount').value;
             const gcv = 314159; 
             document.getElementById('resultUSD').innerText = "$ " + (val * gcv).toLocaleString(undefined, {minimumFractionDigits: 2});
         }
 
+        // REAL DATA
         async function fetchLiveTX() {
             try {
                 const proxy = "https://corsproxy.io/?";
-                const target = encodeURIComponent("https://api.mainnet.minepi.com/payments?limit=6&order=desc");
+                const target = encodeURIComponent("https://api.mainnet.minepi.com/payments?limit=7&order=desc");
                 const response = await fetch(proxy + target);
                 const data = await response.json();
                 const records = data._embedded.records;
                 const ticker = document.getElementById('ticker');
                 ticker.innerHTML = "";
-                
                 records.forEach(tx => {
                     const line = document.createElement('div');
                     line.className = 'tx-line';
-                    line.innerHTML = `NODE: ${tx.from.substring(0,8)}... | <span style="color:#FFD700">${tx.amount} PI</span><br><small>STATUS: GCV SECURE TARGET</small>`;
+                    line.innerHTML = `NODE: ${tx.from.substring(0,8)}... | <span style="color:#FFD700">${tx.amount} PI</span><br>GCV STATUS: SECURE`;
                     ticker.appendChild(line);
                 });
-            } catch (e) { console.log("Re-sync..."); }
+            } catch (e) { console.log("Sync error"); }
         }
-        setInterval(fetchLiveTX, 10000);
+        setInterval(fetchLiveTX, 12000);
         fetchLiveTX();
     </script>
 </body>
