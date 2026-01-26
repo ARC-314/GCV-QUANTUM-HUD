@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ARC-314 | KOSASIH & KOKKALIS GOLD CORE</title>
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; }
+        canvas { display: block; position: fixed; top: 0; left: 0; z-index: 1; }
+        
+        #hud {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10; width: 550px; background: rgba(0, 5, 15, 0.95);
+            border: 3px solid #00f2ff; /* Aura Bleue */
+            padding: 30px; text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 0 60px rgba(0, 242, 255, 0.6), inset 0 0 30px rgba(0, 242, 255, 0.3);
+            animation: aura-pulse 3s infinite alternate;
+        }
+
+        @keyframes aura-pulse {
+            from { box-shadow: 0 0 30px rgba(0, 242, 255, 0.4); }
+            to { box-shadow: 0 0 80px rgba(0, 242, 255, 0.8), inset 0 0 40px rgba(0, 242, 255, 0.4); }
+        }
+
+        /* --- TOUT LE TEXTE EN JAUNE DORÉ --- */
+        .gold-text { 
+            color: #FFD700; 
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7); 
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: bold;
+        }
+
+        .pi-logo { 
+            font-size: 100px; 
+            color: #FFD700; 
+            text-shadow: 0 0 30px #FFD700; 
+            margin: 10px 0; 
+        }
+
+        input { 
+            background: rgba(0, 0, 0, 0.8); 
+            border: 2px solid #FFD700; 
+            color: #FFD700; 
+            font-size: 2.2em; 
+            width: 85%; text-align: center; 
+            margin: 20px 0; 
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            outline: none;
+            font-family: 'Consolas', monospace;
+        }
+
+        #r { 
+            font-size: 3.8em; 
+            color: #FFD700; 
+            text-shadow: 0 0 25px #FFD700; 
+            font-family: 'Consolas', monospace; 
+            margin: 10px 0;
+        }
+
+        .footer-sig { 
+            border-top: 2px solid #FFD700; 
+            padding-top: 15px; 
+            color: #FFD700; 
+            letter-spacing: 4px; 
+            font-size: 1.4em;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="m"></canvas>
+
+<div id="hud">
+    <div class="gold-text" style="letter-spacing: 5px; font-size: 0.8em; opacity: 0.9;">NETWORK ARCHITECTURE BY</div>
+    <div class="gold-text" style="font-size: 1.6em; letter-spacing: 7px; margin-bottom: 10px;">DR. NICOLAS KOKKALIS</div>
+    
+    <div class="pi-logo">π</div>
+    
+    <div class="gold-text" style="letter-spacing: 4px;">KOSASIH TECH // GCV QUANTUM</div>
+    <h1 class="gold-text" style="font-size: 1.8em; letter-spacing: 8px; margin: 5px 0;">CORE SYSTEM</h1>
+    
+    <input type="number" id="i" placeholder="USD AMOUNT" oninput="c()">
+    
+    <div class="gold-text" style="font-size: 11px; letter-spacing: 2px;">GLOBAL CONSENSUS VALUE: 314,159 USD</div>
+    <div id="r">0.00000000</div>
+    
+    <div class="footer-sig">OPERATOR: ARC314</div>
+</div>
+
+<script>
+    const m = document.getElementById('m');
+    const ctx = m.getContext('2d');
+
+    let w = m.width = window.innerWidth;
+    let h = m.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+        w = m.width = window.innerWidth;
+        h = m.height = window.innerHeight;
+    });
+
+    // Codes Matrix en Bleu Aura
+    const txt = "π01ARC314GCVKOSASIHKOKKALIS314159".split("");
+    const fontSize = 18;
+    const columns = Math.floor(w / fontSize);
+    const drops = Array(columns).fill(1);
+
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.fillStyle = "#00d4ff"; // Bleu Aura
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+            const char = txt[Math.floor(Math.random() * txt.length)];
+            ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > h && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(draw, 50);
+
+    function c() {
+        const v = document.getElementById('i').value;
+        const gcv = 314159; 
+        document.getElementById('r').innerText = v ? (v / gcv).toFixed(8) : "0.00000000";
+    }
+</script>
+</body>
+</html>
