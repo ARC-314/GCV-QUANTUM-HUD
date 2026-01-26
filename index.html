@@ -22,14 +22,11 @@
     </style>
 </head>
 <body>
-
     <canvas id="matrix-bg"></canvas>
-
     <header>
         <h1>ARC-314 | GCV QUANTUM HUD</h1>
         <p>REAL-TIME BLOCKCHAIN MONITORING - TARGET GCV $314,159</p>
     </header>
-
     <div class="main-layout">
         <div class="panel">
             <h3>QUANTUM CONVERTER</h3>
@@ -37,17 +34,13 @@
             <input type="number" id="piAmount" placeholder="Enter Pi Amount" oninput="calculate()">
             <div id="resultUSD">Total: $0.00 USD</div>
         </div>
-
         <div class="panel">
             <h3>LIVE BLOCKCHAIN PAYMENTS</h3>
             <div id="ticker">Connecting to Pi Network...</div>
         </div>
     </div>
-
     <footer>DESIGNED BY ARC-314 | ARCHITECTURE KOKKALIS</footer>
-
     <script>
-        // Effet Matrix
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -63,14 +56,12 @@
         }
         setInterval(draw, 50);
 
-        // Calculateur GCV
         function calculate() {
             const val = document.getElementById('piAmount').value;
             const gcv = 314159; 
             document.getElementById('resultUSD').innerText = "Total: $" + (val * gcv).toLocaleString(undefined, {minimumFractionDigits: 2}) + " USD";
         }
 
-        // Récupération des VRAIES transactions
         async function fetchLiveTX() {
             try {
                 const response = await fetch('https://api.mainnet.minepi.com/payments?limit=8&order=desc');
@@ -78,7 +69,6 @@
                 const records = data._embedded.records;
                 const ticker = document.getElementById('ticker');
                 ticker.innerHTML = "";
-                
                 records.forEach(tx => {
                     const line = document.createElement('div');
                     line.className = 'tx-line';
@@ -90,7 +80,7 @@
                 document.getElementById('ticker').innerText = "Syncing with Blockchain...";
             }
         }
-        setInterval(fetchLiveTX, 8000); // Mise à jour toutes les 8 sec
+        setInterval(fetchLiveTX, 8000);
         fetchLiveTX();
     </script>
 </body>
