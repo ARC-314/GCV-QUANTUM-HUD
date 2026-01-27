@@ -5,32 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ARC-314 | QUANTUM CORE</title>
     <style>
-        :root { --cyan: #00f2ff; --gold: #FFD700; --bg: #000; }
-        body, html { background: var(--bg); color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+        :root { --neon: #00f2ff; --gold: #FFD700; }
+        body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        /* MATRIX DYNAMIQUE - OPTIMISÉE POUR MOBILE */
+        /* MATRIX DYNAMIQUE - RENDU BRUT (SANS FILTRE) */
         canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.7; }
 
-        /* CALQUE DE PROTECTION ANTI-LAG */
-        .overlay {
+        /* VIGNETTE CINÉMATIQUE */
+        .vignette {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.85) 100%);
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%);
             z-index: 2; pointer-events: none;
         }
 
-        /* TERMINAL ARC-314 */
-        .hud {
+        .hud-layer {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; flex-direction: column; padding: 10px; box-sizing: border-box;
-            justify-content: space-between;
+            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;
+            justify-content: center;
         }
 
-        .main-unit {
-            border: 2px solid var(--cyan); background: rgba(0, 5, 10, 0.9);
-            padding: 15px; box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        .main-terminal {
+            border: 2px solid var(--neon); background: rgba(0, 10, 20, 0.95);
+            padding: 20px; box-shadow: 0 0 25px rgba(0, 242, 255, 0.5);
+            max-width: 500px; margin: 0 auto; width: 100%;
         }
 
-        header { border-bottom: 2px solid var(--gold); margin-bottom: 10px; padding-bottom: 5px; }
-        .title { font-size: 1.3em; font-weight: bold; color: var(--gold); letter-spacing: 3px; }
+        header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; }
+        .title { font-size: 1.5em; font-weight: bold; color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 10px var(--gold); }
 
-        /* CALCULATEUR DUAL-ENGINE GCV */
+        /* DUAL CALCULATION ENGINE */
+        .calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .engine { background: #000; border: 1px solid var(--neon); padding: 10px; text-align: center; }
+        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; }
+        input { background: #000; border: none; border-bottom: 1px solid var(--gold); color: var(--gold); width: 100%; font-size: 1.5em; text-align: center; outline: none; }
+        .res-display { font-size: 1.1em; color: var(--gold); font-weight: bold; margin-top: 10px; }
+
+        /* BLOCKCHAIN STREAM */
+        .stream { height: 90px; overflow: hidden; font-size: 0.75em; border-top: 1px solid rgba(0,242,255,0.3); padding-top: 10px; }
+        .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.1); padding: 5px 0; }
+
+        /* SIGNATURE ARC314 */
+        footer { border-top: 3px solid var(--gold); margin-top: 20px; padding-top: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .sig { font-size: 2.5em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 20px var(--gold); }
+    </style>
+</head>
+<body>
+
+    <canvas id="m"></canvas>
+    <div class="vignette"></div>
+
+    <div class="hud-layer">
+        <div class="main-terminal">
+            <header>
+                <div class="title">ARC-314 // CORE</div>
+                <div style="font-size: 0.6em;">GCV: $314,159 | PROTOCOL GLT-314</div>
+            </header>
+
+            <div class="calc-row">
+                <div class="engine">
+                    <label>USD -> PI</label>
+                    <input type="number" id="uIn" placeholder="0" oninput="toPi()">
+                    <div id="pOut" class="res-display">0.00 Π</div>
+                </div>
+                <div class="engine">
+                    <label>PI -> USD</label>
+                    <input type="number" id="pIn" placeholder="0" oninput="toUsd()">
+                    <div id="uOut" class="res-display">$ 0.
