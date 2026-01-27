@@ -2,96 +2,95 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | GCV PROTOCOL</title>
+    <title>ARC-314 | GCV QUANTUM HUD</title>
     <style>
         body { 
-            background: #000; color: #00f2ff; 
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0; padding: 0;
+            background: #00050a; color: #00f2ff; 
+            font-family: 'Courier New', monospace; margin: 0; padding: 0; 
         }
-
-        header {
-            background: #001015; border-bottom: 2px solid #FFD700;
-            padding: 15px; text-align: left; display: flex; justify-content: space-between;
+        header { 
+            border-bottom: 2px solid #FFD700; padding: 20px; text-align: center; 
+            background: rgba(0, 15, 30, 0.9);
         }
-
-        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: #00f2ff; border: 2px solid #00f2ff; }
-
-        .panel { background: #000; padding: 25px; }
-
-        h2 { color: #FFD700; border-bottom: 1px solid #FFD700; padding-bottom: 10px; margin-top: 0; }
-
-        .big-val { font-size: 3.5rem; font-weight: bold; color: #FFD700; margin: 10px 0; }
+        h1 { margin: 0; color: #FFD700; letter-spacing: 5px; }
+        
+        .main-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px;
+        }
+        .panel {
+            border: 1px solid #00f2ff; background: rgba(0, 20, 40, 0.5);
+            padding: 20px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+        h2 { color: #FFD700; font-size: 1.2em; border-bottom: 1px solid #00f2ff; }
 
         input {
-            background: #00151a; border: 1px solid #00f2ff; color: #FFD700;
-            padding: 15px; font-size: 1.5rem; width: 100%; box-sizing: border-box;
-            margin-bottom: 10px; outline: none;
+            width: 100%; background: #000; border: 1px solid #FFD700;
+            color: #FFD700; padding: 15px; font-size: 1.8em; margin: 10px 0;
+            box-sizing: border-box; text-align: center;
         }
+        .res-box { font-size: 2.5em; color: #FFD700; text-align: center; font-weight: bold; margin: 10px 0; }
+        
+        #ticker { height: 250px; overflow-y: hidden; font-size: 0.9em; }
+        .tx { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #00252b; }
 
-        .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #00252b; padding: 10px 0; }
-        .label { color: #888; text-transform: uppercase; font-size: 0.8rem; }
-
-        #ticker { height: 300px; overflow-y: hidden; }
-
-        .footer { padding: 10px; font-size: 0.7rem; color: #444; text-align: center; border-top: 1px solid #222; }
+        footer { text-align: center; padding: 20px; color: #FFD700; font-size: 0.8em; border-top: 1px solid #111; }
     </style>
 </head>
 <body>
 
 <header>
-    <div><strong>ARC-314</strong> // CORE SYSTEM</div>
-    <div style="color:#FFD700">GCV: $314,159</div>
+    <h1>ARC-314 // QUANTUM HUB</h1>
+    <p>GCV CONSENSUS $314,159 | KOSASIH ARCHITECTURE</p>
 </header>
 
-<div class="container">
+<div class="main-grid">
     <div class="panel">
-        <h2>TERMINAL DE PAIEMENT</h2>
-        <div class="label">PRIX DE L'ARTICLE (USD)</div>
-        <input type="number" id="usd" placeholder="0.00" oninput="run()">
-        <div class="label">MONTANT À TRANSFERER (PI)</div>
-        <div id="piOut" class="big-val">0.000000</div>
-        <div class="label">ARCHITECTURE KOSASIH // STATUS: READY</div>
+        <h2>QUANTUM VALUATION UNIT</h2>
+        <p>ENTREZ LE MONTANT EN PI :</p>
+        <input type="number" id="piInput" placeholder="0.00" oninput="calc()">
+        <div class="res-box" id="usdOut">$ 0.00</div>
+        <p style="font-size: 0.7em; color: #00f2ff; opacity: 0.6;">SYSTEM STATUS: GLT SYNCHRONIZED</p>
     </div>
 
     <div class="panel">
-        <h2>FLUX MAINNET LIVE</h2>
-        <div id="ticker">SYCHRONISATION...</div>
+        <h2>MAINNET LIVE STREAM</h2>
+        <div id="ticker">CONNECTING TO BLOCKCHAIN...</div>
     </div>
 </div>
 
-<div class="panel" style="border-top:2px solid #00f2ff">
-    <h2>ANALYSE DE VALEUR</h2>
-    <div class="data-row"><span class="label">Pi Network Consensus</span><span>$314,159.00</span></div>
-    <div class="data-row"><span class="label">GLT Utility Protocol</span><span>ACTIVE</span></div>
-    <div class="data-row"><span class="label">Kosasih Repository</span><span>GITHUB/GCVREPUBLIC</span></div>
+<div class="panel" style="margin: 0 20px;">
+    <h2>CORE DATA</h2>
+    <div style="display: flex; justify-content: space-around; text-align: center;">
+        <div><span style="display:block; font-size:0.7em;">PROTOCOL</span><strong>GLT-314</strong></div>
+        <div><span style="display:block; font-size:0.7em;">DEVELOPER</span><strong>KOSASIH</strong></div>
+        <div><span style="display:block; font-size:0.7em;">VALUATION</span><strong>314,159 USD</strong></div>
+    </div>
 </div>
 
-<div class="footer">
-    ARC-314 // AUCUN CONSEIL FINANCIER // CONSENSUS GLOBAL PI NETWORK
-</div>
+<footer>
+    ARC-314 // GCVREPUBLIC GITHUB // © 2026
+</footer>
 
 <script>
     const GCV = 314159;
-    function run() {
-        let u = document.getElementById('usd').value;
-        document.getElementById('piOut').innerText = (u / GCV).toFixed(6);
+    function calc() {
+        let p = document.getElementById('piInput').value;
+        document.getElementById('usdOut').innerText = "$ " + (p * GCV).toLocaleString();
     }
 
-    async function stream() {
+    async function getLive() {
         try {
-            const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=10&order=desc'));
-            const d = await r.json();
+            const res = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=8&order=desc'));
+            const data = await res.json();
             const t = document.getElementById('ticker');
             t.innerHTML = "";
-            d._embedded.records.forEach(x => {
-                t.innerHTML += `<div class="data-row"><span>${x.from.substring(0,8)}...</span><span style="color:#FFD700">${x.amount} PI</span></div>`;
+            data._embedded.records.forEach(tx => {
+                t.innerHTML += `<div class="tx"><span>ID:${tx.from.substring(0,8)}</span><span style="color:#FFD700">${tx.amount} PI</span></div>`;
             });
         } catch(e) {}
     }
-    setInterval(stream, 8000);
-    stream();
+    setInterval(getLive, 10000);
+    getLive();
 </script>
 
 </body>
