@@ -9,14 +9,34 @@
         * { cursor: default !important; user-select: none; box-sizing: border-box; }
 
         body {
-            background-color: #000508; color: #00f2ff; font-family: 'Share Tech Mono', monospace;
-            margin: 0; padding: 10px; height: 100vh; overflow: hidden;
-            border: 2px solid #00f2ff;
+            background-color: #000; color: #00f2ff; font-family: 'Share Tech Mono', monospace;
+            margin: 0; padding: 0; height: 100vh; overflow: hidden;
+            position: relative;
+        }
+
+        /* MATRIX EFFECT */
+        .matrix-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: -1;
+            overflow: hidden;
+        }
+        .matrix-col {
+            position: absolute; width: 15px; text-align: center;
+            font-family: 'Share Tech Mono', monospace; font-size: 15px; color: #0f0;
+            white-space: nowrap; opacity: 0.6;
+            animation: matrix-drop linear infinite;
+        }
+        @keyframes matrix-drop {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
         }
 
         .hud-container {
-            height: 100%; display: grid;
+            position: relative; z-index: 1; /* Pour être au-dessus du Matrix */
+            border: 2px solid #00f2ff; margin: 10px; padding: 10px;
+            height: calc(100vh - 20px); display: grid;
             grid-template-rows: auto 1fr auto; gap: 10px;
+            background: rgba(0, 0, 0, 0.85); /* Fond semi-transparent pour le Matrix */
         }
 
         /* HEADER HUD */
@@ -34,11 +54,12 @@
         .panel { 
             border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 15, 25, 0.8);
             padding: 10px; display: flex; flex-direction: column; position: relative;
+            overflow: hidden; /* Pour les contenus défilants */
         }
 
         .panel-header { 
             color: #ffcc00; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 204, 0, 0.3);
-            margin-bottom: 8px; padding-bottom: 3px;
+            margin-bottom: 8px; padding-bottom: 3px; text-transform: uppercase;
         }
 
         /* GCV DISPLAY */
@@ -49,20 +70,39 @@
         }
 
         /* WORLD MAP SVG */
-        .map-bg {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; opacity: 0.1; z-index: 0; pointer-events: none;
+        .map-wrapper {
+            position: relative; flex-grow: 1; display: flex; justify-content: center; align-items: center;
         }
+        .map-bg {
+            width: 90%; max-height: 90%; opacity: 0.1; z-index: 0; pointer-events: none;
+            filter: invert(1) hue-rotate(180deg) saturate(0.5); /* Pour une couleur bleue subtile */
+        }
+        .node {
+            position: absolute; width: 6px; height: 6px; background: #39ff14; border-radius: 50%;
+            box-shadow: 0 0 10px #39ff14; animation: pulse 1.5s infinite alternate;
+        }
+        @keyframes pulse { from { transform: scale(1); opacity: 1; } to { transform: scale(2); opacity: 0.2; } }
+
 
         /* BLOCKCHAIN FEED */
         #tx-stream {
-            font-size: 0.75rem; color: #39ff14; overflow-y: hidden; z-index: 1; flex-grow: 1;
+            font-size: 0.75rem; color: #39ff14; flex-grow: 1;
+            overflow-y: scroll; /* Scroll pour le flux */
+            scrollbar-width: none; /* Hide scrollbar */
+            -ms-overflow-style: none; /* IE and Edge */
         }
+        #tx-stream::-webkit-scrollbar { display: none; } /* Chrome, Safari, Opera */
+
         .tx-line { border-bottom: 1px solid rgba(57, 255, 20, 0.1); padding: 2px 0; }
         .gcv-alert { color: #ffcc00; background: rgba(255, 204, 0, 0.1); font-weight: bold; }
 
         /* PIMAN ANALYTICS */
-        .piman-intel { color: #bc13fe; font-size: 0.8rem; line-height: 1.6; }
+        #piman-intel { 
+            color: #bc13fe; font-size: 0.8rem; line-height: 1.6; 
+            overflow-y: scroll; flex-grow: 1;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        #piman-intel::-webkit-scrollbar { display: none; }
 
         footer { 
             border-top: 1px solid #00f2ff; padding: 5px; font-size: 0.7rem;
@@ -72,108 +112,173 @@
 </head>
 <body onclick="initAudio()">
 
-<div class="hud-container">
-    <header>
-        <div class="hud-title">GCV-QUANTUM-HUD v25.0</div>
-        <div style="color: #39ff14;">STATUS: MAINNET_LINK_ACTIVE</div>
-        <div>SIGNATURE: ARC314</div>
-    </header>
+    <div class="matrix-bg" id="matrix-canvas"></div>
 
-    <main class="monitor-layout">
-        <div class="panel">
-            <div class="panel-header">STRATEGIC ANALYTICS [PIMAN]</div>
-            <div class="piman-intel" id="intel">
-                > KOSASIH ENGINE: LOCKED<br>
-                > DECENTRALIZATION: 100%<br>
-                > TRAUMA_SHIELD: ACTIVE<br>
-                > QUANTUM_LAYER: SEALED<br>
-                -------------------------<br>
-                VERDICT: $314,159 VALIDATED
-            </div>
-        </div>
+    <div class="hud-container">
+        <header>
+            <div class="hud-title">GCV-QUANTUM-HUD v25.0</div>
+            <div style="color: #39ff14;">STATUS: MAINNET_LINK_ACTIVE</div>
+            <div>SIGNATURE: ARC314</div>
+        </header>
 
-        <div class="panel" style="justify-content: flex-start;">
-            <div class="panel-header">GLOBAL CONSENSUS VALUE MONITOR</div>
-            <div class="gcv-center">
-                <h1 class="gcv-value">$314,159</h1>
+        <main class="monitor-layout">
+            <div class="panel">
+                <div class="panel-header">STRATEGIC ANALYTICS [PIMAN]</div>
+                <div class="piman-intel" id="piman-intel">
+                    > KOSASIH ENGINE: LOCKED<br>
+                    > DECENTRALIZATION: 100%<br>
+                    > TRAUMA_SHIELD: ACTIVE<br>
+                    > QUANTUM_LAYER: SEALED<br>
+                    -------------------------<br>
+                    VERDICT: $314,159 VALIDATED<br>
+                    [2026-01-28 01:25:00] GCV_PROTOCOL_INITIATED<br>
+                    [2026-01-28 01:25:05] PIMAN_CORE_ENGAGED<br>
+                    [2026-01-28 01:25:10] QUANTUM_LAYER_STABLE<br>
+                    [2026-01-28 01:25:15] MERCHANT_NETWORK_MONITORING<br>
+                </div>
             </div>
+
+            <div class="panel">
+                <div class="panel-header">GLOBAL CONSENSUS VALUE MONITOR</div>
+                <div class="gcv-center">
+                    <h1 class="gcv-value">$314,159</h1>
+                </div>
+                
+                <div class="map-wrapper">
+                    <svg class="map-bg" viewBox="0 0 1000 500">
+                        <path d="M150,100 L200,100 L220,150 L180,200 L120,180 Z M450,80 L550,80 L600,150 L500,250 L400,150 Z M700,150 L850,150 L900,250 L800,350 L750,250 Z M250,300 L350,300 L380,400 L300,450 L220,400 Z M100,250 L150,280 L180,250 L130,220 Z M600,300 L650,330 L680,300 L630,270 Z" fill="#00f2ff" />
+                        <circle cx="180" cy="120" r="3" class="node"></circle>
+                        <circle cx="500" cy="100" r="3" class="node"></circle>
+                        <circle cx="820" cy="200" r="3" class="node"></circle>
+                        <circle cx="300" cy="350" r="3" class="node"></circle>
+                        <circle cx="120" cy="250" r="3" class="node"></circle>
+                        <circle cx="630" cy="300" r="3" class="node"></circle>
+                    </svg>
+                </div>
+
+                <div id="tx-stream"></div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">NODE CLUSTER STATUS</div>
+                <div style="font-size: 0.75rem;">
+                    [NODE_ALPHA]: ONLINE [99.8%]<br>
+                    [NODE_BETA]: ONLINE [99.7%]<br>
+                    [NODE_GAMMA]: SYNCHRONIZED [KOSASIH]<br>
+                    [NODE_DELTA]: ACTIVE [ARC314_AUTH]<br>
+                    -------------------------<br>
+                    <div id="sync-log" style="color:#00f2ff">MAINNET DATA STREAMING...</div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <span>SECURED BY GCVREPUBLIC & KOSASIH</span>
+            <span>@cryptoshun1980 | ARC314</span>
+        </footer>
+    </div>
+
+    <script>
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playBip() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // --- MATRIX EFFECT JAVASCRIPT ---
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const chars = '0123456789ABCDEF'; // Hexadecimal characters
+        const maxCols = Math.floor(window.innerWidth / 15); // Adjust column width to match font size
+        
+        function createMatrixColumn() {
+            const col = document.createElement('div');
+            col.className = 'matrix-col';
+            col.style.left = `${Math.floor(Math.random() * maxCols) * 15}px`;
+            col.style.animationDuration = `${Math.random() * 5 + 5}s`; // 5 to 10 seconds
+            col.style.animationDelay = `-${Math.random() * 5}s`; // Stagger animation start
             
-            <svg class="map-bg" viewBox="0 0 280 150">
-                <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.5" />
-                <circle cx="65" cy="50" r="2" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" /></circle>
-                <circle cx="175" cy="45" r="2" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="1.5s" repeatCount="indefinite" /></circle>
-            </svg>
+            for (let i = 0; i < 50; i++) { // Number of characters in a column
+                const span = document.createElement('span');
+                span.textContent = chars[Math.floor(Math.random() * chars.length)];
+                span.style.opacity = Math.random() < 0.2 ? 1 : 0.2; // Some chars brighter
+                col.appendChild(span);
+            }
+            matrixCanvas.appendChild(col);
+        }
+        
+        for (let i = 0; i < maxCols * 2; i++) { // More columns than screen width for continuous effect
+            createMatrixColumn();
+        }
+        // --- END MATRIX EFFECT JAVASCRIPT ---
 
-            <div id="tx-stream"></div>
-        </div>
 
-        <div class="panel">
-            <div class="panel-header">NODE CLUSTER STATUS</div>
-            <div style="font-size: 0.75rem;">
-                [NODE_01]: ONLINE<br>
-                [NODE_02]: ONLINE<br>
-                [NODE_03]: STABLE<br>
-                [NODE_04]: ARC314_AUTH<br>
-                -------------------------<br>
-                <div id="sync-log" style="color:#00f2ff">SYNCING MAINNET...</div>
-            </div>
-        </div>
-    </main>
+        // --- MAINNET TRANSACTION FEED ---
+        const stream = document.getElementById('tx-stream');
+        const pimanIntel = document.getElementById('piman-intel');
+        const intelLogs = [
+            "SCANNING_GLOBAL_TRADE_ROUTES...",
+            "KOSASIH_PROTOCOL_LAYER_INTEGRITY_CHECK...",
+            "MERCHANT_TRAUMA_DATA_ANOMALY_DETECTED...",
+            "GCV_LOCK_INITIATED_ON_COAST_NODES...",
+            "PIMAN_SUBROUTINES_ACTIVATED..."
+        ];
+        let intelLogIndex = 0;
 
-    <footer>
-        <span>SECURED BY GCVREPUBLIC & KOSASIH</span>
-        <span>@cryptoshun1980 | ARC314</span>
-    </footer>
-</div>
+        async function getMainnetData() {
+            try {
+                // Fetch réelle du Mainnet Pi Network
+                const response = await fetch("https://api.mainnet.minepi.com/payments?limit=8&order=desc");
+                const data = await response.json();
+                const records = data._embedded.records;
 
-<script>
-    let audioCtx;
-    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    function playBip() {
-        if(!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-    }
+                records.forEach(tx => {
+                    const time = new Date().toLocaleTimeString('fr-FR');
+                    const amount = parseFloat(tx.amount).toFixed(2);
+                    const isGCV = tx.amount.includes("314159"); // Check for GCV value
 
-    const stream = document.getElementById('tx-stream');
+                    const div = document.createElement('div');
+                    div.className = 'tx-line' + (isGCV ? ' gcv-alert' : '');
+                    div.innerHTML = `[${time}] MAINNET_TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
 
-    // CONNEXION RÉELLE AU MAINNET PI NETWORK (Horizon)
-    async function getMainnetData() {
-        try {
-            const response = await fetch("https://api.mainnet.minepi.com/payments?limit=5&order=desc");
-            const data = await response.json();
-            const records = data._embedded.records;
+                    if (isGCV) {
+                        div.innerHTML = `[${time}] !! GCV_CONFIRMED !! -> ${amount} PI`;
+                        playBip();
+                    }
 
-            records.forEach(tx => {
-                const time = new Date().toLocaleTimeString('fr-FR');
-                const amount = parseFloat(tx.amount).toFixed(2);
-                const isGCV = tx.amount.includes("314159");
+                    stream.prepend(div);
+                });
 
-                const div = document.createElement('div');
-                div.className = 'tx-line' + (isGCV ? ' gcv-alert' : '');
-                div.innerHTML = `[${time}] MAINNET_TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
-
-                if(isGCV) {
-                    div.innerHTML = `[${time}] !! GCV_CONFIRMED !! -> ${amount} PI`;
-                    playBip();
+                // Clean old entries
+                while (stream.children.length > 30) {
+                    stream.removeChild(stream.lastChild);
                 }
 
-                stream.prepend(div);
-            });
-
-            while(stream.children.length > 30) stream.removeChild(stream.lastChild);
-
-        } catch (err) {
-            console.error("Connection Error");
+                // Update Piman Intel
+                const currentTime = new Date().toLocaleTimeString('fr-FR');
+                pimanIntel.innerHTML += `<br>[${currentTime}] ${intelLogs[intelLogIndex]}`;
+                intelLogIndex = (intelLogIndex + 1) % intelLogs.length;
+                pimanIntel.scrollTop = pimanIntel.scrollHeight; // Auto-scroll
+            } catch (err) {
+                const currentTime = new Date().toLocaleTimeString('fr-FR');
+                pimanIntel.innerHTML += `<br>[${currentTime}] !! MAINNET_ACCESS_ERROR !!`;
+                pimanIntel.scrollTop = pimanIntel.scrollHeight;
+            }
         }
-    }
 
-    setInterval(getMainnetData, 4000);
-    getMainnetData();
-</script>
+        // Lancer la récupération des données toutes les 4 secondes
+        setInterval(getMainnetData, 4000);
+        getMainnetData(); // Premier lancement immédiat
+    </script>
 </body>
 </html>
