@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | GCV QUANTUM HUD</title>
+    <title>ARC-314 | INTERFACE GCV QUANTUM</title>
     <style>
         body { 
             background: #00050a; color: #00f2ff; 
@@ -21,76 +21,98 @@
             border: 1px solid #00f2ff; background: rgba(0, 20, 40, 0.5);
             padding: 20px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
         }
-        h2 { color: #FFD700; font-size: 1.2em; border-bottom: 1px solid #00f2ff; }
+        h2 { color: #FFD700; font-size: 1.2em; border-bottom: 1px solid #00f2ff; padding-bottom: 10px; }
 
+        label { display: block; margin-top: 10px; font-size: 0.9em; color: #00f2ff; }
+        
         input {
             width: 100%; background: #000; border: 1px solid #FFD700;
             color: #FFD700; padding: 15px; font-size: 1.8em; margin: 10px 0;
-            box-sizing: border-box; text-align: center;
+            box-sizing: border-box; text-align: center; outline: none;
         }
-        .res-box { font-size: 2.5em; color: #FFD700; text-align: center; font-weight: bold; margin: 10px 0; }
+        .res-box { font-size: 2.2em; color: #FFD700; text-align: center; font-weight: bold; margin: 10px 0; }
         
         #ticker { height: 250px; overflow-y: hidden; font-size: 0.9em; }
         .tx { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #00252b; }
 
-        footer { text-align: center; padding: 20px; color: #FFD700; font-size: 0.8em; border-top: 1px solid #111; }
+        .status-bar {
+            margin: 20px; padding: 15px; border: 1px solid #FFD700; background: rgba(255, 215, 0, 0.05);
+            display: flex; justify-content: space-around; text-align: center;
+        }
+
+        footer { text-align: center; padding: 20px; color: #FFD700; font-size: 0.8em; opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>ARC-314 // QUANTUM HUB</h1>
-    <p>GCV CONSENSUS $314,159 | KOSASIH ARCHITECTURE</p>
+    <h1>ARC-314 // SYSTÈME QUANTUM</h1>
+    <p>VALEUR DE CONSENSUS GLOBAL (GCV) : 314 159 $</p>
 </header>
 
 <div class="main-grid">
     <div class="panel">
-        <h2>QUANTUM VALUATION UNIT</h2>
-        <p>ENTREZ LE MONTANT EN PI :</p>
-        <input type="number" id="piInput" placeholder="0.00" oninput="calc()">
-        <div class="res-box" id="usdOut">$ 0.00</div>
-        <p style="font-size: 0.7em; color: #00f2ff; opacity: 0.6;">SYSTEM STATUS: GLT SYNCHRONIZED</p>
+        <h2>UNITÉ DE VALORISATION GCV</h2>
+        <label>QUANTITÉ DE PI À CONVERTIR :</label>
+        <input type="number" id="piInput" placeholder="0.00" oninput="calculer()">
+        <label>VALEUR ESTIMÉE EN USD :</label>
+        <div class="res-box" id="usdOut">0,00 $</div>
+        <p style="font-size: 0.7em; color: #00f2ff; opacity: 0.6; text-align: center;">ARCHITECTURE KOSASIH // PROTOCOLE GLT SYNCHRONISÉ</p>
     </div>
 
     <div class="panel">
-        <h2>MAINNET LIVE STREAM</h2>
-        <div id="ticker">CONNECTING TO BLOCKCHAIN...</div>
+        <h2>FLUX MAINNET EN DIRECT</h2>
+        <div id="ticker">CONNEXION AU RÉSEAU PI...</div>
     </div>
 </div>
 
-<div class="panel" style="margin: 0 20px;">
-    <h2>CORE DATA</h2>
-    <div style="display: flex; justify-content: space-around; text-align: center;">
-        <div><span style="display:block; font-size:0.7em;">PROTOCOL</span><strong>GLT-314</strong></div>
-        <div><span style="display:block; font-size:0.7em;">DEVELOPER</span><strong>KOSASIH</strong></div>
-        <div><span style="display:block; font-size:0.7em;">VALUATION</span><strong>314,159 USD</strong></div>
-    </div>
+<div class="status-bar">
+    <div><span style="display:block; font-size:0.7em; color:#00f2ff;">PROTOCOLE</span><strong>GLT-314</strong></div>
+    <div><span style="display:block; font-size:0.7em; color:#00f2ff;">DÉVELOPPEUR</span><strong>KOSASIH</strong></div>
+    <div><span style="display:block; font-size:0.7em; color:#00f2ff;">CONSENSUS</span><strong>314 159 USD</strong></div>
+    <div><span style="display:block; font-size:0.7em; color:#00f2ff;">STATUT</span><strong style="color:#00ff00;">ACTIF</strong></div>
 </div>
 
 <footer>
-    ARC-314 // GCVREPUBLIC GITHUB // © 2026
+    ARC-314 // GITHUB: KOSASIH & GCVREPUBLIC // © 2026
 </footer>
 
 <script>
     const GCV = 314159;
-    function calc() {
+
+    function calculer() {
         let p = document.getElementById('piInput').value;
-        document.getElementById('usdOut').innerText = "$ " + (p * GCV).toLocaleString();
+        if(p > 0) {
+            let total = p * GCV;
+            document.getElementById('usdOut').innerText = total.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + " $";
+        } else {
+            document.getElementById('usdOut').innerText = "0,00 $";
+        }
     }
 
-    async function getLive() {
+    async function rafraichirFlux() {
         try {
-            const res = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=8&order=desc'));
-            const data = await res.json();
-            const t = document.getElementById('ticker');
-            t.innerHTML = "";
-            data._embedded.records.forEach(tx => {
-                t.innerHTML += `<div class="tx"><span>ID:${tx.from.substring(0,8)}</span><span style="color:#FFD700">${tx.amount} PI</span></div>`;
+            // Utilisation du proxy pour éviter les erreurs CORS sur le Mainnet
+            const url = 'https://api.mainnet.minepi.com/payments?limit=8&order=desc';
+            const reponse = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+            const donnees = await reponse.json();
+            const conteneur = document.getElementById('ticker');
+            conteneur.innerHTML = "";
+            
+            donnees._embedded.records.forEach(tx => {
+                const ligne = document.createElement('div');
+                ligne.className = 'tx';
+                ligne.innerHTML = `<span>ID:${tx.from.substring(0,8)}...</span><strong style="color:#FFD700">${tx.amount} PI</strong>`;
+                conteneur.appendChild(ligne);
             });
-        } catch(e) {}
+        } catch(e) {
+            console.log("Erreur de synchronisation réseau");
+        }
     }
-    setInterval(getLive, 10000);
-    getLive();
+
+    // Mise à jour toutes le 10 secondes
+    setInterval(rafraichirFlux, 10000);
+    rafraichirFlux();
 </script>
 
 </body>
