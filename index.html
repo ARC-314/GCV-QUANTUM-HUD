@@ -3,139 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 | QUANTUM CORE</title>
+    <title>ARC-314 | CORE GCV</title>
     <style>
-        :root { --cyan: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.4); }
+        :root { --cyan: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.6); }
         body, html { background: #000; color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        /* MATRIX DENSE & COLORÉE */
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; filter: contrast(1.2); }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; }
 
-        /* FILTRE DE PROFONDEUR (L'OMBRE SUR LES BORDURES DE L'IMAGE) */
-        .scanline-overlay {
+        .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.85) 100%);
+            background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.9) 100%);
             z-index: 2; pointer-events: none;
         }
 
-        .main-wrapper {
+        .hud {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
+            display: flex; align-items: center; justify-content: center; padding: 15px;
+            perspective: 1000px;
         }
 
-        /* TERMINAL ARC-314 - LOOK CINÉMATIQUE */
         .terminal {
-            width: 100%; max-width: 460px;
-            background: rgba(0, 10, 20, 0.92);
+            width: 100%; max-width: 480px;
+            background: rgba(0, 15, 30, 0.95);
             border: 2px solid var(--cyan);
-            box-shadow: 0 0 40px var(--glow), inset 0 0 20px var(--glow);
-            padding: 25px; border-radius: 4px;
-            /* TRICHE VISUELLE POUR L'INCLINAISON SANS CRASH */
-            transform: perspective(1000px) rotateY(-5deg) skewY(-1deg);
-            position: relative;
+            box-shadow: 0 0 30px var(--glow), inset 0 0 20px var(--glow);
+            padding: 25px;
+            transform: rotateY(-5deg); /* Légère inclinaison comme sur l'image */
+            border-radius: 5px;
         }
 
-        /* PETIT TEXTE DE DÉTAIL COMME SUR L'IMAGE */
-        .sub-header { font-size: 0.5em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; opacity: 0.7; }
+        header { border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; text-align: left; }
+        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: 3px; }
 
-        header { border-bottom: 3px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; }
-        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: 4px; }
-
-        /* DUAL-ENGINE CALCULATOR */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .box { border: 1px solid var(--cyan); background: rgba(0,0,0,0.8); padding: 12px; text-align: center; position: relative; }
-        .box::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; box-shadow: inset 0 0 10px var(--glow); pointer-events: none; }
+        /* LES CHAMPS DE RECHERCHE / CALCUL (LES "ENGINE" DE L'IMAGE) */
+        .dual-engine { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         
-        label { font-size: 0.55em; color: var(--gold); display: block; margin-bottom: 5px; font-weight: bold; }
-        input { background: transparent; border: none; border-bottom: 2px solid var(--gold); color: var(--gold); width: 100%; font-size: 1.4em; text-align: center; outline: none; }
-        .res { font-size: 1.1em; font-weight: bold; color: var(--gold); margin-top: 8px; text-shadow: 0 0 5px var(--gold); }
+        .engine-box {
+            position: relative;
+            background: rgba(0, 242, 255, 0.05);
+            border: 1px solid var(--cyan);
+            padding: 15px;
+            /* Coupe les coins pour faire la forme technologique de l'image */
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            box-shadow: inset 0 0 15px var(--glow);
+        }
 
-        /* BLOCKCHAIN STREAM */
-        .stream { height: 110px; overflow: hidden; font-size: 0.75em; border-top: 1px solid rgba(0, 242, 255, 0.4); padding-top: 10px; color: #fff; }
+        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; font-weight: bold; }
+        
+        input {
+            background: transparent; border: none; 
+            border-bottom: 1px solid var(--gold);
+            color: var(--gold); width: 100%; font-size: 1.5em; 
+            text-align: center; outline: none; font-weight: bold;
+        }
+
+        .res { font-size: 1.2em; font-weight: bold; color: var(--gold); margin-top: 10px; text-shadow: 0 0 8px var(--gold); }
+
+        .stream { height: 100px; overflow: hidden; font-size: 0.7em; border-top: 1px solid rgba(0, 242, 255, 0.3); padding-top: 10px; }
         .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 5px 0; }
 
-        /* SIGNATURE ARC314 GOLD */
-        footer { margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 3em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 25px var(--gold); line-height: 1; }
+        footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .signature { font-size: 2.8em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 25px var(--gold); }
     </style>
 </head>
 <body>
 
     <canvas id="m"></canvas>
-    <div class="scanline-overlay"></div>
+    <div class="overlay"></div>
 
-    <div class="main-wrapper">
+    <div class="hud">
         <div class="terminal">
-            <div class="sub-header">System: Encrypted | Architecture: Kosasih</div>
             <header>
                 <div class="title">ARC-314 // CORE</div>
-                <div style="font-size: 0.65em; color: var(--cyan); font-weight: bold;">GCV: $314,159 | TOKEN: GLT-314</div>
+                <div style="font-size: 0.6em; color: var(--cyan); font-weight: bold;">GCV CONSENSUS: $314,159</div>
             </header>
 
-            <div class="grid">
-                <div class="box">
-                    <label>USD -> PI</label>
+            <div class="dual-engine">
+                <div class="engine-box">
+                    <label>SEARCH USD</label>
                     <input type="number" id="uIn" placeholder="0" oninput="calc()">
                     <div id="pOut" class="res">0.00 Π</div>
                 </div>
-                <div class="box">
-                    <label>PI -> USD</label>
+                <div class="engine-box">
+                    <label>SEARCH PI</label>
                     <input type="number" id="pIn" placeholder="0" oninput="calc()">
                     <div id="uOut" class="res">$ 0.00</div>
                 </div>
             </div>
 
-            <div style="font-size: 0.6em; color: var(--gold); margin-bottom: 5px; font-weight: bold;">>> LIVE_BLOCKCHAIN_FEED</div>
             <div class="stream" id="st"></div>
 
             <footer>
-                <div style="font-size: 0.5em; color: var(--cyan); line-height: 1.5; font-weight: bold;">
-                    LOC: Koh Samui, TH<br>
-                    STATUS: ACTIVE<br>
-                    PIMAN: INFLUENCE_ACTIVE
+                <div style="font-size: 0.5em; line-height: 1.4; color: var(--cyan); font-weight: bold;">
+                    LOCATION: KOH SAMUI, TH<br>
+                    STATUS: ENCRYPTED<br>
+                    PIMAN: ACTIVE
                 </div>
                 <div class="signature">ARC314</div>
-            </footer>
-        </div>
-    </div>
-
-    <script>
-        const GCV = 314159;
-        const c = document.getElementById('m'), x = c.getContext('2d');
-        let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
-        
-        // DENSITÉ MAXIMALE POUR COPIER L'IMAGE
-        const columns = Array(Math.floor(w/10)).fill(1);
-
-        function draw() {
-            x.fillStyle = "rgba(0, 0, 0, 0.12)";
-            x.fillRect(0, 0, w, h);
-            x.fillStyle = "#00f2ff";
-            x.font = "14px monospace";
-            
-            columns.forEach((y, i) => {
-                const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-                x.fillText(char, i * 10, y * 10);
-                if (y * 10 > h && Math.random() > 0.985) columns[i] = 0;
-                columns[i]++;
-            });
-        }
-        setInterval(draw, 45);
-
-        function calc() {
-            const u = document.getElementById('uIn').value;
-            const p = document.getElementById('pIn').value;
-            document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
-            document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
-        }
-
-        const st = document.getElementById('st');
-        function add() {
-            const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold)">+${(Math.random()*15).toFixed(4)} Π</span></div>`;
-            st.innerHTML = row + st.innerHTML;
-            if(st.children.length > 5) st.lastChild.remove();
-        }
-        setInterval(add, 2200);
-    </script>
-</body>
-</html>
