@@ -2,58 +2,63 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARC-314 | QUANTUM HUD</title>
     <style>
-        body { background: #000; color: #00f2ff; font-family: monospace; margin: 0; overflow: hidden; }
-        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
-        header { border-bottom: 2px solid #FFD700; padding: 15px; text-align: center; background: rgba(0,10,20,0.9); position: relative; z-index: 10; }
-        .hud { display: flex; justify-content: space-between; padding: 20px; position: relative; z-index: 10; }
-        .panel { border: 1px solid #00f2ff; background: rgba(0,20,30,0.8); padding: 15px; width: 350px; backdrop-filter: blur(5px); }
-        input { width: 100%; background: #000; border: 1px solid #FFD700; color: #FFD700; padding: 10px; font-size: 1.5em; text-align: center; box-sizing: border-box; }
-        .res { font-size: 2em; color: #FFD700; text-align: center; margin-top: 10px; font-weight: bold; }
-        .core { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; }
-        .ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid #00f2ff; animation: rot 10s linear infinite; }
-        .r1 { width: 500px; height: 500px; border-style: dashed; }
-        .r2 { width: 350px; height: 350px; border: 4px double #FFD700; animation-direction: reverse; }
-        @keyframes rot { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        footer { position: fixed; bottom: 0; width: 100%; padding: 10px; background: #000; color: #FFD700; text-align: center; border-top: 1px solid #FFD700; }
+        body { background: #000; color: #00f2ff; font-family: monospace; margin: 0; overflow: hidden; height: 100vh; }
+        header { border-bottom: 2px solid #FFD700; padding: 10px; text-align: center; background: #001015; }
+        .main { display: flex; flex-direction: column; align-items: center; padding: 20px; position: relative; z-index: 10; }
+        .panel { border: 1px solid #00f2ff; background: rgba(0,20,30,0.9); padding: 15px; width: 90%; max-width: 400px; margin-bottom: 20px; }
+        input { width: 100%; background: #000; border: 1px solid #FFD700; color: #FFD700; padding: 12px; font-size: 1.5em; text-align: center; box-sizing: border-box; }
+        .res { font-size: 1.8em; color: #FFD700; text-align: center; margin-top: 10px; font-weight: bold; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        footer { position: fixed; bottom: 0; width: 100%; padding: 10px; background: #000; color: #FFD700; text-align: center; font-size: 0.7em; }
     </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
-    <div class="core"><div class="ring r1"></div><div class="ring r2"></div></div>
+    <canvas id="m"></canvas>
     <header>
-        <h1 style="margin:0; letter-spacing:5px;">ARC-314 QUANTUM HUD</h1>
-        <div style="font-size:0.8em;">CONSENSUS GCV: $314,159 | KOSASIH ARCHITECTURE</div>
+        <h1 style="margin:0; font-size: 1.2em; color: #FFD700;">ARC-314 QUANTUM HUD</h1>
+        <div style="font-size: 0.7em;">GCV: $314,159 | KOSASIH ARCHITECTURE</div>
     </header>
-    <div class="hud">
+
+    <div class="main">
         <div class="panel">
-            <h3 style="color:#FFD700; margin-top:0;">> CALCULATEUR</h3>
-            <p>PRIX EN USD ($) :</p>
-            <input type="number" id="u" placeholder="0.00" oninput="c()">
-            <div id="p" class="res">0.000000 Π</div>
+            <div style="font-size: 0.8em; margin-bottom: 5px;">PRIX ARTICLE (USD $) :</div>
+            <input type="number" id="usd" placeholder="0.00" oninput="calc()">
+            <div style="font-size: 0.8em; margin-top: 15px;">VALEUR EN PI (Π) :</div>
+            <div id="pi" class="res">0.000000 Π</div>
         </div>
-        <div class="panel">
-            <h3 style="color:#FFD700; margin-top:0;">> STATUS</h3>
-            <div id="t">INITIALISATION...</div>
+        
+        <div class="panel" style="font-size: 0.7em;">
+            <div style="color:#FFD700; margin-bottom: 5px;">> SYSTEM STATUS</div>
+            <div>CORE: ACTIVE</div>
+            <div>GLT PROTOCOL: ONLINE</div>
         </div>
     </div>
-    <footer>ARC-314 ARCHITECTURE | ARC314</footer>
+
+    <footer>ARC-314 ARCHITECTURE | DESIGNED FOR THE COMMUNITY</footer>
+
     <script>
-        const m = document.getElementById('matrix'), x = m.getContext('2d');
-        m.width = window.innerWidth; m.height = window.innerHeight;
-        const d = Array(Math.floor(m.width/20)).fill(1);
+        // Matrix simplified for mobile performance
+        const c = document.getElementById('m'), x = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const d = Array(Math.floor(c.width/20)).fill(1);
         function draw() {
-            x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,m.width,m.height);
-            x.fillStyle = "#00f2ff"; d.forEach((y, i) => {
-                x.fillText("ARC314"[Math.floor(Math.random()*6)], i*20, y*20);
-                if(y*20 > m.height && Math.random() > 0.98) d[i] = 0; d[i]++;
+            x.fillStyle = "rgba(0,0,0,0.15)"; x.fillRect(0,0,c.width,c.height);
+            x.fillStyle = "#00f2ff"; x.font = "15px monospace";
+            d.forEach((y, i) => {
+                x.fillText("Π", i*20, y*20);
+                if(y*20 > c.height && Math.random() > 0.98) d[i] = 0; d[i]++;
             });
         }
         setInterval(draw, 50);
-        function c() {
-            const val = document.getElementById('u').value;
-            document.getElementById('p').innerText = (val > 0 ? (val / 314159).toFixed(7) : "0.000000") + " Π";
+
+        function calc() {
+            const v = document.getElementById('usd').value;
+            const res = document.getElementById('pi');
+            if(v > 0) res.innerText = (v / 314159).toFixed(7) + " Π";
+            else res.innerText = "0.000000 Π";
         }
     </script>
 </body>
