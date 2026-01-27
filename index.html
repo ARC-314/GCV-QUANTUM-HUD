@@ -3,62 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM HUD</title>
+    <title>ARC-314 | TERMINAL GCV</title>
     <style>
-        body { background: #000; color: #00f2ff; font-family: monospace; margin: 0; overflow: hidden; height: 100vh; }
-        header { border-bottom: 2px solid #FFD700; padding: 10px; text-align: center; background: #001015; }
-        .main { display: flex; flex-direction: column; align-items: center; padding: 20px; position: relative; z-index: 10; }
-        .panel { border: 1px solid #00f2ff; background: rgba(0,20,30,0.9); padding: 15px; width: 90%; max-width: 400px; margin-bottom: 20px; }
-        input { width: 100%; background: #000; border: 1px solid #FFD700; color: #FFD700; padding: 12px; font-size: 1.5em; text-align: center; box-sizing: border-box; }
-        .res { font-size: 1.8em; color: #FFD700; text-align: center; margin-top: 10px; font-weight: bold; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-        footer { position: fixed; bottom: 0; width: 100%; padding: 10px; background: #000; color: #FFD700; text-align: center; font-size: 0.7em; }
+        body { background: #000; color: #00f2ff; font-family: monospace; text-align: center; margin: 0; padding: 20px; }
+        .hud-frame { border: 2px solid #FFD700; padding: 20px; background: rgba(0,20,30,0.9); max-width: 500px; margin: auto; box-shadow: 0 0 20px #00f2ff; }
+        h1 { color: #FFD700; letter-spacing: 5px; font-size: 1.5em; }
+        input { width: 90%; padding: 15px; font-size: 1.5em; background: #000; color: #FFD700; border: 1px solid #FFD700; margin: 20px 0; outline: none; }
+        .resultat { font-size: 2.2em; color: #FFD700; font-weight: bold; text-shadow: 0 0 10px #FFD700; }
+        .footer { margin-top: 30px; font-size: 0.8em; color: #FFD700; border-top: 1px solid #444; padding-top: 10px; }
     </style>
 </head>
 <body>
-    <canvas id="m"></canvas>
-    <header>
-        <h1 style="margin:0; font-size: 1.2em; color: #FFD700;">ARC-314 QUANTUM HUD</h1>
-        <div style="font-size: 0.7em;">GCV: $314,159 | KOSASIH ARCHITECTURE</div>
-    </header>
-
-    <div class="main">
-        <div class="panel">
-            <div style="font-size: 0.8em; margin-bottom: 5px;">PRIX ARTICLE (USD $) :</div>
-            <input type="number" id="usd" placeholder="0.00" oninput="calc()">
-            <div style="font-size: 0.8em; margin-top: 15px;">VALEUR EN PI (Π) :</div>
-            <div id="pi" class="res">0.000000 Π</div>
-        </div>
+    <div class="hud-frame">
+        <h1>ARC-314 // GCV TERMINAL</h1>
+        <p>CONCEPTION : KOSASIH ARCHITECTURE</p>
+        <hr style="border: 0.5px solid #00f2ff;">
         
-        <div class="panel" style="font-size: 0.7em;">
-            <div style="color:#FFD700; margin-bottom: 5px;">> SYSTEM STATUS</div>
-            <div>CORE: ACTIVE</div>
-            <div>GLT PROTOCOL: ONLINE</div>
+        <p style="margin-top:20px;">ENTREZ MONTANT (USD $) :</p>
+        <input type="number" id="usd" placeholder="0.00" oninput="calculer()">
+        
+        <p>VALEUR EN PI (Π) :</p>
+        <div id="pi" class="resultat">0.000000 Π</div>
+        
+        <div class="footer">
+            CONSENSUS : 314 159 USD [ARC314]
         </div>
     </div>
 
-    <footer>ARC-314 ARCHITECTURE | DESIGNED FOR THE COMMUNITY</footer>
-
     <script>
-        // Matrix simplified for mobile performance
-        const c = document.getElementById('m'), x = c.getContext('2d');
-        c.width = window.innerWidth; c.height = window.innerHeight;
-        const d = Array(Math.floor(c.width/20)).fill(1);
-        function draw() {
-            x.fillStyle = "rgba(0,0,0,0.15)"; x.fillRect(0,0,c.width,c.height);
-            x.fillStyle = "#00f2ff"; x.font = "15px monospace";
-            d.forEach((y, i) => {
-                x.fillText("Π", i*20, y*20);
-                if(y*20 > c.height && Math.random() > 0.98) d[i] = 0; d[i]++;
-            });
-        }
-        setInterval(draw, 50);
-
-        function calc() {
-            const v = document.getElementById('usd').value;
+        function calculer() {
+            const usd = document.getElementById('usd').value;
+            const gcv = 314159; // Valeur de consensus global
             const res = document.getElementById('pi');
-            if(v > 0) res.innerText = (v / 314159).toFixed(7) + " Π";
-            else res.innerText = "0.000000 Π";
+            if (usd > 0) {
+                res.innerText = (usd / gcv).toFixed(7) + " Π";
+            } else {
+                res.innerText = "0.000000 Π";
+            }
         }
     </script>
 </body>
