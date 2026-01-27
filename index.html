@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 // HYPER-GLOW LARGE</title>
+    <title>ARC-314 // KOKKALIS & KOSASIH CORE</title>
     <style>
         :root { 
             --neon: #00f2ff; 
             --gold: #FFD700; 
             --neon-glow: 0 0 10px #00f2ff, inset 0 0 10px rgba(0, 242, 255, 0.5);
-            --gold-glow: 0 0 10px #FFD700;
+            --gold-glow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.5);
         }
         
         body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
@@ -27,10 +27,9 @@
             display: flex; align-items: center; justify-content: center; padding: 10px;
         }
 
-        /* MODULE AGRANDI À 680PX AVEC EFFETS MAINTENUS */
         .terminal {
             width: 95%; max-width: 680px;
-            background: rgba(0, 10, 20, 0.95); /* Plus opaque pour stabiliser le rendu */
+            background: rgba(0, 10, 20, 0.95);
             border: 2px solid var(--neon);
             box-shadow: var(--neon-glow);
             padding: 40px;
@@ -56,8 +55,16 @@
         .stream { height: 110px; overflow: hidden; font-size: 0.85em; border-top: 1px solid rgba(0,242,255,0.4); padding-top: 15px; }
         .tx { display: flex; justify-content: space-between; padding: 6px 0; color: #fff; text-shadow: 0 0 5px #fff; }
 
-        footer { margin-top: 35px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 4.2em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: var(--gold-glow); line-height: 1; }
+        footer { margin-top: 35px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* SIGNATURE ALLIANCE : KOKKALIS & KOSASIH */
+        .alliance-seal { 
+            text-align: right;
+            color: var(--gold);
+            text-shadow: var(--gold-glow);
+        }
+        .alliance-names { font-size: 0.9em; font-weight: bold; letter-spacing: 2px; line-height: 1; }
+        .pi-symbol { font-size: 3.5em; font-weight: bold; line-height: 0.8; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -68,9 +75,9 @@
 <div class="container">
     <div class="terminal">
         <header>
-            <div style="font-size: 0.6em; color: var(--neon); text-shadow: var(--neon-glow); margin-bottom: 5px;">TUESDAY, JANUARY 27, 2026 // 14:30</div>
+            <div style="font-size: 0.6em; color: var(--neon); text-shadow: var(--neon-glow); margin-bottom: 5px;">TUESDAY, JANUARY 27, 2026 // CORE_LINK</div>
             <div class="title">ARC-314 // CORE</div>
-            <div style="font-size: 0.7em; color: var(--neon); font-weight: bold;">GCV: $314,159 | ARCHITECTURE KOSASIH</div>
+            <div style="font-size: 0.7em; color: var(--neon); font-weight: bold;">GCV: $314,159 | NETWORK SETTLEMENT</div>
         </header>
 
         <div class="grid">
@@ -86,64 +93,4 @@
             </div>
         </div>
 
-        <div class="stream" id="st"></div>
-
-        <footer>
-            <div style="font-size: 0.6em; color: var(--neon); line-height: 1.6; text-shadow: 0 0 5px var(--neon);">
-                LOC: [PROTECTED]<br>
-                STATUS: ENCRYPTED<br>
-                PIMAN: ACTIVE
-            </div>
-            <div class="signature">ARC314</div>
-        </footer>
-    </div>
-</div>
-
-<script>
-    const GCV = 314159;
-    const canvas = document.getElementById('m'), ctx = canvas.getContext('2d');
-    let w, h, columns;
-
-    function init() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-        columns = Array(Math.floor(w/18)).fill(1);
-    }
-
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#00f2ff";
-        ctx.shadowBlur = 5; // Réduit pour éviter le plantage tout en gardant l'effet
-        ctx.shadowColor = "#00f2ff";
-        ctx.font = "16px monospace";
-        columns.forEach((y, i) => {
-            const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-            ctx.fillText(char, i * 18, y * 18);
-            if (y * 18 > h && Math.random() > 0.98) columns[i] = 0;
-            columns[i]++;
-        });
-    }
-
-    window.addEventListener('resize', init);
-    init();
-    setInterval(draw, 50);
-
-    function calc() {
-        const u = document.getElementById('uIn').value;
-        const p = document.getElementById('pIn').value;
-        document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
-        document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
-    }
-
-    const st = document.getElementById('st');
-    function addTx() {
-        const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold); text-shadow: var(--gold-glow);">+${(Math.random()*10).toFixed(4)} Π</span></div>`;
-        st.innerHTML = row + st.innerHTML;
-        if(st.children.length > 5) st.lastChild.remove();
-    }
-    setInterval(addTx, 2000);
-</script>
-
-</body>
-</html>
+        <div class="stream" id="st
