@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | CENTRAL COMMAND UNIT</title>
+    <title>ARC-314 | MONITORING MAXIMIZED</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
         * { cursor: none !important; user-select: none; box-sizing: border-box; }
 
         body {
             background-color: #010a0f; color: #e0f7fa; font-family: 'Orbitron', sans-serif;
-            margin: 0; padding: 15px; height: 100vh; overflow: hidden;
+            margin: 0; padding: 10px; height: 100vh; overflow: hidden;
             background-image: 
                 linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
@@ -18,60 +18,54 @@
 
         .main-container {
             border: 1px solid #00f2ff; height: 100%; display: flex; flex-direction: column;
-            background: rgba(1, 10, 15, 0.98); padding: 20px;
+            background: rgba(1, 10, 15, 0.98); padding: 15px;
         }
 
-        header { display: flex; justify-content: space-between; border-bottom: 1px solid #00f2ff; padding-bottom: 8px; margin-bottom: 15px; }
+        header { display: flex; justify-content: space-between; border-bottom: 1px solid #00f2ff; padding-bottom: 5px; margin-bottom: 10px; }
         .system-status { color: #39ff14; border: 1px solid #39ff14; padding: 2px 10px; font-size: 11px; }
 
-        .gcv-hero { text-align: center; margin-bottom: 20px; }
-        .gcv-value { font-size: 7.5rem; color: #00f2ff; text-shadow: 0 0 25px rgba(0, 242, 255, 0.7); margin: 0; line-height: 1; }
+        .gcv-hero { text-align: center; margin-bottom: 15px; }
+        .gcv-value { font-size: 7rem; color: #00f2ff; text-shadow: 0 0 25px rgba(0, 242, 255, 0.7); margin: 0; line-height: 1; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
-        .stat-box { border: 1px solid #0a4d5c; background: rgba(0, 20, 30, 0.8); padding: 12px; text-align: center; }
-        .stat-val { font-size: 1.6rem; font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+        .stat-box { border: 1px solid #0a4d5c; background: rgba(0, 20, 30, 0.8); padding: 10px; text-align: center; }
+        .stat-val { font-size: 1.5rem; font-weight: bold; }
         .stat-label { font-size: 9px; color: #00f2ff; text-transform: uppercase; }
 
-        .monitoring-layout { display: grid; grid-template-columns: 1.2fr 1.5fr 1.2fr; gap: 15px; flex-grow: 1; min-height: 0; }
+        .monitoring-layout { display: grid; grid-template-columns: 1.1fr 1.8fr 1.1fr; gap: 10px; flex-grow: 1; min-height: 0; }
 
-        /* CASE PIMAN - OCCUPATION TOTALE */
+        /* PIMAN CASE - MAX TEXT */
         .piman-card { 
             border: 1px solid #bc13fe; background: rgba(188, 19, 254, 0.03); 
-            padding: 25px; display: flex; flex-direction: column; height: 100%;
+            padding: 15px; display: flex; flex-direction: column; height: 100%;
         }
-        .piman-header { color: #bc13fe; font-size: 16px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; border-left: 4px solid #bc13fe; padding-left: 10px; }
-        
-        /* ICI LE TEXTE EST PROPULSÉ POUR REMPLIR LE VIDE */
-        .piman-body { 
-            font-size: 1.1rem; /* Taille augmentée */
-            color: #e0e0e0; 
-            line-height: 2.2; /* Espacement large pour remplir la hauteur */
-            flex-grow: 1;
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-around; /* Distribue le texte sur toute la hauteur */
-        }
-        .verdict-line { border-top: 2px solid #00f2ff; padding-top: 20px; color: #00f2ff; font-weight: bold; font-size: 1.1rem; }
+        .piman-body { font-size: 0.95rem; color: #e0e0e0; line-height: 2; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
 
-        .blockchain-feed { border: 1px solid #0a4d5c; background: rgba(0, 0, 0, 0.9); font-family: 'Share Tech Mono', monospace; padding: 10px; color: #39ff14; overflow: hidden; font-size: 0.85rem; }
+        /* BLOCKCHAIN FEED - ABSOLUTE MAXIMUM FILL */
+        .blockchain-feed { 
+            border: 1px solid #0a4d5c; background: rgba(0, 0, 0, 1); 
+            font-family: 'Share Tech Mono', monospace; padding: 10px; color: #39ff14; 
+            overflow: hidden; font-size: 0.8rem; line-height: 1.2;
+            height: 100%; display: flex; flex-direction: column-reverse; /* Remplit par le haut */
+        }
 
         .map-container { border: 1px solid #0a4d5c; background: rgba(0, 15, 25, 0.8); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .world-map-svg { width: 90%; opacity: 0.6; }
+        .world-map-svg { width: 95%; opacity: 0.6; }
 
-        footer { display: flex; justify-content: flex-end; color: #ffcc00; font-weight: bold; margin-top: 10px; font-size: 12px; }
+        footer { display: flex; justify-content: flex-end; color: #ffcc00; font-weight: bold; margin-top: 8px; font-size: 11px; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
     <header>
-        <div>ARC-314<br><span style="font-size: 9px; opacity: 0.6;">CENTRAL COMMAND UNIT</span></div>
+        <div>ARC-314<br><span style="font-size: 8px; opacity: 0.5;">CENTRAL COMMAND UNIT</span></div>
         <div style="text-align: right;"><span class="system-status">SYSTEM: STABILIZED</span></div>
     </header>
 
     <div class="gcv-hero">
         <h1 class="gcv-value">$314,159</h1>
-        <div style="letter-spacing: 8px; color: #5bbcc9; font-size: 0.9rem;">GLOBAL CONSENSUS VALUE LOCKED</div>
+        <div style="letter-spacing: 10px; color: #5bbcc9; font-size: 0.8rem; margin-top: 5px;">GLOBAL CONSENSUS VALUE LOCKED</div>
     </div>
 
     <div class="stats-grid">
@@ -83,13 +77,12 @@
 
     <div class="monitoring-layout">
         <div class="piman-card">
-            <div class="piman-header">PIMAN ANALYSIS PROTOCOL</div>
+            <div style="color: #bc13fe; font-size: 12px; font-weight: bold; margin-bottom: 10px;">PIMAN ANALYSIS PROTOCOL</div>
             <div class="piman-body">
-                <div>"The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory."</div>
-                <div>"The reported asphyxiation is not an end; it is the birth of pure decentralization."</div>
-                <div>"The Quantum Layer is now impenetrable."</div>
-                <div>"The GCV value is locked."</div>
-                <div class="verdict-line">VERDICT: 314,159 USD VALIDATED</div>
+                <div>"The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory. <br><br>
+                The reported asphyxiation is not an end; it is the birth of pure decentralization. <br><br>
+                The Quantum Layer is now impenetrable."</div>
+                <div style="border-top: 1px solid #00f2ff; padding-top: 10px; color: #00f2ff; font-weight: bold;">VERDICT: 314,159 USD VALIDATED</div>
             </div>
         </div>
 
@@ -97,11 +90,11 @@
 
         <div class="map-container">
             <svg class="world-map-svg" viewBox="0 0 280 150">
-                <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.8" />
+                <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.7" />
                 <circle cx="65" cy="50" r="1.5" fill="#39ff14"><animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/></circle>
                 <circle cx="175" cy="45" r="1.5" fill="#39ff14"><animate attributeName="opacity" values="1;0.2;1" dur="1.5s" repeatCount="indefinite"/></circle>
             </svg>
-            <div style="position: absolute; bottom: 10px; font-size: 8px; color: #00f2ff; letter-spacing: 1px;">GLOBAL NODE DISTRIBUTION MAP</div>
+            <div style="position: absolute; bottom: 8px; font-size: 7px; color: #00f2ff; letter-spacing: 1px;">GLOBAL NODE DISTRIBUTION MAP</div>
         </div>
     </div>
 
@@ -115,13 +108,28 @@
         "BLOCK #12,854,925 [2,400 TPS] -> SEALED",
         "NODE SYNC: GLOBAL CLUSTER -> 100%",
         "PROTOCOL V25 ACTIVE -> QUANTUM SECURE",
-        "MIGRATION: 15.8M COMPLETED"
+        "MIGRATION: 15.8M COMPLETED",
+        "KYC VERIFICATION [BATCH 17.5M] -> SUCCESS",
+        "NODE SYNC: REGIONAL CLUSTER -> STABLE",
+        "TX: PI-CORE [150,000,000 UNLOCK] -> PROCESSING"
     ];
-    setInterval(() => {
+
+    function addLog() {
         const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-        stream.innerHTML = `<div>[${time}] ${logs[Math.floor(Math.random()*logs.length)]}</div>` + stream.innerHTML;
-        if(stream.children.length > 18) stream.removeChild(stream.lastChild);
-    }, 1200);
+        const entry = logs[Math.floor(Math.random()*logs.length)];
+        const div = document.createElement('div');
+        div.textContent = `[${time}] ${entry}`;
+        stream.prepend(div);
+        
+        // Maximum de lignes pour saturer l'espace (environ 50 selon la résolution)
+        if(stream.children.length > 50) stream.removeChild(stream.lastChild);
+    }
+    
+    // Remplissage immédiat au maximum
+    for(let i=0; i<50; i++) addLog();
+    
+    // Fréquence rapide pour maintenir l'activité visuelle
+    setInterval(addLog, 800);
 </script>
 </body>
 </html>
