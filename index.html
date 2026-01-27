@@ -2,155 +2,173 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | GCV-QUANTUM-HUD FINAL</title>
+    <title>ARC-314 | GCV-QUANTUM-HUD</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
-        * { cursor: default !important; user-select: none; box-sizing: border-box; }
-        body { background-color: #000; color: #00f2ff; font-family: 'Share Tech Mono', monospace; margin: 0; padding: 10px; height: 100vh; overflow: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
-        /* MATRIX BACKGROUND */
-        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
-
-        .hud-container {
-            height: 100%; border: 1px solid #00f2ff; display: grid;
-            grid-template-rows: auto 1fr auto; gap: 10px; padding: 10px;
-            background: rgba(0, 10, 20, 0.85);
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #000; color: #00f2ff; font-family: 'Share Tech Mono', monospace; 
+            margin: 0; padding: 10px; height: 100vh; overflow: hidden;
         }
 
-        header { display: flex; justify-content: space-between; border-bottom: 2px solid #ffcc00; padding: 5px; color: #ffcc00; font-family: 'Orbitron'; }
+        /* EFFET MATRIX FIXE */
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; opacity: 0.2; pointer-events: none; }
 
-        .main-layout { display: grid; grid-template-columns: 320px 1fr 320px; gap: 15px; min-height: 0; }
-        .panel { border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.6); padding: 10px; display: flex; flex-direction: column; overflow: hidden; }
-        .panel-header { color: #ffcc00; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 204, 0, 0.3); margin-bottom: 10px; }
+        .interface {
+            position: relative; z-index: 2; height: 100%; width: 100%;
+            display: grid; grid-template-rows: 60px 1fr 40px; gap: 10px;
+            border: 1px solid #00f2ff; padding: 10px; background: rgba(0, 5, 10, 0.9);
+        }
 
-        /* CENTRE : CARTE ET GCV */
-        .gcv-val { font-family: 'Orbitron'; font-size: 4.5rem; text-align: center; text-shadow: 0 0 20px #00f2ff; margin: 10px 0; }
-        .map-box { flex-grow: 1; position: relative; border: 1px solid rgba(0, 242, 255, 0.1); margin: 10px 0; background: rgba(0,0,0,0.4); }
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #ffcc00; color: #ffcc00; font-weight: bold;
+        }
+
+        .main-grid { 
+            display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; min-height: 0; 
+        }
+
+        .column { 
+            border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.8);
+            display: flex; flex-direction: column; padding: 10px; overflow: hidden;
+        }
+
+        /* TITRES ET TEXTE */
+        h2 { color: #ffcc00; font-size: 0.9rem; margin: 0 0 10px 0; border-bottom: 1px solid #ffcc00; }
+        .data-stream { font-size: 0.75rem; line-height: 1.5; flex-grow: 1; overflow-y: auto; }
+        .piman-color { color: #bc13fe; }
+        .kosasih-color { color: #00f2ff; }
+        .green { color: #39ff14; }
+
+        /* CENTRE : GCV & CARTE */
+        .center-col { text-align: center; display: flex; flex-direction: column; }
+        .gcv-display { font-size: 5rem; color: #ffcc00; text-shadow: 0 0 20px #ffcc00; margin: 10px 0; }
         
-        /* FORCAGE CARTE SVG */
-        .world-map { width: 100%; height: 100%; display: block; }
-        .node-dot { fill: #39ff14; filter: drop-shadow(0 0 5px #39ff14); }
+        .map-container { 
+            flex-grow: 1; border: 1px solid rgba(255, 204, 0, 0.2); 
+            background: rgba(0,0,0,0.5); position: relative; min-height: 250px;
+        }
+        .world-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px #00f2ff); }
 
-        /* FLUX ET LOGS */
-        .scroll-list { font-size: 0.75rem; flex-grow: 1; overflow: hidden; color: #39ff14; line-height: 1.4; }
-        .piman-text { color: #bc13fe; }
-        .kosasih-text { color: #00f2ff; font-size: 0.7rem; }
-
-        footer { border-top: 1px solid #00f2ff; display: flex; justify-content: space-between; font-size: 0.7rem; padding-top: 5px; color: #ffcc00; }
+        footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ffcc00; padding-top: 10px; }
     </style>
 </head>
 <body onclick="initAudio()">
-<canvas id="matrix"></canvas>
+<canvas id="m"></canvas>
 
-<div class="hud-container">
+<div class="interface">
     <header>
-        <div>GCV-QUANTUM-HUD // ARC-314</div>
-        <div>MAINNET STATUS: LINKED</div>
+        <div>SYSTEM: ARC-314 QUANTUM-HUD</div>
+        <div style="font-size: 1.5rem;">$314,159</div>
         <div>SIGNATURE: ARC314</div>
     </header>
 
-    <main class="main-layout">
-        <div class="panel">
-            <div class="panel-header">PIMAN STRATEGIC LOGS</div>
-            <div id="piman-feed" class="scroll-list piman-text">
-                > INITIALIZING CORE...<br>
-                > MERCHANT_TRAUMA: ANALYZED<br>
-                > GCV_CONSENSUS: $314,159<br>
-                -------------------------
+    <div class="main-grid">
+        <div class="column">
+            <h2>PIMAN STRATEGIC INTEL</h2>
+            <div id="piman-intel" class="data-stream piman-color">
+                > INITIALIZING PIMAN_PROTOCOL...<br>
+                > LOADING MERCHANT_TRAUMA_DATA...<br>
+                > ANALYSING GLOBAL_TRADE_SENSORS...<br>
+                > KOSASIH_LAB_SHIELD: ARMED<br>
+                > STATUS: 314159_VALIDATED<br>
+                ------------------------------<br>
+                > SECTOR_ASIA: STABLE<br>
+                > SECTOR_EUROPE: SYNC<br>
+                > SECTOR_AFRICA: ONLINE<br>
+                > SECTOR_AMERICA: ACTIVE<br>
+                ------------------------------<br>
+                > THAILAND_SANCTUARY: PROTECTED<br>
+                > GCVREPUBLIC_INFRA: 100%<br>
+                > PI_NETWORK_MAINNET: CONNECTED
             </div>
         </div>
 
-        <div class="panel">
-            <div class="gcv-val">$314,159</div>
-            <div class="map-box">
-                <svg class="world-map" viewBox="0 0 280 150">
-                    <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="rgba(0, 242, 255, 0.1)" stroke="#00f2ff" stroke-width="0.5" />
-                    <circle cx="65" cy="50" r="3" class="node-dot"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" /></circle>
-                    <circle cx="175" cy="45" r="3" class="node-dot"><animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" /></circle>
-                    <circle cx="210" cy="65" r="3" class="node-dot"><animate attributeName="opacity" values="1;0.2;1" dur="0.8s" repeatCount="indefinite" /></circle>
-                    <circle cx="70" cy="115" r="3" class="node-dot"><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" /></circle>
+        <div class="column center-col">
+            <div class="gcv-display">$314,159</div>
+            <div class="map-container">
+                <svg class="world-svg" viewBox="0 0 280 150">
+                    <path d="M30,45 L70,35 L90,60 L60,85 L30,80 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
+                    <path d="M150,35 L200,30 L230,45 L200,80 L150,70 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
+                    <path d="M50,100 L80,130 L40,140 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
+                    <path d="M210,100 L240,110 L220,130 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
+                    
+                    <circle cx="60" cy="55" r="4" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" /></circle>
+                    <circle cx="180" cy="50" r="4" fill="#39ff14"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite" /></circle>
+                    <circle cx="215" cy="115" r="4" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite" /></circle>
                 </svg>
             </div>
-            <div id="mainnet-feed" class="scroll-list" style="height: 100px;"></div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-header">KOSASIH NODE MONITOR</div>
-            <div id="kosasih-feed" class="scroll-list kosasih-text">
-                [NODE_01]: ONLINE (Mainnet)<br>
-                [NODE_02]: ONLINE (Mainnet)<br>
-                [NODE_03]: SYNC_SUCCESS<br>
-                [NODE_04]: SECURITY_LOCKED<br>
-                -------------------------<br>
-                > CPU_LOAD: 12%<br>
-                > MEMORY_NET: 42.1 GB<br>
-                > QUANTUM_SHIELD: 100%<br>
-                > THAILAND_SANCTUARY: SYNC<br>
-                -------------------------<br>
-                [LIVE_TRAFFIC_MONITOR]
+            <div id="tx-feed" class="data-stream green" style="height: 120px; border-top: 1px solid #ffcc00; margin-top: 10px;">
+                ATTENTE DE DATA MAINNET...
             </div>
         </div>
-    </main>
+
+        <div class="column">
+            <h2>KOSASIH NODE HEALTH</h2>
+            <div id="kosasih-intel" class="data-stream kosasih-color">
+                [NODE_ALPHA]: 0x314... CONFIRMED<br>
+                [NODE_BETA]: 0xGCV... ACTIVE<br>
+                [NODE_GAMMA]: KOSASIH_SECURED<br>
+                ------------------------------<br>
+                > CPU_UTILIZATION: 24%<br>
+                > QUANTUM_ENCRYPTION: ON<br>
+                > BLOCK_HEIGHT: 12,984,210<br>
+                > NETWORK_LATENCY: 14ms<br>
+                ------------------------------<br>
+                > GCV_STABILITY: OPTIMAL<br>
+                > ARC314_AUTHORIZATION: YES<br>
+                > PI_CORE_TEAM_FEED: MONITORING
+            </div>
+        </div>
+    </div>
 
     <footer>
-        <span>SECURED BY GCVREPUBLIC</span>
-        <span>MAINNET_ENCLOSED_PROTOCOL_V25</span>
-        <span>@cryptoshun1980 | ARC314</span>
+        <div>NODE_OWNER: @cryptoshun1980</div>
+        <div>SECURED BY GCVREPUBLIC & KOSASIH</div>
+        <div>ARC314-QUANTUM-HUD v1.0</div>
     </footer>
 </div>
 
 <script>
-    // MATRIX EFFECT
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const letters = "0123456789ABCDEF";
-    const fontSize = 10;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#0F0"; ctx.font = fontSize + "px arial";
-        drops.forEach((y, i) => {
-            const text = letters[Math.floor(Math.random() * letters.length)];
-            ctx.fillText(text, i * fontSize, y * fontSize);
-            if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
+    // MATRIX
+    const c = document.getElementById('m');
+    const x = c.getContext('2d');
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    const s = "01"; const f = 12; const cl = c.width/f; const d = Array(Math.floor(cl)).fill(1);
+    function dr() {
+        x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
+        x.fillStyle="#0F0"; x.font=f+"px arial";
+        d.forEach((y,i)=>{
+            x.fillText(s[Math.floor(Math.random()*s.length)],i*f,y*f);
+            if(y*f>c.height&&Math.random()>0.975)d[i]=0; d[i]++;
         });
     }
-    setInterval(drawMatrix, 50);
+    setInterval(dr,50);
 
-    // AUDIO
-    let audioCtx;
-    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    
-    // MAINNET DATA
-    async function updateHUD() {
+    // DATA FETCH
+    async function update() {
         try {
-            const res = await fetch("https://api.mainnet.minepi.com/payments?limit=3&order=desc");
-            const data = await res.json();
-            const stream = document.getElementById('mainnet-feed');
-            const piman = document.getElementById('piman-feed');
-            const kosasih = document.getElementById('kosasih-feed');
-
-            data._embedded.records.forEach(tx => {
-                const div = document.createElement('div');
-                div.innerHTML = `> TX: ${tx.from.substring(0,8)}... -> ${tx.amount} PI`;
-                stream.prepend(div);
-                if(stream.children.length > 8) stream.removeChild(stream.lastChild);
-            });
-
-            // Remplissage dynamique des colonnes
-            piman.innerHTML += `<br>> SCANNING_NODE_${Math.floor(Math.random()*100)}... OK`;
-            kosasih.innerHTML += `<br>[SEC] PACKET_VERIFIED: ${Math.random().toString(16).slice(2,8)}`;
+            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=4&order=desc");
+            const j = await r.json();
+            const feed = document.getElementById('tx-feed');
+            const piman = document.getElementById('piman-intel');
             
-            if(piman.innerHTML.length > 500) piman.innerHTML = "> RESETTING_LOGS...";
-            if(kosasih.innerHTML.length > 500) kosasih.innerHTML = "> CLEANING_BUFFER...";
+            j._embedded.records.forEach(t => {
+                const l = document.createElement('div');
+                l.innerHTML = `> MAINNET_TX: ${t.from.substring(0,8)}... -> ${t.amount} PI`;
+                feed.prepend(l);
+            });
+            while(feed.children.length > 10) feed.removeChild(feed.lastChild);
 
-        } catch (e) { console.log("Mainnet link busy..."); }
+            // AUTO-FILL LEFT COLUMN
+            piman.innerHTML += `<br>> LOG: PACKET_${Math.random().toString(16).slice(2,6)} RECEIVED`;
+            if(piman.innerHTML.length > 1000) piman.innerHTML = "> RESETTING STRATEGIC_LOGS...";
+            
+        } catch(e) {}
     }
-    setInterval(updateHUD, 3000);
+    setInterval(update, 3000);
 </script>
 </body>
 </html>
