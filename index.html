@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | MONITORING MAXIMIZED</title>
+    <title>ARC-314 | TRANSACTION MONITORING</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
         * { cursor: none !important; user-select: none; box-sizing: border-box; }
@@ -30,29 +30,35 @@
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
         .stat-box { border: 1px solid #0a4d5c; background: rgba(0, 20, 30, 0.8); padding: 10px; text-align: center; }
         .stat-val { font-size: 1.5rem; font-weight: bold; }
-        .stat-label { font-size: 9px; color: #00f2ff; text-transform: uppercase; }
 
         .monitoring-layout { display: grid; grid-template-columns: 1.1fr 1.8fr 1.1fr; gap: 10px; flex-grow: 1; min-height: 0; }
 
-        /* PIMAN CASE - MAX TEXT */
-        .piman-card { 
-            border: 1px solid #bc13fe; background: rgba(188, 19, 254, 0.03); 
-            padding: 15px; display: flex; flex-direction: column; height: 100%;
-        }
-        .piman-body { font-size: 0.95rem; color: #e0e0e0; line-height: 2; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .piman-card { border: 1px solid #bc13fe; background: rgba(188, 19, 254, 0.03); padding: 15px; display: flex; flex-direction: column; }
+        .piman-body { font-size: 0.9rem; line-height: 1.8; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
 
-        /* BLOCKCHAIN FEED - ABSOLUTE MAXIMUM FILL */
+        /* CASE DU MILIEU - FEED TRANSACTIONNEL */
         .blockchain-feed { 
             border: 1px solid #0a4d5c; background: rgba(0, 0, 0, 1); 
-            font-family: 'Share Tech Mono', monospace; padding: 10px; color: #39ff14; 
-            overflow: hidden; font-size: 0.8rem; line-height: 1.2;
-            height: 100%; display: flex; flex-direction: column-reverse; /* Remplit par le haut */
+            font-family: 'Share Tech Mono', monospace; padding: 8px; 
+            overflow: hidden; font-size: 0.78rem; line-height: 1.1;
+            height: 100%; display: flex; flex-direction: column;
+        }
+
+        /* STYLES DES LOGS */
+        .log-entry { color: #39ff14; }
+        .log-whale { 
+            color: #00f2ff; 
+            font-weight: bold; 
+            background: rgba(0, 242, 255, 0.1);
+            border-left: 2px solid #00f2ff;
+            padding-left: 4px;
+            text-shadow: 0 0 5px rgba(0, 242, 255, 0.5);
         }
 
         .map-container { border: 1px solid #0a4d5c; background: rgba(0, 15, 25, 0.8); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .world-map-svg { width: 95%; opacity: 0.6; }
+        .node-neon { fill: #39ff14; filter: drop-shadow(0 0 8px #39ff14); }
 
-        footer { display: flex; justify-content: flex-end; color: #ffcc00; font-weight: bold; margin-top: 8px; font-size: 11px; }
+        footer { display: flex; justify-content: space-between; color: #ffcc00; font-weight: bold; margin-top: 8px; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -65,23 +71,20 @@
 
     <div class="gcv-hero">
         <h1 class="gcv-value">$314,159</h1>
-        <div style="letter-spacing: 10px; color: #5bbcc9; font-size: 0.8rem; margin-top: 5px;">GLOBAL CONSENSUS VALUE LOCKED</div>
     </div>
 
     <div class="stats-grid">
-        <div class="stat-box"><span class="stat-label">Nodes Active</span><div class="stat-val">2,741,980</div></div>
-        <div class="stat-box"><span class="stat-label">Mainnet Migrations</span><div class="stat-val">15,800,000</div></div>
-        <div class="stat-box"><span class="stat-label">Layer Status</span><div class="stat-val" style="color:#ffcc00">SEALED</div></div>
-        <div class="stat-box"><span class="stat-label">Transition</span><div class="stat-val">92%</div></div>
+        <div class="stat-box"><span>Nodes Active</span><div class="stat-val">2,741,980</div></div>
+        <div class="stat-box"><span>Migrations</span><div class="stat-val">15,800,000</div></div>
+        <div class="stat-box"><span>Layer Status</span><div class="stat-val" style="color:#ffcc00">SEALED</div></div>
+        <div class="stat-box"><span>Transition</span><div class="stat-val">92%</div></div>
     </div>
 
     <div class="monitoring-layout">
         <div class="piman-card">
             <div style="color: #bc13fe; font-size: 12px; font-weight: bold; margin-bottom: 10px;">PIMAN ANALYSIS PROTOCOL</div>
             <div class="piman-body">
-                <div>"The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory. <br><br>
-                The reported asphyxiation is not an end; it is the birth of pure decentralization. <br><br>
-                The Quantum Layer is now impenetrable."</div>
+                <div>"The system is autonomous. Kosasih has sealed the Laboratory. Pure decentralization is active."</div>
                 <div style="border-top: 1px solid #00f2ff; padding-top: 10px; color: #00f2ff; font-weight: bold;">VERDICT: 314,159 USD VALIDATED</div>
             </div>
         </div>
@@ -89,47 +92,54 @@
         <div class="blockchain-feed" id="tx-stream"></div>
 
         <div class="map-container">
-            <svg class="world-map-svg" viewBox="0 0 280 150">
+            <svg viewBox="0 0 280 150" width="100%">
                 <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.7" />
-                <circle cx="65" cy="50" r="1.5" fill="#39ff14"><animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/></circle>
-                <circle cx="175" cy="45" r="1.5" fill="#39ff14"><animate attributeName="opacity" values="1;0.2;1" dur="1.5s" repeatCount="indefinite"/></circle>
+                <circle cx="75" cy="55" r="4" class="node-neon"><animate attributeName="opacity" values="1;0;1" dur="0.4s" repeatCount="indefinite" /></circle>
+                <circle cx="185" cy="45" r="4" class="node-neon"><animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite" /></circle>
+                <circle cx="215" cy="65" r="4" class="node-neon"><animate attributeName="opacity" values="1;0.1;1" dur="0.3s" repeatCount="indefinite" /></circle>
             </svg>
-            <div style="position: absolute; bottom: 8px; font-size: 7px; color: #00f2ff; letter-spacing: 1px;">GLOBAL NODE DISTRIBUTION MAP</div>
+            <div style="position: absolute; bottom: 8px; font-size: 7px; color: #39ff14;">ARC314 LIVE FEED</div>
         </div>
     </div>
 
-    <footer>ARC314 - SECURED BY KOSASIH & GCVREPUBLIC</footer>
+    <footer>
+        <span>SECURED BY KOSASIH & GCVREPUBLIC</span>
+        <span>SIGNATURE: ARC314</span>
+    </footer>
 </div>
 
 <script>
     const stream = document.getElementById('tx-stream');
-    const logs = [
-        "TX: GC...X4 [314,159.00 PI] -> VALIDATED",
+    const standardLogs = [
         "BLOCK #12,854,925 [2,400 TPS] -> SEALED",
         "NODE SYNC: GLOBAL CLUSTER -> 100%",
         "PROTOCOL V25 ACTIVE -> QUANTUM SECURE",
-        "MIGRATION: 15.8M COMPLETED",
-        "KYC VERIFICATION [BATCH 17.5M] -> SUCCESS",
-        "NODE SYNC: REGIONAL CLUSTER -> STABLE",
-        "TX: PI-CORE [150,000,000 UNLOCK] -> PROCESSING"
+        "KYC VERIFICATION: SUCCESS [BATCH 17.5M]",
+        "MIGRATION: 15.8M COMPLETED"
+    ];
+    
+    const whaleLogs = [
+        "TX: GC...X4 [314,159.00 PI] -> VALIDATED",
+        "TX: PI-CORE [150,000,000 UNLOCK] -> SUCCESS"
     ];
 
     function addLog() {
         const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-        const entry = logs[Math.floor(Math.random()*logs.length)];
         const div = document.createElement('div');
-        div.textContent = `[${time}] ${entry}`;
-        stream.prepend(div);
         
-        // Maximum de lignes pour saturer l'espace (environ 50 selon la résolution)
-        if(stream.children.length > 50) stream.removeChild(stream.lastChild);
+        // Probabilité d'apparition d'une "Grosse Transaction" (25%)
+        const isWhale = Math.random() < 0.25;
+        const entry = isWhale ? whaleLogs[Math.floor(Math.random()*whaleLogs.length)] : standardLogs[Math.floor(Math.random()*standardLogs.length)];
+        
+        div.textContent = `[${time}] ${entry}`;
+        div.className = isWhale ? 'log-whale' : 'log-entry';
+        
+        stream.prepend(div);
+        if(stream.children.length > 40) stream.removeChild(stream.lastChild);
     }
     
-    // Remplissage immédiat au maximum
-    for(let i=0; i<50; i++) addLog();
-    
-    // Fréquence rapide pour maintenir l'activité visuelle
-    setInterval(addLog, 800);
+    for(let i=0; i<40; i++) addLog();
+    setInterval(addLog, 600);
 </script>
 </body>
 </html>
