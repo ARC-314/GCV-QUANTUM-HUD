@@ -6,147 +6,175 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+        * { cursor: default; user-select: none; } /* Désactive la sélection et le pointeur de clic */
+
         body {
             background-color: #010a0f;
             color: #e0f7fa;
             font-family: 'Orbitron', sans-serif;
             margin: 0;
             padding: 20px;
+            /* Le fameux quadrillage de ton image */
             background-image: 
-                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90px, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        #dashboard {
+        .main-frame {
             border: 1px solid #0a2d37;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
             padding: 20px;
-            background: rgba(1, 10, 15, 0.8);
-            position: relative;
+            background: radial-gradient(circle at center, rgba(10, 45, 55, 0.2) 0%, transparent 80%);
         }
 
         header {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid #00f2ff;
+            border-bottom: 2px solid #00f2ff;
             padding-bottom: 10px;
-            margin-bottom: 30px;
         }
 
-        .gcv-main {
+        .system-status { color: #39ff14; font-weight: bold; border: 1px solid #39ff14; padding: 2px 8px; font-size: 12px; }
+
+        .gcv-display {
             text-align: center;
-            margin: 40px 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-top: -50px;
         }
 
         .gcv-value {
-            font-size: 8rem;
+            font-size: 9rem;
             color: #00f2ff;
-            text-shadow: 0 0 20px #00f2ff, 0 0 40px rgba(0, 242, 255, 0.5);
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
             margin: 0;
+            font-weight: 700;
         }
 
-        .gcv-label {
-            letter-spacing: 8px;
-            color: #88f2ff;
+        .gcv-subtitle {
+            letter-spacing: 10px;
             text-transform: uppercase;
+            font-size: 1.2rem;
+            color: #5bbcc9;
+            margin-top: -10px;
+        }
+
+        .monitor-line {
+            font-style: italic;
             font-size: 0.9rem;
-        }
-
-        .live-monitor-bar {
-            background: rgba(0, 242, 255, 0.1);
-            padding: 10px 20px;
             margin: 20px 0;
-            font-size: 0.8rem;
-            border-left: 4px solid #00f2ff;
+            color: #ffffff;
         }
 
-        .grid-container {
+        .bottom-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
-        .stat-card {
+        .stat-box {
             border: 1px solid #0a4d5c;
-            background: rgba(0, 20, 30, 0.6);
+            background: rgba(0, 20, 30, 0.8);
             padding: 15px;
             text-align: center;
         }
 
-        .stat-label { font-size: 0.6rem; color: #00f2ff; margin-bottom: 10px; opacity: 0.7; }
-        .stat-val { font-size: 1.4rem; font-weight: bold; }
+        .stat-label { color: #00f2ff; font-size: 0.7rem; margin-bottom: 8px; opacity: 0.8; }
+        .stat-main { font-size: 1.6rem; font-weight: bold; }
 
-        .bottom-section {
+        .analysis-section {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 1.2fr 2fr 0.8fr;
             gap: 20px;
-            margin-top: 20px;
+            height: 180px;
         }
 
-        .piman-box {
+        .piman-card {
             border: 1px solid #bc13fe;
             background: rgba(188, 19, 254, 0.05);
             padding: 15px;
+            font-size: 0.75rem;
         }
 
-        .piman-title { color: #bc13fe; border-bottom: 1px solid #bc13fe; margin-bottom: 10px; padding-bottom: 5px; }
-        .piman-content { font-size: 0.7rem; font-style: italic; line-height: 1.4; color: #d1d1d1; }
-        
-        .map-placeholder {
+        .piman-header { 
+            background: linear-gradient(90deg, #bc13fe, transparent);
+            padding: 5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .world-map {
             border: 1px solid #0a4d5c;
             background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') center/contain no-repeat;
-            opacity: 0.4;
-            height: 200px;
+            opacity: 0.3;
         }
 
+        .node-list { font-size: 0.6rem; color: #00f2ff; overflow: hidden; opacity: 0.6; }
+
         footer {
-            margin-top: 30px;
             text-align: right;
             color: #ffcc00;
-            font-size: 0.8rem;
             font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-<div id="dashboard">
+<div class="main-frame">
     <header>
-        <div>ARC-314 <br><small>CENTRAL COMMAND UNIT</small></div>
+        <div>ARC-314<br><small style="font-size: 10px;">CENTRAL COMMAND UNIT</small></div>
         <div style="text-align: right;">
             <small>AUTH_ID: @CRYPTOSHUN1980</small><br>
-            <span style="color:#39ff14; border: 1px solid #39ff14; padding: 2px 5px;">SYSTEM: STABILIZED</span>
+            <span class="system-status">SYSTEM: STABILIZED</span>
         </div>
     </header>
 
-    <div class="gcv-main">
+    <div class="gcv-display">
         <h1 class="gcv-value">$314,159</h1>
-        <div class="gcv-label">Global Consensus Value Locked</div>
+        <div class="gcv-subtitle">Global Consensus Value Locked</div>
     </div>
 
-    <div class="live-monitor-bar">
+    <div class="monitor-line">
         PI NETWORK LIVE MONITOR (JAN 27, 2026 - 22:03:30 +07)
     </div>
 
-    <div class="grid-container">
-        <div class="stat-card"><div class="stat-label">NODES ACTIVE</div><div class="stat-val">2,741,980</div></div>
-        <div class="stat-card"><div class="stat-label">LAST BLOCK</div><div class="stat-val">#12,854,921</div><small style="color:#39ff14">0.5s ago</small></div>
-        <div class="stat-card"><div class="stat-label">LAYER STATUS</div><div class="stat-val" style="color:#ffcc00">SEALED</div></div>
-        <div class="stat-card"><div class="stat-label">TRANSITION</div><div class="stat-val">92%</div></div>
+    <div class="bottom-grid">
+        <div class="stat-box"><div class="stat-label">NODES ACTIVE</div><div class="stat-main">2,741,980</div></div>
+        <div class="stat-box"><div class="stat-label">LAST BLOCK</div><div class="stat-main">#12,854,921</div><div style="color:#39ff14; font-size: 10px;">0.5s ago</div></div>
+        <div class="stat-box"><div class="stat-label">LAYER STATUS</div><div class="stat-main" style="color:#ffcc00">SEALED</div></div>
+        <div class="stat-box"><div class="stat-label">TRANSITION</div><div class="stat-main">92%</div></div>
     </div>
 
-    <div class="bottom-section">
-        <div class="piman-box">
-            <div class="piman-title">PIMAN ANALYSIS PROTOCOL</div>
-            <div class="piman-content">
+    <div class="analysis-section">
+        <div class="piman-card">
+            <div class="piman-header">PIMAN ANALYSIS PROTOCOL</div>
+            <div style="font-style: italic; color: #ccc;">
                 "The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory. 
                 The reported asphyxiation is not an end; it is the birth of pure decentralization. 
                 The Quantum Layer is now impenetrable. The GCV value is locked."
             </div>
-            <div style="color:#00f2ff; margin-top:10px; font-size: 0.8rem;">VERDICT: 314,159 USD VALIDATED</div>
+            <div style="color:#00f2ff; margin-top:10px; font-weight: bold;">VERDICT: 314,159 USD VALIDATED</div>
         </div>
-        <div class="map-placeholder"></div>
+        <div class="world-map"></div>
+        <div class="node-list">
+            GLOBAL NODE DISTRIBUTION<br>
+            ------------------------<br>
+            ASIA: 1,420,850 [ACTIVE]<br>
+            EUROPE: 840,320 [ACTIVE]<br>
+            NA: 310,120 [ACTIVE]<br>
+            SA: 98,450 [ACTIVE]<br>
+            AFRICA: 72,240 [ACTIVE]
+        </div>
     </div>
 
     <footer>
