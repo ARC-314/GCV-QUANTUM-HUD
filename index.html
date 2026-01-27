@@ -2,30 +2,34 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | GCV-QUANTUM-HUD</title>
+    <title>ARC-314 | GCV-QUANTUM-HUD FINAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         * { box-sizing: border-box; cursor: default; }
         body { background-color: #000; color: #00f2ff; font-family: 'Share Tech Mono', monospace; margin: 0; padding: 10px; height: 100vh; overflow: hidden; }
         #bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        
         .container { height: 100%; border: 2px solid #00f2ff; display: grid; grid-template-rows: auto 1fr auto; gap: 10px; padding: 10px; background: rgba(0, 5, 10, 0.95); }
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ffcc00; padding-bottom: 5px; color: #ffcc00; }
+        
         .main-layout { display: grid; grid-template-columns: 320px 1fr 380px; gap: 15px; min-height: 0; }
         .panel { border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.7); display: flex; flex-direction: column; padding: 12px; overflow: hidden; }
         
+        /* CENTRE : CARTE ET GCV */
         .center-content { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .gcv-hero { font-size: 5rem; color: #ffcc00; text-shadow: 0 0 15px #ffcc00; margin-bottom: 20px; }
         .map-box { width: 100%; height: 350px; border: 1px solid rgba(0, 242, 255, 0.2); background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center; background-size: 100% 100%; position: relative; filter: invert(1) sepia(1) saturate(5) hue-rotate(140deg); }
         .node { position: absolute; width: 8px; height: 8px; background: #39ff14; border-radius: 50%; box-shadow: 0 0 8px #39ff14; animation: pulse 1s infinite alternate; transform: translate(-50%, -50%); }
 
+        /* DROITE : KOSASIH + FLUX TRANSACTIONNEL */
         .right-col { display: grid; grid-template-rows: 180px 1fr; gap: 10px; }
         #tx-feed { flex-grow: 1; width: 100%; font-size: 0.85rem; color: #39ff14; overflow-y: hidden; background: rgba(0, 10, 5, 0.8); border: 1px solid rgba(57, 255, 20, 0.2); padding: 8px; }
         
-        /* STYLES DE FLUX DYNAMIQUE */
+        /* STYLES DES TRANSACTIONS */
         .tx-line { margin-bottom: 4px; border-left: 2px solid #39ff14; padding-left: 6px; white-space: nowrap; }
-        .tx-gold { color: #ffcc00; border-left-color: #ffcc00; font-weight: bold; } /* > 500 PI */
-        .tx-mega { color: #ff3333; border-left-color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333; } /* > 5000 PI */
-        .tx-gcv-match { color: #00f2ff; background: rgba(255,204,0,0.15); border-left: 4px solid #ffcc00; } /* GCV detected */
+        .tx-gold { color: #ffcc00; border-left-color: #ffcc00; font-weight: bold; } /* > 500 PI (ex: 951 PI) */
+        .tx-whale { color: #ff3333; border-left-color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333; } /* > 5000 PI */
+        .tx-gcv-match { color: #00f2ff; background: rgba(255,204,0,0.15); border-left: 4px solid #ffcc00; } /* GCV 314159 */
 
         .piman-data { color: #bc13fe; font-size: 0.8rem; line-height: 1.8; }
         footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ffcc00; }
@@ -43,74 +47,80 @@
 
         <div class="main-layout">
             <div class="panel">
-                <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">PIMAN_ANALYTICS [cite: 2025-12-28]</div>
+                <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">PIMAN_STRATEGY</div>
                 <div id="piman-intel" class="piman-data">
-                    > SCANNING GCV CONSENSUS... [cite: 2026-01-04]<br>
-                    > TRAUMA_SHIELD: ACTIVE [cite: 2026-01-12]<br>
-                    > THAILAND_SANCTUARY: SYNC [cite: 2025-12-28]<br>
+                    > GCV_CONSENSUS: $314,159 [cite: 2026-01-04]<br>
+                    > MERCHANT_TRAUMA_DATA: SYNCED [cite: 2026-01-12]<br>
+                    > THAILAND_SANCTUARY: PROTECTED [cite: 2025-12-28]<br>
                 </div>
             </div>
 
             <div class="panel center-content">
                 <div class="gcv-hero">$314,159</div>
                 <div class="map-box">
-                    <div class="node" style="top: 35%; left: 18%;"></div>
-                    <div class="node" style="top: 32%; left: 49%;"></div>
-                    <div class="node" style="top: 55%; left: 78%; background:#ffcc00; box-shadow:0 0 12px #ffcc00;"></div>
-                    <div class="node" style="top: 58%; left: 51%;"></div>
-                </div>
+                    <div class="node" style="top: 35%; left: 18%;"></div> <div class="node" style="top: 32%; left: 49%;"></div> <div class="node" style="top: 55%; left: 78%; background:#ffcc00; box-shadow:0 0 12px #ffcc00;"></div> <div class="node" style="top: 58%; left: 51%;"></div> </div>
             </div>
 
             <div class="right-col">
                 <div class="panel">
-                    <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">KOSASIH_NODES [cite: 2026-01-27]</div>
+                    <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">KOSASIH_NODES</div>
                     <div style="font-size: 0.8rem; color:#00f2ff;">
-                        [NODE_01]: ONLINE<br>
-                        [NODE_02]: ONLINE<br>
+                        [NODE_ALPHA]: ONLINE<br>
+                        [NODE_BETA]: ONLINE<br>
                         > SECURITY: ARC-314_ARMED [cite: 2026-01-21]
                     </div>
                 </div>
                 <div class="panel">
-                    <div style="color:#39ff14; font-size: 0.7rem; margin-bottom:5px;">LIVE_MAINNET_STREAM</div>
+                    <div style="color:#39ff14; font-size: 0.7rem; margin-bottom:5px;">LIVE_MAINNET_STREAM [FILTERED]</div>
                     <div id="tx-feed"></div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <span>ARC314 - GCVREPUBLIC INFRA [cite: 2026-01-04]</span>
+            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE [cite: 2026-01-04]</span>
             <span>@cryptoshun1980 | ARC314 [cite: 2025-12-29]</span>
         </footer>
     </div>
 
 <script>
+    // MATRIX EFFECT
     const c = document.getElementById('bg'); const x = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
     const s = "01"; const f = 14; const d = Array(Math.floor(c.width/f)).fill(1);
     function dr() { x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height); x.fillStyle="#0F0"; x.font=f+"px arial"; d.forEach((y,i)=>{ x.fillText(s[Math.floor(Math.random()*2)],i*f,y*f); if(y*f>c.height&&Math.random()>0.975)d[i]=0; d[i]++; }); }
     setInterval(dr, 50);
 
+    // AUDIO SYSTEM
+    let audioCtx;
+    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+    // DATA STREAM WITH FILTERS
     async function updateHUD() {
         try {
-            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=10&order=desc");
+            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=15&order=desc");
             const data = await r.json();
             const feed = document.getElementById('tx-feed');
             
             data._embedded.records.forEach(tx => {
                 const amount = parseFloat(tx.amount);
+                
+                // FILTRE : On ignore les micro-transactions de 1.98 PI
+                if (amount <= 1.99) return; 
+
                 const div = document.createElement('div');
                 div.className = 'tx-line';
                 
-                // LOGIQUE DE COULEUR
+                // COLOR LOGIC
                 if (tx.amount.includes("314159")) {
                     div.classList.add('tx-gcv-match');
-                    div.innerHTML = `> !! GCV_DETECTED !! -> ${tx.amount} PI`;
+                    div.innerHTML = `> !! GCV_MATCH !! -> ${tx.amount} PI`;
                 } else if (amount >= 5000) {
-                    div.classList.add('tx-mega');
-                    div.innerHTML = `> MEGA_TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
+                    div.classList.add('tx-whale');
+                    div.innerHTML = `> WHALE_ALERT: ${amount} PI`;
                 } else if (amount >= 500) {
-                    div.classList.add('tx-gold');
-                    div.innerHTML = `> HIGH_VOL: ${tx.from.substring(0,8)}... -> ${amount} PI`;
+                    div.classList.add('tx-gold'); // Pour tes 951 PI
+                    div.innerHTML = `> HIGH_VOLUME: ${amount} PI`;
                 } else {
                     div.innerHTML = `> TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
                 }
