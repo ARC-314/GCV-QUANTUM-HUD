@@ -2,173 +2,168 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | GCV-QUANTUM-HUD</title>
+    <title>ARC-314 | QUANTUM-HUD FINAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; cursor: default; }
         body { 
             background-color: #000; color: #00f2ff; font-family: 'Share Tech Mono', monospace; 
             margin: 0; padding: 10px; height: 100vh; overflow: hidden;
         }
 
-        /* EFFET MATRIX FIXE */
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; opacity: 0.2; pointer-events: none; }
+        /* EFFET MATRIX DISCRET EN FOND */
+        #bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
 
-        .interface {
-            position: relative; z-index: 2; height: 100%; width: 100%;
-            display: grid; grid-template-rows: 60px 1fr 40px; gap: 10px;
-            border: 1px solid #00f2ff; padding: 10px; background: rgba(0, 5, 10, 0.9);
+        .container {
+            height: 100%; border: 2px solid #00f2ff; display: grid;
+            grid-template-rows: auto 1fr auto; gap: 10px; padding: 10px;
+            background: rgba(0, 5, 10, 0.9);
         }
 
         header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid #ffcc00; color: #ffcc00; font-weight: bold;
+            border-bottom: 2px solid #ffcc00; padding-bottom: 5px; color: #ffcc00;
         }
 
-        .main-grid { 
-            display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; min-height: 0; 
-        }
-
-        .column { 
-            border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.8);
-            display: flex; flex-direction: column; padding: 10px; overflow: hidden;
-        }
-
-        /* TITRES ET TEXTE */
-        h2 { color: #ffcc00; font-size: 0.9rem; margin: 0 0 10px 0; border-bottom: 1px solid #ffcc00; }
-        .data-stream { font-size: 0.75rem; line-height: 1.5; flex-grow: 1; overflow-y: auto; }
-        .piman-color { color: #bc13fe; }
-        .kosasih-color { color: #00f2ff; }
-        .green { color: #39ff14; }
-
-        /* CENTRE : GCV & CARTE */
-        .center-col { text-align: center; display: flex; flex-direction: column; }
-        .gcv-display { font-size: 5rem; color: #ffcc00; text-shadow: 0 0 20px #ffcc00; margin: 10px 0; }
+        .main-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; min-height: 0; }
         
-        .map-container { 
-            flex-grow: 1; border: 1px solid rgba(255, 204, 0, 0.2); 
-            background: rgba(0,0,0,0.5); position: relative; min-height: 250px;
+        .panel { 
+            border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.7);
+            display: flex; flex-direction: column; padding: 12px; overflow: hidden;
         }
-        .world-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 5px #00f2ff); }
 
-        footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ffcc00; padding-top: 10px; }
+        .panel-header { color: #ffcc00; font-size: 0.85rem; border-bottom: 1px solid rgba(255, 204, 0, 0.3); margin-bottom: 10px; }
+
+        /* GAUCHE : PIMAN (REMPLI) */
+        .piman-data { color: #bc13fe; font-size: 0.8rem; line-height: 1.8; flex-grow: 1; overflow-y: auto; }
+
+        /* CENTRE : CARTE PROPORTIONNELLE */
+        .center-content { display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .gcv-hero { font-size: 4rem; color: #ffcc00; text-shadow: 0 0 15px #ffcc00; margin: 0; }
+        
+        .map-box { 
+            width: 100%; max-width: 600px; height: 280px; 
+            border: 1px solid rgba(0, 242, 255, 0.2); 
+            background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center;
+            background-size: contain; position: relative; margin: 10px 0;
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(140deg); /* Transforme la carte en bleu HUD */
+        }
+
+        /* POINTS CLIGNOTANTS SUR LA CARTE */
+        .node { 
+            position: absolute; width: 8px; height: 8px; background: #39ff14; 
+            border-radius: 50%; box-shadow: 0 0 10px #39ff14; 
+            animation: pulse 1s infinite alternate;
+        }
+
+        /* DROITE : KOSASIH */
+        .kosasih-data { color: #00f2ff; font-size: 0.8rem; line-height: 1.6; }
+
+        /* FLUX MAINNET EN BAS */
+        #tx-feed { height: 100px; width: 100%; border-top: 1px solid #ffcc00; font-size: 0.75rem; color: #39ff14; padding-top: 5px; overflow: hidden; }
+
+        footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ffcc00; }
+        @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
     </style>
 </head>
 <body onclick="initAudio()">
-<canvas id="m"></canvas>
+    <canvas id="bg"></canvas>
+    <div class="container">
+        <header>
+            <div>SYSTEM: ARC-314 QUANTUM-HUD</div>
+            <div>SIGNATURE: ARC314</div>
+        </header>
 
-<div class="interface">
-    <header>
-        <div>SYSTEM: ARC-314 QUANTUM-HUD</div>
-        <div style="font-size: 1.5rem;">$314,159</div>
-        <div>SIGNATURE: ARC314</div>
-    </header>
+        <div class="main-layout">
+            <div class="panel">
+                <div class="panel-header">STRATEGIC ANALYTICS [PIMAN]</div>
+                <div id="piman-intel" class="piman-data">
+                    > INITIALIZING PIMAN_CORE...<br>
+                    > MERCHANT_TRAUMA_DATA: SYNCED<br>
+                    > GCV_CONSENSUS: $314,159 VALIDATED<br>
+                    > KOSASIH_SHIELD_V25: ACTIVE<br>
+                    > THAILAND_SANCTUARY: SECURED<br>
+                    ----------------------------------<br>
+                    > ASIA_NODE_SYNC: 100%<br>
+                    > EUROPE_NODE_SYNC: 100%<br>
+                    > AFRICA_NODE_SYNC: 98%<br>
+                    ----------------------------------<br>
+                    > SCANNING REAL-TIME TRADE...
+                </div>
+            </div>
 
-    <div class="main-grid">
-        <div class="column">
-            <h2>PIMAN STRATEGIC INTEL</h2>
-            <div id="piman-intel" class="data-stream piman-color">
-                > INITIALIZING PIMAN_PROTOCOL...<br>
-                > LOADING MERCHANT_TRAUMA_DATA...<br>
-                > ANALYSING GLOBAL_TRADE_SENSORS...<br>
-                > KOSASIH_LAB_SHIELD: ARMED<br>
-                > STATUS: 314159_VALIDATED<br>
-                ------------------------------<br>
-                > SECTOR_ASIA: STABLE<br>
-                > SECTOR_EUROPE: SYNC<br>
-                > SECTOR_AFRICA: ONLINE<br>
-                > SECTOR_AMERICA: ACTIVE<br>
-                ------------------------------<br>
-                > THAILAND_SANCTUARY: PROTECTED<br>
-                > GCVREPUBLIC_INFRA: 100%<br>
-                > PI_NETWORK_MAINNET: CONNECTED
+            <div class="panel center-content">
+                <div class="gcv-hero">$314,159</div>
+                <div class="map-box">
+                    <div class="node" style="top: 30%; left: 45%;"></div> <div class="node" style="top: 60%; left: 75%;"></div> <div class="node" style="top: 40%; left: 20%;"></div> <div class="node" style="top: 75%; left: 48%;"></div> </div>
+                <div id="tx-feed">ATTENTE DU FLUX MAINNET...</div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">NODE HEALTH [KOSASIH]</div>
+                <div id="kosasih-intel" class="kosasih-data">
+                    [NODE_01]: ONLINE (Mainnet)<br>
+                    [NODE_02]: ONLINE (Mainnet)<br>
+                    [NODE_03]: SECURED_BY_KOSASIH<br>
+                    ----------------------------------<br>
+                    > CPU_LOAD: 14.5%<br>
+                    > MEM_AVAILABLE: 64.2GB<br>
+                    > NETWORK_LATENCY: 12ms<br>
+                    > UPTIME: 99.99%<br>
+                    ----------------------------------<br>
+                    > GCV_STABILITY: OPTIMAL<br>
+                    > QUANTUM_SHIELD: ARMED<br>
+                    > ENCRYPTION_KEY: ARC-314-SEC
+                </div>
             </div>
         </div>
 
-        <div class="column center-col">
-            <div class="gcv-display">$314,159</div>
-            <div class="map-container">
-                <svg class="world-svg" viewBox="0 0 280 150">
-                    <path d="M30,45 L70,35 L90,60 L60,85 L30,80 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
-                    <path d="M150,35 L200,30 L230,45 L200,80 L150,70 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
-                    <path d="M50,100 L80,130 L40,140 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
-                    <path d="M210,100 L240,110 L220,130 Z" fill="rgba(0, 242, 255, 0.2)" stroke="#00f2ff" />
-                    
-                    <circle cx="60" cy="55" r="4" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" /></circle>
-                    <circle cx="180" cy="50" r="4" fill="#39ff14"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite" /></circle>
-                    <circle cx="215" cy="115" r="4" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite" /></circle>
-                </svg>
-            </div>
-            <div id="tx-feed" class="data-stream green" style="height: 120px; border-top: 1px solid #ffcc00; margin-top: 10px;">
-                ATTENTE DE DATA MAINNET...
-            </div>
-        </div>
-
-        <div class="column">
-            <h2>KOSASIH NODE HEALTH</h2>
-            <div id="kosasih-intel" class="data-stream kosasih-color">
-                [NODE_ALPHA]: 0x314... CONFIRMED<br>
-                [NODE_BETA]: 0xGCV... ACTIVE<br>
-                [NODE_GAMMA]: KOSASIH_SECURED<br>
-                ------------------------------<br>
-                > CPU_UTILIZATION: 24%<br>
-                > QUANTUM_ENCRYPTION: ON<br>
-                > BLOCK_HEIGHT: 12,984,210<br>
-                > NETWORK_LATENCY: 14ms<br>
-                ------------------------------<br>
-                > GCV_STABILITY: OPTIMAL<br>
-                > ARC314_AUTHORIZATION: YES<br>
-                > PI_CORE_TEAM_FEED: MONITORING
-            </div>
-        </div>
+        <footer>
+            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE</span>
+            <span>DATE: 2026-01-28</span>
+            <span>AUTHENTICATED BY KOSASIH</span>
+        </footer>
     </div>
 
-    <footer>
-        <div>NODE_OWNER: @cryptoshun1980</div>
-        <div>SECURED BY GCVREPUBLIC & KOSASIH</div>
-        <div>ARC314-QUANTUM-HUD v1.0</div>
-    </footer>
-</div>
-
 <script>
-    // MATRIX
-    const c = document.getElementById('m');
+    // EFFET MATRIX
+    const c = document.getElementById('bg');
     const x = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
-    const s = "01"; const f = 12; const cl = c.width/f; const d = Array(Math.floor(cl)).fill(1);
+    const s = "01"; const f = 14; const d = Array(Math.floor(c.width/f)).fill(1);
     function dr() {
         x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height);
         x.fillStyle="#0F0"; x.font=f+"px arial";
         d.forEach((y,i)=>{
-            x.fillText(s[Math.floor(Math.random()*s.length)],i*f,y*f);
+            x.fillText(s[Math.floor(Math.random()*2)],i*f,y*f);
             if(y*f>c.height&&Math.random()>0.975)d[i]=0; d[i]++;
         });
     }
-    setInterval(dr,50);
+    setInterval(dr, 50);
 
-    // DATA FETCH
-    async function update() {
+    // FETCH MAINNET
+    async function updateData() {
         try {
-            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=4&order=desc");
+            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=5&order=desc");
             const j = await r.json();
             const feed = document.getElementById('tx-feed');
             const piman = document.getElementById('piman-intel');
             
             j._embedded.records.forEach(t => {
                 const l = document.createElement('div');
-                l.innerHTML = `> MAINNET_TX: ${t.from.substring(0,8)}... -> ${t.amount} PI`;
+                l.textContent = `> MAINNET_TX: ${t.from.substring(0,8)}... -> ${t.amount} PI`;
                 feed.prepend(l);
             });
-            while(feed.children.length > 10) feed.removeChild(feed.lastChild);
+            while(feed.children.length > 8) feed.removeChild(feed.lastChild);
 
-            // AUTO-FILL LEFT COLUMN
-            piman.innerHTML += `<br>> LOG: PACKET_${Math.random().toString(16).slice(2,6)} RECEIVED`;
-            if(piman.innerHTML.length > 1000) piman.innerHTML = "> RESETTING STRATEGIC_LOGS...";
-            
+            // Remplissage colonne gauche
+            piman.innerHTML += `<br>> LOG_ENTRY: NODE_${Math.random().toString(16).slice(2,5)} SYNC`;
+            piman.scrollTop = piman.scrollHeight;
+
         } catch(e) {}
     }
-    setInterval(update, 3000);
+    setInterval(updateData, 3000);
 </script>
 </body>
 </html>
