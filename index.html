@@ -2,104 +2,112 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | TOTAL SATURATION</title>
+    <title>ARC-314 | RESTORED COMMAND</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
-        * { cursor: crosshair !important; user-select: none; box-sizing: border-box; }
+        
+        /* RETOUR AU CURSEUR CLASSIQUE */
+        * { cursor: default !important; user-select: none; box-sizing: border-box; }
 
         body {
-            background-color: #000508; color: #e0f7fa; font-family: 'Orbitron', sans-serif;
-            margin: 0; padding: 10px; height: 100vh; overflow: hidden;
-            background-image: radial-gradient(circle, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-color: #010a0f; color: #e0f7fa; font-family: 'Orbitron', sans-serif;
+            margin: 0; padding: 15px; height: 100vh; overflow: hidden;
         }
 
         .main-container {
-            border: 2px solid #00f2ff; height: 100%; display: flex; flex-direction: column;
-            background: rgba(1, 10, 15, 0.98); padding: 15px; box-shadow: inset 0 0 50px rgba(0, 242, 255, 0.2);
+            border: 1px solid #00f2ff; height: 100%; display: flex; flex-direction: column;
+            background: rgba(1, 10, 15, 0.98); padding: 20px;
         }
 
-        header { display: flex; justify-content: space-between; border-bottom: 2px solid #00f2ff; padding-bottom: 5px; margin-bottom: 10px; }
-        .system-status { color: #39ff14; border: 1px solid #39ff14; padding: 2px 12px; font-size: 12px; box-shadow: 0 0 10px #39ff14; }
+        header { display: flex; justify-content: space-between; border-bottom: 1px solid #00f2ff; padding-bottom: 8px; margin-bottom: 15px; }
+        .system-status { color: #39ff14; border: 1px solid #39ff14; padding: 2px 10px; font-size: 11px; }
 
-        .gcv-hero { text-align: center; margin-bottom: 15px; }
-        .gcv-value { font-size: 6.5rem; color: #00f2ff; text-shadow: 0 0 40px #00f2ff; margin: 0; }
+        .gcv-hero { text-align: center; margin-bottom: 20px; }
+        .gcv-value { font-size: 7.5rem; color: #00f2ff; text-shadow: 0 0 25px rgba(0, 242, 255, 0.7); margin: 0; line-height: 1; }
 
-        .monitoring-layout { display: grid; grid-template-columns: 1.3fr 1.6fr 1.1fr; gap: 10px; flex-grow: 1; min-height: 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
+        .stat-box { border: 1px solid #0a4d5c; background: rgba(0, 20, 30, 0.8); padding: 12px; text-align: center; }
+        .stat-val { font-size: 1.6rem; font-weight: bold; }
+        .stat-label { font-size: 9px; color: #00f2ff; text-transform: uppercase; }
 
-        /* CASE PIMAN - SATURATION MAXIMUM */
+        .monitoring-layout { display: grid; grid-template-columns: 1.2fr 1.5fr 1.2fr; gap: 15px; flex-grow: 1; min-height: 0; }
+
+        /* CASE PIMAN - STYLE CLASSIQUE MAIS REMPLI */
         .piman-card { 
-            border: 1px solid #bc13fe; background: rgba(188, 19, 254, 0.04); 
-            padding: 15px; display: flex; flex-direction: column; height: 100%;
-            font-family: 'Share Tech Mono', monospace;
+            border: 1px solid #bc13fe; background: rgba(188, 19, 254, 0.03); 
+            padding: 20px; display: flex; flex-direction: column; height: 100%;
         }
-        .piman-header { color: #bc13fe; font-family: 'Orbitron'; font-weight: bold; font-size: 14px; margin-bottom: 10px; border-bottom: 1px solid #bc13fe; }
-        .piman-content { font-size: 0.85rem; color: #e0e0e0; line-height: 1.4; flex-grow: 1; overflow: hidden; }
-        .piman-verdict { color: #00f2ff; font-weight: bold; border-top: 1px solid #00f2ff; padding-top: 10px; margin-top: 5px; font-family: 'Orbitron'; }
+        .piman-header { color: #bc13fe; font-size: 16px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+        .piman-body { 
+            font-size: 1.05rem; color: #e0e0e0; 
+            line-height: 2.1; /* Espacement calculé pour remplir la case */
+            flex-grow: 1;
+            display: flex; flex-direction: column; justify-content: space-around; 
+        }
 
-        /* CASE MILIEU */
+        /* CASE DU MILIEU - TEXTE VERT SANS VIDE */
         .blockchain-feed { 
-            border: 1px solid #0a4d5c; background: #000; padding: 5px; 
-            overflow: hidden; font-size: 0.8rem; line-height: 1.1; height: 100%;
+            border: 1px solid #0a4d5c; background: rgba(0, 0, 0, 0.9); 
+            font-family: 'Share Tech Mono', monospace; padding: 10px; color: #39ff14; 
+            overflow: hidden; font-size: 0.85rem; line-height: 1.2;
+            height: 100%;
         }
-        .log-entry { color: #15652a; }
-        .log-whale { color: #ffcc00 !important; background: rgba(255, 204, 0, 0.1); font-weight: bold; border: 1px solid #ffcc00; animation: flash 0.5s infinite; }
-        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-        /* MAP ET NODES SURPUISSANTS */
-        .map-container { border: 1px solid #0a4d5c; background: #000; position: relative; display: flex; justify-content: center; align-items: center; }
-        .node-pulse { fill: #39ff14; filter: drop-shadow(0 0 12px #39ff14) drop-shadow(0 0 20px #39ff14); }
+        /* MAP - RETOUR À LA CARTE DU MONDE */
+        .map-container { border: 1px solid #0a4d5c; background: rgba(0, 15, 25, 0.8); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .world-map-svg { width: 90%; opacity: 0.6; }
+        .node-neon { fill: #39ff14; filter: drop-shadow(0 0 10px #39ff14); }
 
-        footer { display: flex; justify-content: space-between; color: #ffcc00; font-size: 11px; margin-top: 10px; }
+        footer { display: flex; justify-content: space-between; color: #ffcc00; font-weight: bold; margin-top: 10px; font-size: 12px; }
     </style>
 </head>
 <body onclick="initAudio()">
 
 <div class="main-container">
     <header>
-        <div>ARC-314 <span style="font-size: 9px; opacity: 0.7;">V25.0</span></div>
-        <span class="system-status">QUANTUM SECURE ACTIVE</span>
+        <div>ARC-314<br><span style="font-size: 9px; opacity: 0.6;">CENTRAL COMMAND UNIT</span></div>
+        <div style="text-align: right;"><span class="system-status">SYSTEM: STABILIZED</span></div>
     </header>
 
     <div class="gcv-hero">
         <h1 class="gcv-value">$314,159</h1>
+        <div style="letter-spacing: 8px; color: #5bbcc9; font-size: 0.9rem;">GLOBAL CONSENSUS VALUE LOCKED</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box"><span class="stat-label">Nodes Active</span><div class="stat-val">2,741,980</div></div>
+        <div class="stat-box"><span class="stat-label">Migrations</span><div class="stat-val">15,800,000</div></div>
+        <div class="stat-box"><span class="stat-label">Status</span><div class="stat-val" style="color:#ffcc00">SEALED</div></div>
+        <div class="stat-box"><span class="stat-label">Transition</span><div class="stat-val">92%</div></div>
     </div>
 
     <div class="monitoring-layout">
         <div class="piman-card">
             <div class="piman-header">PIMAN ANALYSIS PROTOCOL</div>
-            <div class="piman-content">
-                [PROTOCOL_INIT]... OK<br>
-                [SENSORY_DATA]: LABORATORY SEALED BY KOSASIH<br>
-                [MERCHANT_TRAUMA_ANALYSIS]: CRITICAL FACTOR INTEGRATED<br>
-                [STRATEGY]: GCV STABILIZATION AT 314,159 USD<br><br>
-                "The system has reached its critical point of autonomy. The transition is now 92% complete. 
-                Every merchant impact has been calculated. The decentralization is total. 
-                The Quantum Layer is impenetrable to external influence."<br><br>
-                [CORE_DATA]: V25 PROTOCOL STABLE<br>
-                [SECURITY]: LAYER SEALED<br>
-                [STATUS]: NO DEVIATION DETECTED<br>
-                [LOCATION]: THAILAND SANCTUARY SECURED<br>
-                [NETWORK]: PI NETWORK SYNC 100%
+            <div class="piman-body">
+                <div>"The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory."</div>
+                <div>"The reported asphyxiation is not an end; it is the birth of pure decentralization."</div>
+                <div>"The Quantum Layer is now impenetrable. The GCV value is locked."</div>
+                <div style="border-top: 2px solid #00f2ff; padding-top: 10px; color: #00f2ff; font-weight: bold;">VERDICT: 314,159 USD VALIDATED</div>
             </div>
-            <div class="piman-verdict">VERDICT: 314,159 USD LOCKED</div>
         </div>
 
         <div class="blockchain-feed" id="tx-stream"></div>
 
         <div class="map-container">
-            <svg viewBox="0 0 280 150" width="100%">
-                <path d="M30,45 L100,60 L70,85 Z M150,35 L220,45 L170,70 Z M50,95 L40,135 Z M200,95 L210,125 Z" fill="none" stroke="rgba(0, 242, 255, 0.4)" stroke-width="1" />
-                <circle cx="65" cy="50" r="6" class="node-pulse"><animate attributeName="opacity" values="1;0;1" dur="0.4s" repeatCount="indefinite" /></circle>
-                <circle cx="185" cy="45" r="6" class="node-pulse"><animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite" /></circle>
-                <circle cx="215" cy="65" r="6" class="node-pulse"><animate attributeName="opacity" values="1;0.2;1" dur="0.3s" repeatCount="indefinite" /></circle>
-                <circle cx="70" cy="115" r="6" class="node-pulse"><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite" /></circle>
+            <svg class="world-map-svg" viewBox="0 0 280 150">
+                <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.8" />
+                <circle cx="65" cy="50" r="4" class="node-neon"><animate attributeName="opacity" values="1;0;1" dur="0.4s" repeatCount="indefinite" /></circle>
+                <circle cx="175" cy="45" r="4" class="node-neon"><animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite" /></circle>
+                <circle cx="210" cy="65" r="4" class="node-neon"><animate attributeName="opacity" values="1;0.2;1" dur="0.3s" repeatCount="indefinite" /></circle>
+                <circle cx="70" cy="115" r="4" class="node-neon"><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite" /></circle>
             </svg>
+            <div style="position: absolute; bottom: 10px; font-size: 8px; color: #00f2ff; letter-spacing: 1px;">GLOBAL NODE DISTRIBUTION MAP</div>
         </div>
     </div>
 
     <footer>
-        <span>SECURED BY KOSASIH & GCVREPUBLIC</span>
+        <span>ARC314 - SECURED BY KOSASIH & GCVREPUBLIC</span>
         <span>SIGNATURE: ARC314</span>
     </footer>
 </div>
@@ -111,29 +119,40 @@
         if(!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(700, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
     const stream = document.getElementById('tx-stream');
-    const standardLogs = ["BLOCK #12,854,925 -> SEALED", "NODE SYNC: 100%", "PROTOCOL V25 ACTIVE", "KYC: SUCCESS", "MIGRATION COMPLETED"];
-    const whaleLogs = ["TX: GC...X4 [314,159.00 PI] -> VALIDATED", "TX: PI-CORE [150M UNLOCK] -> SUCCESS"];
+    const logs = [
+        "TX: GC...X4 [314,159.00 PI] -> VALIDATED",
+        "BLOCK #12,854,925 [2,400 TPS] -> SEALED",
+        "NODE SYNC: GLOBAL CLUSTER -> 100%",
+        "PROTOCOL V25 ACTIVE -> QUANTUM SECURE",
+        "MIGRATION: 15.8M COMPLETED"
+    ];
 
     function addLog() {
         const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-        const isWhale = Math.random() < 0.25;
-        const entry = isWhale ? whaleLogs[Math.floor(Math.random()*whaleLogs.length)] : standardLogs[Math.floor(Math.random()*standardLogs.length)];
+        const entry = logs[Math.floor(Math.random()*logs.length)];
+        const isWhale = entry.includes("314,159");
+        
         const div = document.createElement('div');
         div.textContent = `[${time}] ${entry}`;
-        div.className = isWhale ? 'log-whale' : 'log-entry';
-        if(isWhale) playBip();
+        if(isWhale) {
+            div.style.color = "#00f2ff"; // Bleu GCV pour les grosses transactions
+            div.style.fontWeight = "bold";
+            playBip();
+        }
+        
         stream.prepend(div);
-        if(stream.children.length > 50) stream.removeChild(stream.lastChild);
+        if(stream.children.length > 42) stream.removeChild(stream.lastChild);
     }
-    for(let i=0; i<50; i++) addLog();
-    setInterval(addLog, 600);
+    
+    for(let i=0; i<42; i++) addLog();
+    setInterval(addLog, 700);
 </script>
 </body>
 </html>
