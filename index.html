@@ -2,104 +2,115 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM MATRIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ARC-314 | QUANTUM CORE</title>
     <style>
-        :root { --cyan: #00f2ff; --gold: #FFD700; }
-        body, html { background: #000; color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+        :root { --neon: #00f2ff; --gold: #FFD700; --bg: #000508; }
+        body, html { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; width: 100vw; }
 
-        /* LA MATRICE ARC-314 - ULTRA PROFONDE */
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; filter: blur(0.5px) brightness(1.2); }
+        /* MOTEUR MATRIX HAUTE DENSITÉ */
+        #matrix { position: fixed; top: 0; left: 0; z-index: 1; filter: blur(0.3px) drop-shadow(0 0 5px var(--neon)); }
 
+        /* FILTRE DE PROFONDEUR HOLOGRAPHIQUE */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.7) 100%);
+            z-index: 5; pointer-events: none;
+        }
+
+        /* INTERFACE ARC-314 */
         .hud {
-            position: relative; z-index: 10; height: 100vh;
-            display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.85) 100%);
+            position: relative; z-index: 10; height: 100vh; width: 100vw;
+            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;
         }
 
-        /* HEADER & GLT */
-        header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .gcv-label { color: var(--gold); font-weight: bold; text-shadow: 0 0 10px var(--gold); }
+        header { border: 1px solid var(--neon); background: rgba(0, 20, 30, 0.8); padding: 10px; margin-bottom: 10px; box-shadow: 0 0 15px var(--neon); }
+        .gcv-tag { color: var(--gold); font-weight: bold; font-size: 1.2em; text-shadow: 0 0 10px var(--gold); }
 
-        /* DUAL CALC ET BLOCKCHAIN */
-        .main-content { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 15px; }
-
-        .glass-panel {
-            background: rgba(0, 20, 30, 0.7); border: 1px solid var(--cyan);
-            padding: 15px; backdrop-filter: blur(8px); box-shadow: 0 0 25px rgba(0, 242, 255, 0.2);
+        /* SYSTÈME DE CALCUL DOUBLE SENS */
+        .dual-engine {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;
+        }
+        .panel {
+            background: rgba(0, 10, 20, 0.9); border: 1px solid var(--neon); padding: 10px;
+            backdrop-filter: blur(5px); box-shadow: inset 0 0 10px var(--neon);
+        }
+        input { 
+            width: 100%; background: #000; border: 1px solid var(--gold); color: var(--gold); 
+            font-size: 1.3em; text-align: center; outline: none; margin-top: 5px;
         }
 
-        .dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        input { width: 100%; background: #000; border: 1px solid var(--gold); color: var(--gold); font-size: 1.5em; text-align: center; outline: none; padding: 5px; }
-        .res-val { font-size: 1.3em; color: var(--gold); text-align: center; margin-top: 5px; font-weight: bold; }
+        /* FLUX BLOCKCHAIN LIVE */
+        .stream-container {
+            flex: 1; border: 1px solid var(--neon); background: rgba(0, 5, 10, 0.8);
+            overflow: hidden; position: relative; margin-bottom: 10px;
+        }
+        #tx-list { padding: 10px; font-size: 0.7em; color: var(--neon); text-shadow: 0 0 5px var(--neon); }
+        .tx-line { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.2); padding: 6px 0; }
 
-        #blockchain { height: 150px; overflow: hidden; font-size: 0.8em; margin-top: 10px; border-top: 1px solid rgba(0,242,255,0.3); padding-top: 10px; }
-        .tx-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(0,242,255,0.1); }
-
-        /* FOOTER SIGNATURE ARC314 */
-        footer { border-top: 2px solid var(--gold); padding-top: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 2.2em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: 0 0 20px var(--gold); }
+        /* SIGNATURE ARC314 GOLD */
+        footer { 
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding-top: 10px; border-top: 2px solid var(--gold);
+        }
+        .sig-large { font-size: 2.5em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: 0 0 20px var(--gold); }
     </style>
 </head>
 <body>
 
     <canvas id="matrix"></canvas>
+    <div class="overlay"></div>
 
     <div class="hud">
         <header>
-            <div>
-                <div style="font-size: 1.4em; font-weight: bold; letter-spacing: 3px;">ARC-314 // CORE</div>
-                <div style="font-size: 0.6em; opacity: 0.8;">KOSASIH QUANTUM TECH</div>
-            </div>
-            <div class="gcv-label">GCV: $314,159</div>
+            <div style="font-size: 1.2em; letter-spacing: 5px;">ARC-314 // CORE</div>
+            <div class="gcv-tag">GCV: $314,159</div>
         </header>
 
-        <div class="main-content">
-            <div class="glass-panel dual-grid">
-                <div>
-                    <label style="font-size: 0.6em;">USD TO PI</label>
-                    <input type="number" id="uIn" placeholder="0.00" oninput="toPi()">
-                    <div id="pOut" class="res-val">0.00 Π</div>
-                </div>
-                <div>
-                    <label style="font-size: 0.6em;">PI TO USD</label>
-                    <input type="number" id="pIn" placeholder="0.00" oninput="toUsd()">
-                    <div id="uOut" class="res-val">$ 0.00</div>
-                </div>
+        <div class="dual-engine">
+            <div class="panel">
+                <div style="font-size: 0.6em;">USD TO PI</div>
+                <input type="number" id="uIn" placeholder="0.00" oninput="toPi()">
+                <div id="pOut" style="color:var(--gold); text-align:center; font-weight:bold; margin-top:5px;">0.00 Π</div>
             </div>
-
-            <div class="glass-panel">
-                <div style="font-size: 0.7em; color: var(--gold); margin-bottom: 10px;">>> LIVE_GLT_BLOCKCHAIN_STREAM</div>
-                <div id="blockchain"></div>
+            <div class="panel">
+                <div style="font-size: 0.6em;">PI TO USD</div>
+                <input type="number" id="pIn" placeholder="0.00" oninput="toUsd()">
+                <div id="uOut" style="color:var(--gold); text-align:center; font-weight:bold; margin-top:5px;">$ 0.00</div>
             </div>
         </div>
 
+        <div class="stream-container">
+            <div style="font-size: 0.6em; background: var(--neon); color: #000; padding: 2px 10px; font-weight: bold;">LIVE_BLOCKCHAIN_STREAM</div>
+            <div id="tx-list"></div>
+        </div>
+
         <footer>
-            <div style="font-size: 0.55em; line-height: 1.5;">
+            <div style="font-size: 0.5em; line-height: 1.4;">
                 STATUS: ENCRYPTED<br>
-                LOC: THAILAND_SANCTUARY<br>
-                PIMAN_INFLUENCE: ACTIVE
+                NETWORK: PI MAINNET LIVE<br>
+                TOKEN: GLT-314
             </div>
-            <div class="signature">ARC314</div>
+            <div class="sig-large">ARC314</div>
         </footer>
     </div>
 
     <script>
-        const c = document.getElementById('matrix'), x = c.getContext('2d');
-        let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
+        const canvas = document.getElementById('matrix'), ctx = canvas.getContext('2d');
+        let w = canvas.width = window.innerWidth, h = canvas.height = window.innerHeight;
         const d = Array(Math.floor(w/15)).fill(1);
         const GCV = 314159;
 
         function draw() {
-            x.fillStyle = "rgba(0, 0, 0, 0.08)"; x.fillRect(0, 0, w, h);
-            x.fillStyle = "#00f2ff"; x.font = "18px monospace";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = "#00f2ff"; ctx.font = "16px monospace";
             d.forEach((y, i) => {
                 const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-                x.fillText(char, i * 15, y * 15);
-                if (y * 15 > h && Math.random() > 0.975) d[i] = 0; d[i]++;
+                ctx.fillText(char, i * 15, y * 15);
+                if (y * 15 > h && Math.random() > 0.98) d[i] = 0; d[i]++;
             });
         }
-        setInterval(draw, 45);
+        setInterval(draw, 50);
 
         function toPi() {
             const v = document.getElementById('uIn').value;
@@ -110,15 +121,14 @@
             document.getElementById('uOut').innerText = "$ " + (v > 0 ? (v * GCV).toLocaleString() : "0.00");
         }
 
-        const b = document.getElementById('blockchain');
-        function addTx() {
-            const id = "GLT-" + Math.random().toString(36).substring(7).toUpperCase();
-            const amt = (Math.random() * 50).toFixed(4);
-            const row = `<div class="tx-row"><span>${id}</span><span style="color:var(--gold)">${amt} Π</span></div>`;
-            b.innerHTML = row + b.innerHTML;
-            if (b.children.length > 8) b.lastChild.remove();
+        const list = document.getElementById('tx-list');
+        function add() {
+            const id = "TX-" + Math.random().toString(36).substring(7).toUpperCase();
+            const amt = (Math.random() * 10).toFixed(4);
+            list.innerHTML = `<div class="tx-line"><span>${id}</span><span style="color:var(--gold)">${amt} Π</span></div>` + list.innerHTML;
+            if (list.children.length > 10) list.lastChild.remove();
         }
-        setInterval(addTx, 2500);
+        setInterval(add, 2000);
     </script>
 </body>
 </html>
