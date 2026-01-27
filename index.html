@@ -2,141 +2,60 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM OVERLORD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ARC-314 | QUANTUM CORE</title>
     <style>
-        :root { --cyan: #00f2ff; --gold: #FFD700; --deep: #00080a; }
+        :root { --cyan: #00f2ff; --gold: #FFD700; --panel-bg: rgba(0, 15, 25, 0.85); }
         
-        body { 
-            background: var(--deep); color: var(--cyan); 
+        body, html { 
+            background: #000; color: var(--cyan); 
             font-family: 'Courier New', monospace; margin: 0; 
-            overflow: hidden; height: 100vh;
+            padding: 0; width: 100%; height: 100%; overflow: hidden;
         }
 
-        /* FILTRE SCANLINE & FLICKER HOLOGRAPHIQUE */
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 1000; pointer-events: none; background-size: 100% 2px, 3px 100%;
+        /* FOND MATRIX SUBTIL */
+        #m { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.2; }
+
+        /* EFFET DE LIGNES HOLOGRAPHIQUES */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 3px; z-index: 100; pointer-events: none;
         }
 
-        #m { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
-
-        /* CADRE HUD TACTIQUE */
-        .hud-frame {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 20px solid transparent; border-image: radial-gradient(circle, transparent 70%, var(--cyan) 100%) 20;
-            box-sizing: border-box; z-index: 100; pointer-events: none;
+        /* CONTENEUR PRINCIPAL */
+        .hud-wrapper {
+            position: relative; z-index: 10; height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15px; box-sizing: border-box;
         }
 
-        /* ANNEAUX QUANTIQUES GÉANTS AU CENTRE */
-        .core-center {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(75deg);
-            z-index: 0;
+        /* ANNEAUX QUANTIQUES (FIXÉS DERRIÈRE) */
+        .quantum-bg {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(70deg);
+            z-index: 2; pointer-events: none;
         }
         .ring {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            border-radius: 50%; border: 1px solid var(--cyan); animation: spin 20s linear infinite;
+            border-radius: 50%; border: 1px solid var(--cyan); animation: spin 15s linear infinite;
         }
-        .r1 { width: 900px; height: 900px; border-style: dashed; opacity: 0.2; }
-        .r2 { width: 600px; height: 600px; border: 10px double var(--gold); animation-direction: reverse; box-shadow: 0 0 100px rgba(255,215,0,0.1); }
-        .r3 { width: 300px; height: 300px; border-width: 2px; box-shadow: 0 0 50px var(--cyan); }
+        .r1 { width: 350px; height: 350px; border-style: dashed; opacity: 0.3; }
+        .r2 { width: 250px; height: 250px; border: 4px double var(--gold); animation-direction: reverse; }
 
         @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        /* PANNEAUX FLOTTANTS */
+        /* PANNEAUX HOLOGRAPHIQUES */
         .panel {
-            position: absolute; background: rgba(0, 20, 30, 0.8);
-            border: 1px solid var(--cyan); padding: 20px;
-            backdrop-filter: blur(10px); z-index: 200;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            background: var(--panel-bg); border: 1px solid var(--cyan);
+            padding: 12px; backdrop-filter: blur(10px);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
+            position: relative; overflow: hidden;
+        }
+        .panel::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--gold);
         }
 
-        /* POSITIONNEMENT TACTIQUE */
-        .top-left { top: 30px; left: 30px; border-left: 5px solid var(--gold); }
-        .top-right { top: 30px; right: 30px; border-right: 5px solid var(--gold); width: 300px; }
-        .bottom-center { bottom: 50px; left: 50%; transform: translateX(-50%); width: 500px; border-top: 5px solid var(--gold); }
-
-        h2 { margin: 0; font-size: 1em; letter-spacing: 3px; color: var(--gold); }
-        input { 
-            background: transparent; border: none; border-bottom: 2px solid var(--gold);
-            color: var(--gold); font-size: 2em; width: 100%; outline: none; text-align: center;
-        }
-
-        #tx-stream { height: 150px; overflow: hidden; font-size: 0.8em; margin-top: 10px; }
-        .tx-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(0,242,255,0.1); }
-
-        .signature { position: absolute; bottom: 10px; right: 20px; color: var(--gold); font-weight: bold; font-size: 1.2em; letter-spacing: 5px; }
-
-    </style>
-</head>
-<body>
-
-    <div class="hud-frame"></div>
-    <canvas id="m"></canvas>
-    
-    <div class="core-center">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
-        <div class="ring r3"></div>
-    </div>
-
-    <div class="panel top-left">
-        <h2>[ QUANTUM CONVERTER ]</h2>
-        <div style="font-size: 0.7em; margin-top: 10px;">INPUT_USD</div>
-        <input type="number" id="u" placeholder="0.00" oninput="c()">
-        <div style="font-size: 0.7em; margin-top: 15px;">OUTPUT_PI (GCV)</div>
-        <div id="p" style="font-size: 2.2em; color: var(--gold); text-shadow: 0 0 10px var(--gold);">0.000000</div>
-    </div>
-
-    <div class="panel top-right">
-        <h2>[ SYSTEM STATUS ]</h2>
-        <div style="font-size: 0.7em; line-height: 2; margin-top: 10px;">
-            NODE: PI-MAINNET-01<br>
-            ARCH: KOSASIH_QUANTUM<br>
-            GCV_VALUE: $314,159<br>
-            LOC: TH_SANCTUARY_ALPHA
-        </div>
-    </div>
-
-    <div class="panel bottom-center">
-        <h2>[ LIVE MAINNET TRANSACTIONS ]</h2>
-        <div id="tx-stream">CHARGEMENT DES DONNÉES...</div>
-    </div>
-
-    <div class="signature">ARC-314</div>
-
-    <script>
-        const m = document.getElementById('m'), x = m.getContext('2d');
-        m.width = window.innerWidth; m.height = window.innerHeight;
-        const d = Array(Math.floor(m.width/20)).fill(1);
-        function draw() {
-            x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,m.width,m.height);
-            x.fillStyle = "#00f2ff"; x.font = "14px monospace";
-            d.forEach((y, i) => {
-                x.fillText("ARC314"[Math.floor(Math.random()*6)], i*20, y*20);
-                if(y*20 > m.height && Math.random() > 0.98) d[i] = 0; d[i]++;
-            });
-        }
-        setInterval(draw, 50);
-
-        function c() {
-            const v = document.getElementById('u').value;
-            document.getElementById('p').innerText = (v > 0 ? (v / 314159).toFixed(7) : "0.000000");
-        }
-
-        async function f() {
-            try {
-                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=5&order=desc'));
-                const j = await r.json();
-                const s = document.getElementById('tx-stream'); s.innerHTML = "";
-                j._embedded.records.forEach(v => {
-                    s.innerHTML += `<div class="tx-line"><span>ID:${v.from.substring(0,8)}</span><span style="color:#FFD700">${v.amount} Π</span></div>`;
-                });
-            } catch(e) {}
-        }
-        setInterval(f, 7000); f();
-    </script>
-</body>
-</html>
+        /* MODULE CALCULATEUR (HAUT) */
+        .top-panel { width: 100%; margin-bottom: 10px; }
+        h2 { margin: 0 0 1
