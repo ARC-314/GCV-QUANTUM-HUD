@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | GCV-QUANTUM-HUD ALERTS</title>
+    <title>ARC-314 | GCV-QUANTUM-HUD</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         * { box-sizing: border-box; cursor: default; }
@@ -13,22 +13,19 @@
         .main-layout { display: grid; grid-template-columns: 320px 1fr 380px; gap: 15px; min-height: 0; }
         .panel { border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.7); display: flex; flex-direction: column; padding: 12px; overflow: hidden; }
         
-        /* CENTRE : CARTE ET GCV */
         .center-content { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .gcv-hero { font-size: 5rem; color: #ffcc00; text-shadow: 0 0 15px #ffcc00; margin-bottom: 20px; }
         .map-box { width: 100%; height: 350px; border: 1px solid rgba(0, 242, 255, 0.2); background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center; background-size: 100% 100%; position: relative; filter: invert(1) sepia(1) saturate(5) hue-rotate(140deg); }
         .node { position: absolute; width: 8px; height: 8px; background: #39ff14; border-radius: 50%; box-shadow: 0 0 8px #39ff14; animation: pulse 1s infinite alternate; transform: translate(-50%, -50%); }
 
-        /* DROITE : FLUX AVEC COULEURS DYNAMIQUES */
         .right-col { display: grid; grid-template-rows: 180px 1fr; gap: 10px; }
         #tx-feed { flex-grow: 1; width: 100%; font-size: 0.85rem; color: #39ff14; overflow-y: hidden; background: rgba(0, 10, 5, 0.8); border: 1px solid rgba(57, 255, 20, 0.2); padding: 8px; }
         
-        .tx-line { margin-bottom: 4px; border-left: 2px solid #39ff14; padding-left: 6px; white-space: nowrap; transition: all 0.3s; }
-        
-        /* CLASSES DE COULEURS POUR LES GROSSES TX */
-        .tx-medium { color: #ffcc00; border-left-color: #ffcc00; font-weight: bold; } /* > 100 PI */
-        .tx-whale { color: #ff3333; border-left-color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333; } /* > 1000 PI */
-        .tx-gcv { color: #00f2ff; border-left-color: #ffcc00; background: rgba(255,204,0,0.1); } /* GCV Matches */
+        /* STYLES DE FLUX DYNAMIQUE */
+        .tx-line { margin-bottom: 4px; border-left: 2px solid #39ff14; padding-left: 6px; white-space: nowrap; }
+        .tx-gold { color: #ffcc00; border-left-color: #ffcc00; font-weight: bold; } /* > 500 PI */
+        .tx-mega { color: #ff3333; border-left-color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff3333; } /* > 5000 PI */
+        .tx-gcv-match { color: #00f2ff; background: rgba(255,204,0,0.15); border-left: 4px solid #ffcc00; } /* GCV detected */
 
         .piman-data { color: #bc13fe; font-size: 0.8rem; line-height: 1.8; }
         footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ffcc00; }
@@ -46,11 +43,11 @@
 
         <div class="main-layout">
             <div class="panel">
-                <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">PIMAN_STRATEGY [cite: 2025-12-28]</div>
+                <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">PIMAN_ANALYTICS [cite: 2025-12-28]</div>
                 <div id="piman-intel" class="piman-data">
                     > SCANNING GCV CONSENSUS... [cite: 2026-01-04]<br>
                     > TRAUMA_SHIELD: ACTIVE [cite: 2026-01-12]<br>
-                    > THAILAND_SANCTUARY: ONLINE [cite: 2025-12-28]<br>
+                    > THAILAND_SANCTUARY: SYNC [cite: 2025-12-28]<br>
                 </div>
             </div>
 
@@ -68,8 +65,8 @@
                 <div class="panel">
                     <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">KOSASIH_NODES [cite: 2026-01-27]</div>
                     <div style="font-size: 0.8rem; color:#00f2ff;">
-                        [NODE_01]: SYNCED<br>
-                        [NODE_02]: SYNCED<br>
+                        [NODE_01]: ONLINE<br>
+                        [NODE_02]: ONLINE<br>
                         > SECURITY: ARC-314_ARMED [cite: 2026-01-21]
                     </div>
                 </div>
@@ -81,23 +78,21 @@
         </div>
 
         <footer>
-            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE [cite: 2026-01-04]</span>
+            <span>ARC314 - GCVREPUBLIC INFRA [cite: 2026-01-04]</span>
             <span>@cryptoshun1980 | ARC314 [cite: 2025-12-29]</span>
         </footer>
     </div>
 
 <script>
-    // MATRIX BG
     const c = document.getElementById('bg'); const x = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
     const s = "01"; const f = 14; const d = Array(Math.floor(c.width/f)).fill(1);
     function dr() { x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height); x.fillStyle="#0F0"; x.font=f+"px arial"; d.forEach((y,i)=>{ x.fillText(s[Math.floor(Math.random()*2)],i*f,y*f); if(y*f>c.height&&Math.random()>0.975)d[i]=0; d[i]++; }); }
     setInterval(dr, 50);
 
-    // MAINNET LOGIC
     async function updateHUD() {
         try {
-            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=12&order=desc");
+            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=10&order=desc");
             const data = await r.json();
             const feed = document.getElementById('tx-feed');
             
@@ -106,15 +101,15 @@
                 const div = document.createElement('div');
                 div.className = 'tx-line';
                 
-                // DETECTION DES SEUILS
+                // LOGIQUE DE COULEUR
                 if (tx.amount.includes("314159")) {
-                    div.classList.add('tx-gcv');
-                    div.innerHTML = `> !! GCV_MATCH !! -> ${tx.amount} PI`;
-                } else if (amount >= 1000) {
-                    div.classList.add('tx-whale');
-                    div.innerHTML = `> WHALE_ALERT: ${tx.from.substring(0,8)}... -> ${amount} PI`;
-                } else if (amount >= 100) {
-                    div.classList.add('tx-medium');
+                    div.classList.add('tx-gcv-match');
+                    div.innerHTML = `> !! GCV_DETECTED !! -> ${tx.amount} PI`;
+                } else if (amount >= 5000) {
+                    div.classList.add('tx-mega');
+                    div.innerHTML = `> MEGA_TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
+                } else if (amount >= 500) {
+                    div.classList.add('tx-gold');
                     div.innerHTML = `> HIGH_VOL: ${tx.from.substring(0,8)}... -> ${amount} PI`;
                 } else {
                     div.innerHTML = `> TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
