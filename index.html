@@ -14,7 +14,7 @@
         
         body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        /* Matrice optimisée pour éviter l'écran noir */
+        /* Matrice simplifiée pour éviter le crash GPU */
         canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.7; }
 
         .overlay {
@@ -28,7 +28,7 @@
             display: flex; align-items: center; justify-content: center; padding: 10px;
         }
 
-        /* TERMINAL RECTANGULAIRE (ANGLES DROITS) */
+        /* TERMINAL RECTANGULAIRE NET (SANS ANGLES COUPÉS) */
         .terminal {
             width: 95%; max-width: 480px;
             background: rgba(0, 10, 20, 0.95);
@@ -46,9 +46,3 @@
             border: 1px solid var(--neon); background: rgba(0,0,0,0.9); padding: 15px; text-align: center;
             box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.3);
         }
-        
-        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; font-weight: bold; }
-        input { 
-            background: transparent; border: none; border-bottom: 1px solid var(--gold); 
-            color: var(--gold); width: 90%; font-size: 1.5em; text-align: center; outline: none;
-            text-shadow: var(--
