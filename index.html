@@ -3,111 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM TERMINAL</title>
+    <title>ARC-314 | QUANTUM OVERLORD</title>
     <style>
-        :root { --blue: #00f2ff; --gold: #FFD700; }
+        :root { --cyan: #00f2ff; --gold: #FFD700; --deep: #00080a; }
+        
         body { 
-            background: #000; color: var(--blue); 
+            background: var(--deep); color: var(--cyan); 
             font-family: 'Courier New', monospace; margin: 0; 
             overflow: hidden; height: 100vh;
         }
 
-        /* MATRIX BG */
-        #m { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
-
-        /* EFFET DE DISTORSION HOLOGRAPHIQUE */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-            pointer-events: none; z-index: 100;
+        /* FILTRE SCANLINE & FLICKER HOLOGRAPHIQUE */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 1000; pointer-events: none; background-size: 100% 2px, 3px 100%;
         }
 
-        /* QUANTUM CORE */
-        .core {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        #m { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+
+        /* CADRE HUD TACTIQUE */
+        .hud-frame {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 20px solid transparent; border-image: radial-gradient(circle, transparent 70%, var(--cyan) 100%) 20;
+            box-sizing: border-box; z-index: 100; pointer-events: none;
+        }
+
+        /* ANNEAUX QUANTIQUES GÉANTS AU CENTRE */
+        .core-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(75deg);
             z-index: 0;
         }
         .ring {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            border-radius: 50%; border: 1px solid var(--blue); animation: rot 20s linear infinite;
+            border-radius: 50%; border: 1px solid var(--cyan); animation: spin 20s linear infinite;
         }
-        .r1 { width: 800px; height: 800px; border-style: dashed; opacity: 0.1; }
-        .r2 { width: 400px; height: 400px; border: 4px double var(--gold); animation-direction: reverse; box-shadow: 0 0 60px rgba(255,215,0,0.2); }
+        .r1 { width: 900px; height: 900px; border-style: dashed; opacity: 0.2; }
+        .r2 { width: 600px; height: 600px; border: 10px double var(--gold); animation-direction: reverse; box-shadow: 0 0 100px rgba(255,215,0,0.1); }
+        .r3 { width: 300px; height: 300px; border-width: 2px; box-shadow: 0 0 50px var(--cyan); }
 
-        /* INTERFACE HUD ARC-314 */
-        .hud {
-            position: relative; height: 100vh; display: flex; flex-direction: column;
-            justify-content: space-between; z-index: 10;
-        }
+        @keyframes spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        header { padding: 30px; border-bottom: 4px solid var(--gold); background: rgba(0,5,15,0.8); }
-        h1 { margin: 0; font-size: 2.5em; letter-spacing: 15px; color: var(--gold); text-shadow: 0 0 20px var(--gold); }
-
-        .main-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; padding: 20px; gap: 20px; flex: 1; }
-
-        .panel { 
-            border: 1px solid var(--blue); background: rgba(0,10,20,0.7); 
-            padding: 20px; box-shadow: inset 0 0 20px rgba(0,242,255,0.1);
+        /* PANNEAUX FLOTTANTS */
+        .panel {
+            position: absolute; background: rgba(0, 20, 30, 0.8);
+            border: 1px solid var(--cyan); padding: 20px;
+            backdrop-filter: blur(10px); z-index: 200;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
 
+        /* POSITIONNEMENT TACTIQUE */
+        .top-left { top: 30px; left: 30px; border-left: 5px solid var(--gold); }
+        .top-right { top: 30px; right: 30px; border-right: 5px solid var(--gold); width: 300px; }
+        .bottom-center { bottom: 50px; left: 50%; transform: translateX(-50%); width: 500px; border-top: 5px solid var(--gold); }
+
+        h2 { margin: 0; font-size: 1em; letter-spacing: 3px; color: var(--gold); }
         input { 
-            background: #000; border: 1px solid var(--gold); color: var(--gold); 
-            width: 100%; padding: 15px; font-size: 2em; text-align: center; margin-top: 10px;
+            background: transparent; border: none; border-bottom: 2px solid var(--gold);
+            color: var(--gold); font-size: 2em; width: 100%; outline: none; text-align: center;
         }
 
-        #ticker { height: 400px; overflow: hidden; font-size: 0.9em; border: 1px solid var(--gold); padding: 10px; background: rgba(0,0,0,0.5); }
-        .tx { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,242,255,0.2); }
+        #tx-stream { height: 150px; overflow: hidden; font-size: 0.8em; margin-top: 10px; }
+        .tx-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(0,242,255,0.1); }
 
-        footer { 
-            padding: 20px; background: #000; border-top: 4px solid var(--gold);
-            text-align: center; color: var(--gold); font-weight: bold; letter-spacing: 8px;
-        }
+        .signature { position: absolute; bottom: 10px; right: 20px; color: var(--gold); font-weight: bold; font-size: 1.2em; letter-spacing: 5px; }
 
-        @keyframes rot { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="overlay"></div>
+
+    <div class="hud-frame"></div>
     <canvas id="m"></canvas>
     
-    <div class="core">
+    <div class="core-center">
         <div class="ring r1"></div>
         <div class="ring r2"></div>
+        <div class="ring r3"></div>
     </div>
 
-    <div class="hud">
-        <header>
-            <h1>ARC-314 QUANTUM TERMINAL</h1>
-            <div style="font-size: 0.9em; margin-top: 5px;">ARCHITECTURE: KOSASIH | GCV: $314,159</div>
-        </header>
+    <div class="panel top-left">
+        <h2>[ QUANTUM CONVERTER ]</h2>
+        <div style="font-size: 0.7em; margin-top: 10px;">INPUT_USD</div>
+        <input type="number" id="u" placeholder="0.00" oninput="c()">
+        <div style="font-size: 0.7em; margin-top: 15px;">OUTPUT_PI (GCV)</div>
+        <div id="p" style="font-size: 2.2em; color: var(--gold); text-shadow: 0 0 10px var(--gold);">0.000000</div>
+    </div>
 
-        <div class="main-grid">
-            <div class="panel">
-                <h3 style="color:var(--gold);">> GCV CALCULATOR</h3>
-                <label>PRICE (USD $)</label>
-                <input type="number" id="u" placeholder="00.00" oninput="c()">
-                <div style="margin-top:20px; font-size: 0.8em;">REQUIRED PI (Π)</div>
-                <div id="p" style="font-size: 2.2em; color: var(--gold); text-shadow: 0 0 10px var(--gold);">0.000000</div>
-            </div>
-
-            <div class="panel">
-                <h3 style="color:var(--gold);">> LIVE MAINNET STREAM</h3>
-                <div id="ticker">CONNECTING TO NODE...</div>
-            </div>
-
-            <div class="panel" style="font-size: 0.8em; line-height: 2;">
-                <h3 style="color:var(--gold);">> SYSTEM INFO</h3>
-                DEV: ARC-314<br>
-                NETWORK: PI MAINNET LIVE<br>
-                AUTH: GLT-TOKEN-ACTIVE<br>
-                LOCATION: THAILAND SANCTUARY
-            </div>
+    <div class="panel top-right">
+        <h2>[ SYSTEM STATUS ]</h2>
+        <div style="font-size: 0.7em; line-height: 2; margin-top: 10px;">
+            NODE: PI-MAINNET-01<br>
+            ARCH: KOSASIH_QUANTUM<br>
+            GCV_VALUE: $314,159<br>
+            LOC: TH_SANCTUARY_ALPHA
         </div>
-
-        <footer>
-            ARC314-QUANTUM-UNIT | POWERED BY KOSASIH
-        </footer>
     </div>
+
+    <div class="panel bottom-center">
+        <h2>[ LIVE MAINNET TRANSACTIONS ]</h2>
+        <div id="tx-stream">CHARGEMENT DES DONNÉES...</div>
+    </div>
+
+    <div class="signature">ARC-314</div>
 
     <script>
         const m = document.getElementById('m'), x = m.getContext('2d');
@@ -115,30 +113,30 @@
         const d = Array(Math.floor(m.width/20)).fill(1);
         function draw() {
             x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,m.width,m.height);
-            x.fillStyle = "#00f2ff"; x.font = "16px monospace";
+            x.fillStyle = "#00f2ff"; x.font = "14px monospace";
             d.forEach((y, i) => {
-                x.fillText("ARC314π"[Math.floor(Math.random()*7)], i*20, y*20);
-                if(y*20 > m.height && Math.random() > 0.975) d[i] = 0; d[i]++;
+                x.fillText("ARC314"[Math.floor(Math.random()*6)], i*20, y*20);
+                if(y*20 > m.height && Math.random() > 0.98) d[i] = 0; d[i]++;
             });
         }
         setInterval(draw, 50);
 
         function c() {
             const v = document.getElementById('u').value;
-            document.getElementById('p').innerText = (v > 0 ? (v / 314159).toFixed(7) : "0.000000") + " Π";
+            document.getElementById('p').innerText = (v > 0 ? (v / 314159).toFixed(7) : "0.000000");
         }
 
         async function f() {
             try {
-                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=8&order=desc'));
+                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=5&order=desc'));
                 const j = await r.json();
-                const t = document.getElementById('ticker'); t.innerHTML = "";
+                const s = document.getElementById('tx-stream'); s.innerHTML = "";
                 j._embedded.records.forEach(v => {
-                    t.innerHTML += `<div class="tx"><span>WALLET:${v.from.substring(0,8)}...</span><span style="color:#FFD700">${v.amount} Π</span></div>`;
+                    s.innerHTML += `<div class="tx-line"><span>ID:${v.from.substring(0,8)}</span><span style="color:#FFD700">${v.amount} Π</span></div>`;
                 });
             } catch(e) {}
         }
-        setInterval(f, 8000); f();
+        setInterval(f, 7000); f();
     </script>
 </body>
 </html>
