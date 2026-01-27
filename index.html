@@ -2,106 +2,59 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARC-314 | QUANTUM HUD</title>
     <style>
-        :root { --blue: #00f2ff; --gold: #FFD700; }
-        body { background: #000; color: var(--blue); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
-        
-        /* FOND MATRIX */
-        #matrix-bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
-
-        /* DESIGN QUANTUM CENTRAL */
-        .quantum-core { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(60deg); z-index: 0; pointer-events: none; }
-        .ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid var(--blue); animation: rotate 10s linear infinite; }
-        .r1 { width: 600px; height: 600px; border-style: dashed; opacity: 0.3; }
-        .r2 { width: 450px; height: 450px; border: 5px double var(--gold); animation-direction: reverse; }
-        .r3 { width: 250px; height: 250px; box-shadow: 0 0 50px var(--blue); }
-        @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-
-        /* HUD INTERFACE */
-        header { width: 100%; padding: 20px; text-align: center; background: rgba(0, 5, 15, 0.9); border-bottom: 2px solid var(--gold); position: relative; z-index: 100; }
-        .main-hud { display: grid; grid-template-columns: 400px 1fr 400px; padding: 30px; gap: 20px; position: relative; z-index: 50; }
-        .panel { background: rgba(0, 10, 25, 0.85); border: 1px solid var(--blue); padding: 20px; backdrop-filter: blur(10px); }
-        
-        input { background: #000; border: 1px solid var(--gold); color: var(--gold); width: 100%; padding: 12px; font-size: 1.8em; text-align: center; margin-top: 10px; box-sizing: border-box; }
-        .res { font-size: 2.2em; color: var(--gold); text-align: center; margin-top: 15px; font-weight: bold; }
-        #ticker { height: 300px; overflow: hidden; font-size: 0.8em; }
-        .line { border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 8px 0; display: flex; justify-content: space-between; }
-
-        footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: rgba(0,0,0,0.9); color: var(--gold); text-align: center; border-top: 1px solid var(--gold); z-index: 100; }
+        body { background: #000; color: #00f2ff; font-family: monospace; margin: 0; overflow: hidden; }
+        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
+        header { border-bottom: 2px solid #FFD700; padding: 15px; text-align: center; background: rgba(0,10,20,0.9); position: relative; z-index: 10; }
+        .hud { display: flex; justify-content: space-between; padding: 20px; position: relative; z-index: 10; }
+        .panel { border: 1px solid #00f2ff; background: rgba(0,20,30,0.8); padding: 15px; width: 350px; backdrop-filter: blur(5px); }
+        input { width: 100%; background: #000; border: 1px solid #FFD700; color: #FFD700; padding: 10px; font-size: 1.5em; text-align: center; box-sizing: border-box; }
+        .res { font-size: 2em; color: #FFD700; text-align: center; margin-top: 10px; font-weight: bold; }
+        .core { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; }
+        .ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid #00f2ff; animation: rot 10s linear infinite; }
+        .r1 { width: 500px; height: 500px; border-style: dashed; }
+        .r2 { width: 350px; height: 350px; border: 4px double #FFD700; animation-direction: reverse; }
+        @keyframes rot { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        footer { position: fixed; bottom: 0; width: 100%; padding: 10px; background: #000; color: #FFD700; text-align: center; border-top: 1px solid #FFD700; }
     </style>
 </head>
 <body>
-
-    <canvas id="matrix-bg"></canvas>
-
-    <div class="quantum-core">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
-        <div class="ring r3"></div>
-    </div>
-
+    <canvas id="matrix"></canvas>
+    <div class="core"><div class="ring r1"></div><div class="ring r2"></div></div>
     <header>
-        <h1 style="margin:0; letter-spacing:10px; color:var(--gold);">ARC-314 PROCESSOR</h1>
-        <div style="font-size:0.8em;">UNITÉ DE CALCUL GCV 314,159$ | KOSASIH ARCHITECTURE</div>
+        <h1 style="margin:0; letter-spacing:5px;">ARC-314 QUANTUM HUD</h1>
+        <div style="font-size:0.8em;">CONSENSUS GCV: $314,159 | KOSASIH ARCHITECTURE</div>
     </header>
-
-    <div class="main-hud">
+    <div class="hud">
         <div class="panel">
-            <h3 style="color:var(--gold); margin-top:0;">> CALCULATEUR GCV</h3>
-            <p>PRIX ARTICLE (USD $) :</p>
-            <input type="number" id="usd" placeholder="Ex: 100" oninput="run()">
-            <p style="margin-top:15px;">MONTANT EN PI :</p>
-            <div id="pi" class="res">0.000000 Π</div>
+            <h3 style="color:#FFD700; margin-top:0;">> CALCULATEUR</h3>
+            <p>PRIX EN USD ($) :</p>
+            <input type="number" id="u" placeholder="0.00" oninput="c()">
+            <div id="p" class="res">0.000000 Π</div>
         </div>
-
-        <div></div> <div class="panel">
-            <h3 style="color:var(--gold); margin-top:0;">> LIVE MAINNET</h3>
-            <div id="ticker">EN ATTENTE DE DONNÉES...</div>
+        <div class="panel">
+            <h3 style="color:#FFD700; margin-top:0;">> STATUS</h3>
+            <div id="t">INITIALISATION...</div>
         </div>
     </div>
-
-    <footer>
-        ARC-314 ARCHITECTURE | POWERED BY KOSASIH <span style="float:right; padding-right:40px;">ARC314</span>
-    </footer>
-
+    <footer>ARC-314 ARCHITECTURE | ARC314</footer>
     <script>
-        // MATRIX
-        const c = document.getElementById('matrix-bg');
-        const x = c.getContext('2d');
-        c.width = window.innerWidth; c.height = window.innerHeight;
-        const d = Array(Math.floor(c.width/18)).fill(1);
-        function m() {
-            x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,c.width,c.height);
-            x.fillStyle = "#00f2ff"; x.font = "15px monospace";
-            d.forEach((y, i) => {
-                x.fillText("ARC314π"[Math.floor(Math.random()*7)], i*18, y*18);
-                if(y*18 > c.height && Math.random() > 0.975) d[i] = 0; d[i]++;
+        const m = document.getElementById('matrix'), x = m.getContext('2d');
+        m.width = window.innerWidth; m.height = window.innerHeight;
+        const d = Array(Math.floor(m.width/20)).fill(1);
+        function draw() {
+            x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,m.width,m.height);
+            x.fillStyle = "#00f2ff"; d.forEach((y, i) => {
+                x.fillText("ARC314"[Math.floor(Math.random()*6)], i*20, y*20);
+                if(y*20 > m.height && Math.random() > 0.98) d[i] = 0; d[i]++;
             });
         }
-        setInterval(m, 50);
-
-        // CALC
-        function run() {
-            const v = document.getElementById('usd').value;
-            const res = document.getElementById('pi');
-            if(v > 0) res.innerText = (v / 314159).toFixed(7) + " Π";
-            else res.innerText = "0.000000 Π";
+        setInterval(draw, 50);
+        function c() {
+            const val = document.getElementById('u').value;
+            document.getElementById('p').innerText = (val > 0 ? (val / 314159).toFixed(7) : "0.000000") + " Π";
         }
-
-        // FETCH
-        async function f() {
-            try {
-                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=6&order=desc'));
-                const j = await r.json();
-                const t = document.getElementById('ticker'); t.innerHTML = "";
-                j._embedded.records.forEach(v => {
-                    t.innerHTML += `<div class="line"><span>ID:${v.from.substring(0,5)}</span><strong style="color:#FFD700">${v.amount} Π</strong></div>`;
-                });
-            } catch(e) {}
-        }
-        setInterval(f, 15000); f();
     </script>
 </body>
 </html>
