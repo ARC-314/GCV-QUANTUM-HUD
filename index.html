@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM COMPUTER TERMINAL</title>
+    <title>ARC-314 | QUANTUM PROCESSOR</title>
     <style>
         :root {
             --quantum-blue: #00f2ff;
             --quantum-gold: #FFD700;
-            --core-glow: rgba(0, 242, 255, 0.6);
         }
 
         body { 
@@ -16,14 +15,13 @@
             color: var(--quantum-blue); 
             font-family: 'Courier New', monospace; 
             margin: 0; overflow: hidden; height: 100vh;
-            perspective: 1500px;
         }
 
-        #matrix-bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.6; }
+        #matrix-bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
 
         .quantum-core {
             position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotateX(60deg);
+            transform: translate(-50%, -50%);
             z-index: 0;
         }
 
@@ -32,12 +30,11 @@
             transform: translate(-50%, -50%);
             border-radius: 50%;
             border: 2px solid var(--quantum-blue);
-            box-shadow: 0 0 50px var(--core-glow), inset 0 0 30px var(--core-glow);
             animation: rotate 10s linear infinite;
         }
-        .r1 { width: 700px; height: 700px; border-style: dashed; animation-duration: 20s; opacity: 0.4; }
-        .r2 { width: 550px; height: 550px; border: 10px double var(--quantum-gold); animation-direction: reverse; animation-duration: 15s; opacity: 0.7; }
-        .r3 { width: 300px; height: 300px; border: 5px solid var(--quantum-blue); animation-duration: 5s; box-shadow: 0 0 100px var(--quantum-blue); }
+        .r1 { width: 600px; height: 600px; border-style: dashed; opacity: 0.3; }
+        .r2 { width: 450px; height: 450px; border: 5px double var(--quantum-gold); animation-direction: reverse; }
+        .r3 { width: 250px; height: 250px; box-shadow: 0 0 50px var(--quantum-blue); }
 
         @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
@@ -45,4 +42,109 @@
             width: 100%; padding: 20px; text-align: center;
             background: rgba(0, 5, 15, 0.9);
             border-bottom: 2px solid var(--quantum-gold);
-            position: relative;
+            position: relative; z-index: 100;
+        }
+
+        .main-hud {
+            display: grid; grid-template-columns: 400px 1fr 400px;
+            padding: 30px; gap: 20px; z-index: 50; position: relative;
+        }
+
+        .side-panel {
+            background: rgba(0, 10, 25, 0.9);
+            border: 1px solid var(--quantum-blue);
+            padding: 20px;
+        }
+
+        input {
+            background: #000; border: 1px solid var(--quantum-gold);
+            color: var(--quantum-gold); width: 100%; padding: 10px;
+            font-size: 1.5em; text-align: center;
+        }
+
+        #ticker { height: 300px; overflow: hidden; font-size: 0.8em; line-height: 1.6; }
+
+        footer {
+            position: fixed; bottom: 0; width: 100%; padding: 15px;
+            background: #000; color: var(--quantum-gold);
+            text-align: center; z-index: 100; border-top: 1px solid var(--quantum-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="quantum-core">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+    </div>
+
+    <header>
+        <h1 style="margin:0; color:var(--quantum-gold); letter-spacing:8px;">ARC-314 PROCESSOR</h1>
+        <div style="font-size:0.8em;">STATUT : GCV $314,159 | ARCHITECTURE KOSASIH</div>
+    </header>
+
+    <div class="main-hud">
+        <div class="side-panel">
+            <h3 style="color:var(--quantum-gold)">> CALCULATEUR GCV</h3>
+            <label>MONTANT EN PI :</label>
+            <input type="number" id="piAmount" placeholder="0.00" oninput="calc()">
+            <div id="resUSD" style="font-size:2em; color:var(--quantum-gold); margin-top:15px; text-align:center;">$ 0.00</div>
+        </div>
+
+        <div></div>
+
+        <div class="side-panel">
+            <h3 style="color:var(--quantum-gold)">> FLUX RÉSEAU</h3>
+            <div id="ticker">INITIALISATION DU FLUX...</div>
+        </div>
+    </div>
+
+    <footer>
+        ARC-314 ARCHITECTURE | SIGNATURE : ARC314
+    </footer>
+
+    <script>
+        // Matrix
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const drops = Array(Math.floor(canvas.width / 18)).fill(1);
+
+        function matrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00f2ff";
+            drops.forEach((y, i) => {
+                ctx.fillText("01ARC314"[Math.floor(Math.random()*8)], i * 18, y * 18);
+                if (y * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(matrix, 50);
+
+        // Calc
+        function calc() {
+            const v = document.getElementById('piAmount').value;
+            document.getElementById('resUSD').innerText = "$ " + (v * 314159).toLocaleString();
+        }
+
+        // Blockchain
+        async function getTX() {
+            try {
+                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=5&order=desc'));
+                const d = await r.json();
+                const t = document.getElementById('ticker');
+                t.innerHTML = "";
+                d._embedded.records.forEach(x => {
+                    t.innerHTML += `<div>NODE: ${x.from.substring(0,5)}... <span style="color:#FFD700">${x.amount} PI</span></div>`;
+                });
+            } catch (e) {}
+        }
+        setInterval(getTX, 15000);
+        getTX();
+    </script>
+</body>
+</html>
