@@ -1,267 +1,137 @@
- <!DOCTYPE html>
-
+<!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <title>ARC-314 // HYPER-GLOW CORE</title>
-
+    <title>ARC-314 // LARGE STABLE</title>
     <style>
-
         :root { 
-
             --neon: #00f2ff; 
-
             --gold: #FFD700; 
-
-            --neon-glow: 0 0 5px #00f2ff, 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.7);
-
-            --gold-glow: 0 0 5px #FFD700, 0 0 15px rgba(255, 215, 0, 0.6);
-
+            --neon-glow: 0 0 10px rgba(0, 242, 255, 0.8);
         }
-
         
-
         body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-
-        /* J'ai enlevé 'filter' ici car c'est la cause n°1 de l'écran noir sur iPad */
-
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; }
-
-
-        .overlay {
-
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.85) 100%);
-
-            z-index: 2; pointer-events: none;
-
-        }
-
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.6; }
 
         .container {
-
             position: relative; z-index: 10; height: 100vh;
-
             display: flex; align-items: center; justify-content: center; padding: 10px;
-
         }
 
-
+        /* FOND NOIR PUR (#000) POUR ÉVITER L'ÉCRAN NOIR SUR IPAD */
         .terminal {
-
-            width: 100%; max-width: 480px;
-
-            background: rgba(0, 5, 10, 0.85);
-
-            border: 2px solid var(--neon);
-
-            box-shadow: var(--neon-glow), inset 0 0 20px rgba(0, 242, 255, 0.3);
-
-            padding: 25px;
-
-            /* J'ai enlevé 'clip-path' ici pour que l'affichage soit stable (angles droits) */
-
+            width: 98%; max-width: 750px; /* ENCORE PLUS LARGE */
+            background: #000; 
+            border: 3px solid var(--neon);
+            box-shadow: var(--neon-glow);
+            padding: 40px;
         }
 
+        header { border-bottom: 2px solid var(--gold); margin-bottom: 30px; padding-bottom: 20px; }
+        .title { font-size: 2.5em; font-weight: bold; color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 5px var(--gold); }
 
-        header { border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; box-shadow: 0 5px 10px -5px var(--gold); }
-
-        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: var(--gold-glow); letter-spacing: 3px; }
-
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
         .box { 
-
-            border: 1px solid var(--neon); background: rgba(0,0,0,0.8); padding: 15px; text-align: center;
-
-            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.4);
-
-            /* J'ai enlevé 'clip-path' ici aussi */
-
+            border: 2px solid var(--neon); background: #050505; padding: 30px; text-align: center;
         }
-
         
-
-        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; text-shadow: 0 0 5px var(--gold); font-weight: bold; }
-
+        label { font-size: 0.8em; color: var(--gold); display: block; margin-bottom: 10px; font-weight: bold; }
         input { 
-
-            background: transparent; border: none; border-bottom: 1px solid var(--gold); 
-
-            color: var(--gold); width: 90%; font-size: 1.5em; text-align: center; outline: none;
-
-            text-shadow: var(--gold-glow);
-
+            background: transparent; border: none; border-bottom: 2px solid var(--gold); 
+            color: var(--gold); width: 95%; font-size: 2.2em; text-align: center; outline: none;
         }
+        .res { font-size: 1.8em; font-weight: bold; color: var(--gold); margin-top: 15px; }
 
-        .res { font-size: 1.2em; font-weight: bold; color: var(--gold); margin-top: 10px; text-shadow: var(--gold-glow); }
+        .stream { height: 130px; overflow: hidden; font-size: 0.9em; border-top: 1px solid var(--neon); padding-top: 20px; color: #fff; }
+        .tx { display: flex; justify-content: space-between; padding: 6px 0; }
 
-
-        .stream { height: 100px; overflow: hidden; font-size: 0.75em; border-top: 1px solid rgba(0,242,255,0.4); padding-top: 10px; }
-
-        .tx { display: flex; justify-content: space-between; padding: 5px 0; color: #fff; text-shadow: 0 0 5px #fff; }
-
-
-        footer { margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
-
-        .signature { font-size: 3.2em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: var(--gold-glow); line-height: 1; }
-
+        footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .signature { font-size: 4.8em; font-weight: bold; color: var(--gold); letter-spacing: 15px; line-height: 1; text-shadow: 0 0 10px var(--gold); }
     </style>
-
 </head>
-
 <body>
-
 
 <canvas id="m"></canvas>
 
-<div class="overlay"></div>
-
-
 <div class="container">
-
     <div class="terminal">
-
         <header>
-
-            <div style="font-size: 0.5em; color: var(--neon); text-shadow: var(--neon-glow); margin-bottom: 5px;">TUESDAY, JANUARY 27, 2026 // 14:30</div>
-
+            <div style="font-size: 0.7em; color: var(--neon); margin-bottom: 8px;">ARC-314 // CORE_SYSTEM_V5 // 2026</div>
             <div class="title">ARC-314 // CORE</div>
-
-            <div style="font-size: 0.6em; color: var(--neon); font-weight: bold;">GCV: $314,159 | ARCHITECTURE KOSASIH</div>
-
+            <div style="font-size: 0.8em; font-weight: bold;">GCV: $314,159 | ARCH: KOSASIH</div>
         </header>
 
-
         <div class="grid">
-
             <div class="box">
-
                 <label>SEARCH USD</label>
-
                 <input type="number" id="uIn" placeholder="0" oninput="calc()">
-
                 <div id="pOut" class="res">0.00 Π</div>
-
             </div>
-
             <div class="box">
-
                 <label>SEARCH PI</label>
-
                 <input type="number" id="pIn" placeholder="0" oninput="calc()">
-
                 <div id="uOut" class="res">$ 0.00</div>
-
             </div>
-
         </div>
-
 
         <div class="stream" id="st"></div>
 
-
         <footer>
-
-            <div style="font-size: 0.5em; color: var(--neon); line-height: 1.4; text-shadow: 0 0 5px var(--neon);">
-
-                LOC: [PROTECTED]<br>
-
+            <div style="font-size: 0.7em; line-height: 1.7;">
                 STATUS: ENCRYPTED<br>
-
-                PIMAN: ACTIVE
-
+                PIMAN: ACTIVE<br>
+                LOC: [PROTECTED]
             </div>
-
             <div class="signature">ARC314</div>
-
         </footer>
-
     </div>
-
 </div>
 
-
 <script>
-
     const GCV = 314159;
-
     const canvas = document.getElementById('m'), ctx = canvas.getContext('2d');
+    let w, h, columns;
 
-    let w = canvas.width = window.innerWidth, h = canvas.height = window.innerHeight;
-
-    const columns = Array(Math.floor(w/12)).fill(1);
-
+    function init() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        columns = Array(Math.floor(w/20)).fill(1);
+    }
 
     function draw() {
-
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-
+        ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
         ctx.fillRect(0, 0, w, h);
-
         ctx.fillStyle = "#00f2ff";
-
-        ctx.shadowBlur = 8;
-
-        ctx.shadowColor = "#00f2ff";
-
-        ctx.font = "16px monospace";
-
+        ctx.font = "15px monospace";
         columns.forEach((y, i) => {
-
             const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-
-            ctx.fillText(char, i * 12, y * 12);
-
-            if (y * 12 > h && Math.random() > 0.98) columns[i] = 0;
-
+            ctx.fillText(char, i * 20, y * 20);
+            if (y * 20 > h && Math.random() > 0.98) columns[i] = 0;
             columns[i]++;
-
         });
-
     }
 
-    setInterval(draw, 50);
-
+    window.addEventListener('resize', init);
+    init();
+    setInterval(draw, 70);
 
     function calc() {
-
         const u = document.getElementById('uIn').value;
-
         const p = document.getElementById('pIn').value;
-
         document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
-
         document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
-
     }
-
 
     const st = document.getElementById('st');
-
     function addTx() {
-
-        const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold); text-shadow: var(--gold-glow);">+${(Math.random()*10).toFixed(4)} Π</span></div>`;
-
+        const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold)">+${(Math.random()*12).toFixed(4)} Π</span></div>`;
         st.innerHTML = row + st.innerHTML;
-
-        if(st.children.length > 5) st.lastChild.remove();
-
+        if(st.children.length > 4) st.lastChild.remove();
     }
-
-    setInterval(addTx, 2000);
-
+    setInterval(addTx, 3000);
 </script>
 
-
 </body>
-
 </html>
