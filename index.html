@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | QUANTUM-HUD FINAL</title>
+    <title>ARC-314 | QUANTUM-HUD SIDE-STREAM</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
@@ -12,13 +12,12 @@
             margin: 0; padding: 10px; height: 100vh; overflow: hidden;
         }
 
-        /* EFFET MATRIX DISCRET EN FOND */
         #bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
 
         .container {
             height: 100%; border: 2px solid #00f2ff; display: grid;
             grid-template-rows: auto 1fr auto; gap: 10px; padding: 10px;
-            background: rgba(0, 5, 10, 0.9);
+            background: rgba(0, 5, 10, 0.95);
         }
 
         header { 
@@ -26,43 +25,44 @@
             border-bottom: 2px solid #ffcc00; padding-bottom: 5px; color: #ffcc00;
         }
 
-        .main-layout { display: grid; grid-template-columns: 350px 1fr 350px; gap: 15px; min-height: 0; }
+        .main-layout { display: grid; grid-template-columns: 320px 1fr 380px; gap: 15px; min-height: 0; }
         
         .panel { 
             border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 20, 30, 0.7);
             display: flex; flex-direction: column; padding: 12px; overflow: hidden;
         }
 
-        .panel-header { color: #ffcc00; font-size: 0.85rem; border-bottom: 1px solid rgba(255, 204, 0, 0.3); margin-bottom: 10px; }
-
-        /* GAUCHE : PIMAN (REMPLI) */
-        .piman-data { color: #bc13fe; font-size: 0.8rem; line-height: 1.8; flex-grow: 1; overflow-y: auto; }
-
-        /* CENTRE : CARTE PROPORTIONNELLE */
-        .center-content { display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
-        .gcv-hero { font-size: 4rem; color: #ffcc00; text-shadow: 0 0 15px #ffcc00; margin: 0; }
+        /* CENTRE : CARTE PLEINE TAILLE */
+        .center-content { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .gcv-hero { font-size: 5rem; color: #ffcc00; text-shadow: 0 0 15px #ffcc00; margin-bottom: 20px; }
         
         .map-box { 
-            width: 100%; max-width: 600px; height: 280px; 
+            width: 100%; height: 350px; 
             border: 1px solid rgba(0, 242, 255, 0.2); 
             background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center;
-            background-size: contain; position: relative; margin: 10px 0;
-            filter: invert(1) sepia(1) saturate(5) hue-rotate(140deg); /* Transforme la carte en bleu HUD */
+            background-size: 100% 100%; position: relative;
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(140deg);
         }
 
-        /* POINTS CLIGNOTANTS SUR LA CARTE */
         .node { 
             position: absolute; width: 8px; height: 8px; background: #39ff14; 
-            border-radius: 50%; box-shadow: 0 0 10px #39ff14; 
-            animation: pulse 1s infinite alternate;
+            border-radius: 50%; box-shadow: 0 0 8px #39ff14; 
+            animation: pulse 1s infinite alternate; transform: translate(-50%, -50%);
         }
 
-        /* DROITE : KOSASIH */
-        .kosasih-data { color: #00f2ff; font-size: 0.8rem; line-height: 1.6; }
+        /* DROITE : SPLIT HEALTH / TX-FEED */
+        .right-col { display: grid; grid-template-rows: 200px 1fr; gap: 10px; }
+        
+        #tx-feed { 
+            flex-grow: 1; width: 100%; font-size: 0.85rem; color: #39ff14; 
+            overflow-y: hidden; background: rgba(0, 10, 5, 0.6);
+            border: 1px solid rgba(57, 255, 20, 0.2); padding: 8px;
+        }
 
-        /* FLUX MAINNET EN BAS */
-        #tx-feed { height: 100px; width: 100%; border-top: 1px solid #ffcc00; font-size: 0.75rem; color: #39ff14; padding-top: 5px; overflow: hidden; }
+        .tx-line { margin-bottom: 4px; border-left: 2px solid #39ff14; padding-left: 6px; white-space: nowrap; }
 
+        .piman-data { color: #bc13fe; font-size: 0.8rem; line-height: 1.8; }
+        .kosasih-data { color: #00f2ff; font-size: 0.8rem; line-height: 1.5; }
         footer { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ffcc00; }
         @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
     </style>
@@ -71,63 +71,53 @@
     <canvas id="bg"></canvas>
     <div class="container">
         <header>
-            <div>SYSTEM: ARC-314 QUANTUM-HUD</div>
-            <div>SIGNATURE: ARC314</div>
+            <div>SYSTEM: ARC-314 // GLOBAL COMMAND</div>
+            <div style="font-size: 1.5rem; color: #ffcc00;">$314,159 [cite: 2026-01-04]</div>
+            <div>SIGNATURE: ARC314 [cite: 2026-01-21]</div>
         </header>
 
         <div class="main-layout">
             <div class="panel">
-                <div class="panel-header">STRATEGIC ANALYTICS [PIMAN]</div>
+                <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">PIMAN_ANALYTICS [cite: 2025-12-28]</div>
                 <div id="piman-intel" class="piman-data">
-                    > INITIALIZING PIMAN_CORE...<br>
-                    > MERCHANT_TRAUMA_DATA: SYNCED<br>
-                    > GCV_CONSENSUS: $314,159 VALIDATED<br>
-                    > KOSASIH_SHIELD_V25: ACTIVE<br>
-                    > THAILAND_SANCTUARY: SECURED<br>
-                    ----------------------------------<br>
-                    > ASIA_NODE_SYNC: 100%<br>
-                    > EUROPE_NODE_SYNC: 100%<br>
-                    > AFRICA_NODE_SYNC: 98%<br>
-                    ----------------------------------<br>
-                    > SCANNING REAL-TIME TRADE...
+                    > SCANNING GCV CONSENSUS... [cite: 2026-01-04]<br>
+                    > TRAUMA_SHIELD: ENGAGED [cite: 2026-01-12]<br>
+                    > THAILAND_SANCTUARY: SYNC [cite: 2025-12-28]<br>
+                    ----------------------------------
                 </div>
             </div>
 
             <div class="panel center-content">
                 <div class="gcv-hero">$314,159</div>
                 <div class="map-box">
-                    <div class="node" style="top: 30%; left: 45%;"></div> <div class="node" style="top: 60%; left: 75%;"></div> <div class="node" style="top: 40%; left: 20%;"></div> <div class="node" style="top: 75%; left: 48%;"></div> </div>
-                <div id="tx-feed">ATTENTE DU FLUX MAINNET...</div>
+                    <div class="node" style="top: 35%; left: 18%;"></div> <div class="node" style="top: 32%; left: 49%;"></div> <div class="node" style="top: 55%; left: 78%; background:#ffcc00; box-shadow:0 0 12px #ffcc00;"></div> <div class="node" style="top: 58%; left: 51%;"></div> </div>
             </div>
 
-            <div class="panel">
-                <div class="panel-header">NODE HEALTH [KOSASIH]</div>
-                <div id="kosasih-intel" class="kosasih-data">
-                    [NODE_01]: ONLINE (Mainnet)<br>
-                    [NODE_02]: ONLINE (Mainnet)<br>
-                    [NODE_03]: SECURED_BY_KOSASIH<br>
-                    ----------------------------------<br>
-                    > CPU_LOAD: 14.5%<br>
-                    > MEM_AVAILABLE: 64.2GB<br>
-                    > NETWORK_LATENCY: 12ms<br>
-                    > UPTIME: 99.99%<br>
-                    ----------------------------------<br>
-                    > GCV_STABILITY: OPTIMAL<br>
-                    > QUANTUM_SHIELD: ARMED<br>
-                    > ENCRYPTION_KEY: ARC-314-SEC
+            <div class="right-col">
+                <div class="panel">
+                    <div style="color:#ffcc00; border-bottom:1px solid rgba(255,204,0,0.3); margin-bottom:10px;">KOSASIH_NODES [cite: 2026-01-27]</div>
+                    <div id="kosasih-intel" class="kosasih-data">
+                        [NODE_01]: ONLINE<br>
+                        [NODE_02]: ONLINE<br>
+                        > CPU: 18% | MEM: 64GB<br>
+                        > SECURE: ARC-314_AUTH [cite: 2026-01-21]
+                    </div>
+                </div>
+                <div class="panel">
+                    <div style="color:#39ff14; font-size: 0.7rem; margin-bottom:5px;">LIVE_MAINNET_STREAM</div>
+                    <div id="tx-feed">
+                        </div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE</span>
-            <span>DATE: 2026-01-28</span>
-            <span>AUTHENTICATED BY KOSASIH</span>
+            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE [cite: 2026-01-04]</span>
+            <span>SECURED BY KOSASIH & PIMAN [cite: 2025-12-28]</span>
         </footer>
     </div>
 
 <script>
-    // EFFET MATRIX
     const c = document.getElementById('bg');
     const x = c.getContext('2d');
     c.width = window.innerWidth; c.height = window.innerHeight;
@@ -142,28 +132,25 @@
     }
     setInterval(dr, 50);
 
-    // FETCH MAINNET
-    async function updateData() {
+    async function updateHUD() {
         try {
-            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=5&order=desc");
-            const j = await r.json();
+            const r = await fetch("https://api.mainnet.minepi.com/payments?limit=10&order=desc");
+            const data = await r.json();
             const feed = document.getElementById('tx-feed');
             const piman = document.getElementById('piman-intel');
             
-            j._embedded.records.forEach(t => {
-                const l = document.createElement('div');
-                l.textContent = `> MAINNET_TX: ${t.from.substring(0,8)}... -> ${t.amount} PI`;
-                feed.prepend(l);
+            data._embedded.records.forEach(tx => {
+                const div = document.createElement('div');
+                div.className = 'tx-line';
+                div.innerHTML = `> TX: ${tx.from.substring(0,8)}... -> ${tx.amount} PI`;
+                feed.prepend(div);
             });
-            while(feed.children.length > 8) feed.removeChild(feed.lastChild);
-
-            // Remplissage colonne gauche
-            piman.innerHTML += `<br>> LOG_ENTRY: NODE_${Math.random().toString(16).slice(2,5)} SYNC`;
+            while(feed.children.length > 30) feed.removeChild(feed.lastChild);
+            piman.innerHTML += `<br>> LOG: NODE_${Math.random().toString(16).slice(2,5).toUpperCase()} SYNC`;
             piman.scrollTop = piman.scrollHeight;
-
         } catch(e) {}
     }
-    setInterval(updateData, 3000);
+    setInterval(updateHUD, 3000);
 </script>
 </body>
 </html>
