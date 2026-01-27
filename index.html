@@ -3,121 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | GCV QUANTUM HUD</title>
+    <title>ARC-314 | GCV PROTOCOL</title>
     <style>
-        :root {
-            --quantum-blue: #00f2ff;
-            --quantum-gold: #FFD700;
-            --bg-dark: #00050a;
-            --panel-bg: rgba(0, 10, 20, 0.85);
-        }
-
         body { 
-            background: var(--bg-dark); 
-            color: var(--quantum-blue); 
-            font-family: 'Courier New', monospace; 
-            margin: 0; overflow-x: hidden; height: 100vh;
-            perspective: 1200px;
+            background: #000; color: #00f2ff; 
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0; padding: 0;
         }
 
-        /* MATRIX BACKGROUND */
-        #matrix-bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
-
-        /* QUANTUM CORE RINGS */
-        .core-container {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotateX(70deg);
-            z-index: 0; pointer-events: none;
-        }
-        .ring {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            border-radius: 50%; border: 2px solid var(--quantum-blue);
-            box-shadow: 0 0 40px var(--quantum-blue), inset 0 0 20px var(--quantum-blue);
-            animation: rotate 10s linear infinite;
-        }
-        .r1 { width: 600px; height: 600px; border-style: dashed; opacity: 0.3; }
-        .r2 { width: 450px; height: 450px; border: 6px double var(--quantum-gold); animation-duration: 15s; animation-direction: reverse; }
-        .r3 { width: 200px; height: 200px; box-shadow: 0 0 80px var(--quantum-blue); }
-
-        @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-
-        /* INTERFACE */
         header {
-            text-align: center; padding: 20px; background: rgba(0,0,0,0.9);
-            border-bottom: 3px solid var(--quantum-gold); position: relative; z-index: 100;
+            background: #001015; border-bottom: 2px solid #FFD700;
+            padding: 15px; text-align: left; display: flex; justify-content: space-between;
         }
 
-        h1 { margin: 0; font-size: 2.5em; color: var(--quantum-gold); letter-spacing: 10px; text-shadow: 0 0 15px var(--quantum-gold); }
+        .container { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: #00f2ff; border: 2px solid #00f2ff; }
 
-        .main-container {
-            display: grid; grid-template-columns: 400px 1fr 400px;
-            padding: 30px; gap: 20px; position: relative; z-index: 50;
-        }
+        .panel { background: #000; padding: 25px; }
 
-        .panel {
-            background: var(--panel-bg); border: 1px solid var(--quantum-blue);
-            padding: 20px; backdrop-filter: blur(10px);
-            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-        }
+        h2 { color: #FFD700; border-bottom: 1px solid #FFD700; padding-bottom: 10px; margin-top: 0; }
 
-        h3 { color: var(--quantum-gold); border-bottom: 1px solid var(--quantum-blue); padding-bottom: 5px; text-transform: uppercase; }
+        .big-val { font-size: 3.5rem; font-weight: bold; color: #FFD700; margin: 10px 0; }
 
         input {
-            background: #000; border: 1px solid var(--quantum-gold);
-            color: var(--quantum-gold); width: 100%; padding: 12px;
-            font-size: 1.5em; text-align: center; outline: none; margin-top: 10px;
-            box-sizing: border-box; box-shadow: inset 0 0 10px var(--quantum-gold);
+            background: #00151a; border: 1px solid #00f2ff; color: #FFD700;
+            padding: 15px; font-size: 1.5rem; width: 100%; box-sizing: border-box;
+            margin-bottom: 10px; outline: none;
         }
 
-        .result-display {
-            font-size: 2em; color: var(--quantum-gold); font-weight: bold;
-            text-align: center; margin-top: 15px; text-shadow: 0 0 10px var(--quantum-gold);
-        }
+        .data-row { display: flex; justify-content: space-between; border-bottom: 1px solid #00252b; padding: 10px 0; }
+        .label { color: #888; text-transform: uppercase; font-size: 0.8rem; }
 
-        #ticker { height: 300px; overflow: hidden; font-size: 0.8em; margin-top: 10px; }
-        .tx-line { border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 8px 0; display: flex; justify-content: space-between; }
+        #ticker { height: 300px; overflow-y: hidden; }
 
-        footer {
-            position: fixed; bottom: 0; width: 100%; padding: 15px;
-            background: rgba(0,0,0,0.9); color: var(--quantum-gold);
-            text-align: center; font-size: 0.9em; letter-spacing: 3px; z-index: 100;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 1100px) {
-            .main-container { grid-template-columns: 1fr; }
-            .core-container { display: none; }
-        }
+        .footer { padding: 10px; font-size: 0.7rem; color: #444; text-align: center; border-top: 1px solid #222; }
     </style>
 </head>
 <body>
 
-    <div class="core-container">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
-        <div class="ring r3"></div>
+<header>
+    <div><strong>ARC-314</strong> // CORE SYSTEM</div>
+    <div style="color:#FFD700">GCV: $314,159</div>
+</header>
+
+<div class="container">
+    <div class="panel">
+        <h2>TERMINAL DE PAIEMENT</h2>
+        <div class="label">PRIX DE L'ARTICLE (USD)</div>
+        <input type="number" id="usd" placeholder="0.00" oninput="run()">
+        <div class="label">MONTANT À TRANSFERER (PI)</div>
+        <div id="piOut" class="big-val">0.000000</div>
+        <div class="label">ARCHITECTURE KOSASIH // STATUS: READY</div>
     </div>
-    
-    <canvas id="matrix-bg"></canvas>
 
-    <header>
-        <h1>ARC-314 QUANTUM HUD</h1>
-        <div style="color:var(--quantum-blue); font-weight:bold;">GCV PROTOCOL $314,159 | KOSASIH ARCHITECTURE</div>
-    </header>
+    <div class="panel">
+        <h2>FLUX MAINNET LIVE</h2>
+        <div id="ticker">SYCHRONISATION...</div>
+    </div>
+</div>
 
-    <div class="main-container">
-        <div class="panel">
-            <h3>[ GCV MICRO-PAY ]</h3>
-            <p style="font-size: 0.8em;">ENTREZ PRIX EN DOLLARS ($) :</p>
-            <input type="number" id="fiatInput" placeholder="Ex: 10.00" oninput="calculate()">
-            <p style="font-size: 0.8em; margin-top: 20px;">MONTANT REQUIS EN PI :</p>
-            <div id="piResult" class="result-display">0.00000000 Π</div>
-            <p style="font-size: 0.6em; margin-top: 15px; opacity: 0.7;">
-                CALCUL SUR BASE GCV CONSENSUS<br>NETWORK FEE: 0.01 Π
-            </p>
-        </div>
+<div class="panel" style="border-top:2px solid #00f2ff">
+    <h2>ANALYSE DE VALEUR</h2>
+    <div class="data-row"><span class="label">Pi Network Consensus</span><span>$314,159.00</span></div>
+    <div class="data-row"><span class="label">GLT Utility Protocol</span><span>ACTIVE</span></div>
+    <div class="data-row"><span class="label">Kosasih Repository</span><span>GITHUB/GCVREPUBLIC</span></div>
+</div>
 
-        <div></div>
+<div class="footer">
+    ARC-314 // AUCUN CONSEIL FINANCIER // CONSENSUS GLOBAL PI NETWORK
+</div>
 
-        <div class="panel">
+<script>
+    const GCV = 314159;
+    function run() {
+        let u = document.getElementById('usd').value;
+        document.getElementById('piOut').innerText = (u / GCV).toFixed(6);
+    }
+
+    async function stream() {
+        try {
+            const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=10&order=desc'));
+            const d = await r.json();
+            const t = document.getElementById('ticker');
+            t.innerHTML = "";
+            d._embedded.records.forEach(x => {
+                t.innerHTML += `<div class="data-row"><span>${x.from.substring(0,8)}...</span><span style="color:#FFD700">${x.amount} PI</span></div>`;
+            });
+        } catch(e) {}
+    }
+    setInterval(stream, 8000);
+    stream();
+</script>
+
+</body>
+</html>
