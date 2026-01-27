@@ -3,72 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM PROCESSOR</title>
+    <title>ARC-314 | QUANTUM HUD</title>
     <style>
-        :root {
-            --quantum-blue: #00f2ff;
-            --quantum-gold: #FFD700;
-        }
-
-        body { 
-            background: #000205; 
-            color: var(--quantum-blue); 
-            font-family: 'Courier New', monospace; 
-            margin: 0; overflow: hidden; height: 100vh;
-        }
-
+        :root { --blue: #00f2ff; --gold: #FFD700; }
+        body { background: #000; color: var(--blue); font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        
+        /* FOND MATRIX */
         #matrix-bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
 
-        .quantum-core {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 0;
-        }
-
-        .ring {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            border: 2px solid var(--quantum-blue);
-            animation: rotate 10s linear infinite;
-        }
+        /* DESIGN QUANTUM CENTRAL */
+        .quantum-core { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(60deg); z-index: 0; pointer-events: none; }
+        .ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid var(--blue); animation: rotate 10s linear infinite; }
         .r1 { width: 600px; height: 600px; border-style: dashed; opacity: 0.3; }
-        .r2 { width: 450px; height: 450px; border: 5px double var(--quantum-gold); animation-direction: reverse; }
-        .r3 { width: 250px; height: 250px; box-shadow: 0 0 50px var(--quantum-blue); }
-
+        .r2 { width: 450px; height: 450px; border: 5px double var(--gold); animation-direction: reverse; }
+        .r3 { width: 250px; height: 250px; box-shadow: 0 0 50px var(--blue); }
         @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        header {
-            width: 100%; padding: 20px; text-align: center;
-            background: rgba(0, 5, 15, 0.9);
-            border-bottom: 2px solid var(--quantum-gold);
-            position: relative; z-index: 100;
-        }
+        /* HUD INTERFACE */
+        header { width: 100%; padding: 20px; text-align: center; background: rgba(0, 5, 15, 0.9); border-bottom: 2px solid var(--gold); position: relative; z-index: 100; }
+        .main-hud { display: grid; grid-template-columns: 400px 1fr 400px; padding: 30px; gap: 20px; position: relative; z-index: 50; }
+        .panel { background: rgba(0, 10, 25, 0.85); border: 1px solid var(--blue); padding: 20px; backdrop-filter: blur(10px); }
+        
+        input { background: #000; border: 1px solid var(--gold); color: var(--gold); width: 100%; padding: 12px; font-size: 1.8em; text-align: center; margin-top: 10px; box-sizing: border-box; }
+        .res { font-size: 2.2em; color: var(--gold); text-align: center; margin-top: 15px; font-weight: bold; }
+        #ticker { height: 300px; overflow: hidden; font-size: 0.8em; }
+        .line { border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 8px 0; display: flex; justify-content: space-between; }
 
-        .main-hud {
-            display: grid; grid-template-columns: 400px 1fr 400px;
-            padding: 30px; gap: 20px; z-index: 50; position: relative;
-        }
-
-        .side-panel {
-            background: rgba(0, 10, 25, 0.9);
-            border: 1px solid var(--quantum-blue);
-            padding: 20px;
-        }
-
-        input {
-            background: #000; border: 1px solid var(--quantum-gold);
-            color: var(--quantum-gold); width: 100%; padding: 10px;
-            font-size: 1.5em; text-align: center;
-        }
-
-        #ticker { height: 300px; overflow: hidden; font-size: 0.8em; line-height: 1.6; }
-
-        footer {
-            position: fixed; bottom: 0; width: 100%; padding: 15px;
-            background: #000; color: var(--quantum-gold);
-            text-align: center; z-index: 100; border-top: 1px solid var(--quantum-gold);
-        }
+        footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: rgba(0,0,0,0.9); color: var(--gold); text-align: center; border-top: 1px solid var(--gold); z-index: 100; }
     </style>
 </head>
 <body>
@@ -82,69 +43,65 @@
     </div>
 
     <header>
-        <h1 style="margin:0; color:var(--quantum-gold); letter-spacing:8px;">ARC-314 PROCESSOR</h1>
-        <div style="font-size:0.8em;">STATUT : GCV $314,159 | ARCHITECTURE KOSASIH</div>
+        <h1 style="margin:0; letter-spacing:10px; color:var(--gold);">ARC-314 PROCESSOR</h1>
+        <div style="font-size:0.8em;">UNITÉ DE CALCUL GCV 314,159$ | KOSASIH ARCHITECTURE</div>
     </header>
 
     <div class="main-hud">
-        <div class="side-panel">
-            <h3 style="color:var(--quantum-gold)">> CALCULATEUR GCV</h3>
-            <label>MONTANT EN PI :</label>
-            <input type="number" id="piAmount" placeholder="0.00" oninput="calc()">
-            <div id="resUSD" style="font-size:2em; color:var(--quantum-gold); margin-top:15px; text-align:center;">$ 0.00</div>
+        <div class="panel">
+            <h3 style="color:var(--gold); margin-top:0;">> CALCULATEUR GCV</h3>
+            <p>PRIX ARTICLE (USD $) :</p>
+            <input type="number" id="usd" placeholder="Ex: 100" oninput="run()">
+            <p style="margin-top:15px;">MONTANT EN PI :</p>
+            <div id="pi" class="res">0.000000 Π</div>
         </div>
 
-        <div></div>
-
-        <div class="side-panel">
-            <h3 style="color:var(--quantum-gold)">> FLUX RÉSEAU</h3>
-            <div id="ticker">INITIALISATION DU FLUX...</div>
+        <div></div> <div class="panel">
+            <h3 style="color:var(--gold); margin-top:0;">> LIVE MAINNET</h3>
+            <div id="ticker">EN ATTENTE DE DONNÉES...</div>
         </div>
     </div>
 
     <footer>
-        ARC-314 ARCHITECTURE | SIGNATURE : ARC314
+        ARC-314 ARCHITECTURE | POWERED BY KOSASIH <span style="float:right; padding-right:40px;">ARC314</span>
     </footer>
 
     <script>
-        // Matrix
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const drops = Array(Math.floor(canvas.width / 18)).fill(1);
-
-        function matrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00f2ff";
-            drops.forEach((y, i) => {
-                ctx.fillText("01ARC314"[Math.floor(Math.random()*8)], i * 18, y * 18);
-                if (y * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+        // MATRIX
+        const c = document.getElementById('matrix-bg');
+        const x = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const d = Array(Math.floor(c.width/18)).fill(1);
+        function m() {
+            x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,c.width,c.height);
+            x.fillStyle = "#00f2ff"; x.font = "15px monospace";
+            d.forEach((y, i) => {
+                x.fillText("ARC314π"[Math.floor(Math.random()*7)], i*18, y*18);
+                if(y*18 > c.height && Math.random() > 0.975) d[i] = 0; d[i]++;
             });
         }
-        setInterval(matrix, 50);
+        setInterval(m, 50);
 
-        // Calc
-        function calc() {
-            const v = document.getElementById('piAmount').value;
-            document.getElementById('resUSD').innerText = "$ " + (v * 314159).toLocaleString();
+        // CALC
+        function run() {
+            const v = document.getElementById('usd').value;
+            const res = document.getElementById('pi');
+            if(v > 0) res.innerText = (v / 314159).toFixed(7) + " Π";
+            else res.innerText = "0.000000 Π";
         }
 
-        // Blockchain
-        async function getTX() {
+        // FETCH
+        async function f() {
             try {
-                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=5&order=desc'));
-                const d = await r.json();
-                const t = document.getElementById('ticker');
-                t.innerHTML = "";
-                d._embedded.records.forEach(x => {
-                    t.innerHTML += `<div>NODE: ${x.from.substring(0,5)}... <span style="color:#FFD700">${x.amount} PI</span></div>`;
+                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=6&order=desc'));
+                const j = await r.json();
+                const t = document.getElementById('ticker'); t.innerHTML = "";
+                j._embedded.records.forEach(v => {
+                    t.innerHTML += `<div class="line"><span>ID:${v.from.substring(0,5)}</span><strong style="color:#FFD700">${v.amount} Π</strong></div>`;
                 });
-            } catch (e) {}
+            } catch(e) {}
         }
-        setInterval(getTX, 15000);
-        getTX();
+        setInterval(f, 15000); f();
     </script>
 </body>
 </html>
