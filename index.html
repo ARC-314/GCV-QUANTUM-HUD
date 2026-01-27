@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | QUANTUM-HUD SECURE</title>
+    <title>ARC-314 | QUANTUM-HUD PRO</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         * { box-sizing: border-box; cursor: default; }
@@ -31,7 +31,7 @@
     <canvas id="bg"></canvas>
     <div class="container">
         <header>
-            <div>SYSTEM: ARC-314 // SECURE_HUB</div>
+            <div>SYSTEM: ARC-314 // QUANTUM_CORE</div>
             <div style="font-size: 1.5rem; color: #ffcc00;">GCV: $314,159</div>
             <div>SIGNATURE: ARC314</div>
         </header>
@@ -55,18 +55,18 @@
                     <div style="font-size: 0.8rem; color:#00f2ff;">
                         [NODE_01]: ONLINE<br>
                         [NODE_02]: ONLINE<br>
-                        > SECURE: ARC-314_ARMED [cite: 2026-01-21]
+                        > STATUS: ARC-314_ARMED
                     </div>
                 </div>
                 <div class="panel">
-                    <div style="color:#39ff14; font-size: 0.7rem; margin-bottom:5px;">LIVE_MAINNET_STREAM [FILTERED]</div>
+                    <div style="color:#39ff14; font-size: 0.7rem; margin-bottom:5px;">LIVE_MAINNET_STREAM</div>
                     <div id="tx-feed"></div>
                 </div>
             </div>
         </div>
         <footer>
-            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE [cite: 2026-01-04]</span>
-            <span>@cryptoshun1980 | ARC314 [cite: 2025-12-29]</span>
+            <span>ARC314 - GCVREPUBLIC INFRASTRUCTURE</span>
+            <span>@cryptoshun1980 | ARC314</span>
         </footer>
     </div>
 
@@ -77,16 +77,17 @@
     function dr() { x.fillStyle="rgba(0,0,0,0.05)"; x.fillRect(0,0,c.width,c.height); x.fillStyle="#0F0"; x.font=f+"px arial"; d.forEach((y,i)=>{ x.fillText(s[Math.floor(Math.random()*2)],i*f,y*f); if(y*f>c.height&&Math.random()>0.975)d[i]=0; d[i]++; }); }
     setInterval(dr, 50);
 
-    // LOGS FILTRÉS (SANS LE SANCTUAIRE)
     const pimanLogs = [
-        "> GCV_CONSENSUS: $314,159 [cite: 2026-01-04]",
-        "> MERCHANT_TRAUMA: ANALYZING [cite: 2026-01-12]",
+        "> GCV_CONSENSUS: $314,159",
+        "> MERCHANT_TRAUMA: ANALYZING DATA",
         "> KOSASIH_SHIELD: ARMED",
-        "> PI_NETWORK_SYNC: OK",
-        "> SCANNING_NODES...",
-        "> ARC-314_PROTOCOL: ACTIVE",
+        "> PI_NETWORK_SYNC: COMPLETED",
+        "> SCANNING_GLOBAL_NODES...",
+        "> ARC-314_PROTOCOL: ONLINE",
         "> GCVREPUBLIC_INFRA: STABLE",
-        "> GLOBAL_LIQUIDITY_MONITOR: ON"
+        "> GLOBAL_LIQUIDITY_MONITOR: ACTIVE",
+        "> MERCHANT_SUPPORT_V2: DEPLOYED",
+        "> MAINNET_VAL_STATUS: OPTIMAL"
     ];
 
     function startSystem() {
