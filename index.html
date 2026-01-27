@@ -3,18 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM CORE TERMINAL</title>
+    <title>ARC-314 | QUANTUM HOLOGRAM TERMINAL</title>
     <style>
-        :root { --q-blue: #00f2ff; --q-gold: #FFD700; --bg: #00050a; }
+        :root { --blue: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.4); }
         
         body { 
-            background: var(--bg); color: var(--q-blue); 
-            font-family: 'Courier New', monospace; margin: 0; 
+            background: #000; color: var(--blue); 
+            font-family: 'Orbitron', sans-serif; margin: 0; 
             overflow: hidden; height: 100vh;
+            text-transform: uppercase;
         }
 
-        /* EFFET SCANLINE (VIEIL ÉCRAN) */
-        body::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 25
+        /* EFFET HOLOGRAPHIQUE & SCANLINES */
+        .hologram-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 100; pointer-events: none; background-size: 100% 3px, 3px 100%;
+            animation: flicker 0.15s infinite;
+        }
+
+        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; filter: blur(0.5px); }
+
+        /* QUANTUM CORE 3D */
+        .quantum-hologram {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(60deg);
+            z-index: 1; perspective: 1000px;
+        }
+        .ring {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            border-radius: 50%; border: 2px solid var(--blue);
+            animation: rotate 12s linear infinite; box-shadow: 0 0 30px var(--glow), inset 0 0 30px var(--glow);
+        }
+        .r1 { width: 750px; height: 750px; border-style: dashed; opacity: 0.2; }
+        .r2 { width: 500px; height: 500px; border: 8px double var(--gold); animation-direction: reverse; box-shadow: 0 0 50px rgba(255,215,0,0.4); }
+        .r3 { width: 300px; height: 300px; border: 1px solid var(--blue); box-shadow: 0 0 80px var(--blue); }
+
+        @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes flicker { 0% { opacity: 0.97; } 100% { opacity: 1; } }
+
+        /* INTERFACE HUD ARC-314 */
+        header {
+            background: rgba(0, 10, 25, 0.9); border-bottom: 2px solid var(--gold);
+            padding: 20px; text-align: center; position: relative; z-index: 150;
+        }
+
+        .hud-container {
+            display: grid; grid-template-columns: 400px 1fr 400px;
+            padding: 30px; gap: 40px; position: relative; z-index: 150;
+        }
+
+        .cyber-panel {
+            background: rgba(0, 20, 40, 0.7); border: 1px solid var(--blue);
+            padding: 25px; backdrop-filter: blur(10px);
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+        }
+
+        .lcd {
+            background: #000; border: 1px solid var(--gold);
+            padding: 15px; margin-top: 15px; text-align: center;
+        }
+
+        input {
+            background: transparent; border: none; border-bottom: 2px solid var(--gold);
+            color: var(--gold); width: 100%; font-size: 2.2em; text-align: center; outline: none;
+        }
+
+        #ticker { height: 320px; overflow: hidden; font-size: 0.85em; }
+        .tx-line { border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 10px 0; display: flex; justify-content: space-between; }
+        .tx-amount { color: var(--gold); font-weight: bold; }
+
+        footer {
+            position: fixed; bottom: 0; width: 100%; padding: 15px;
+            background: rgba(0,0,0,0.95); border-top: 2px solid var(--gold);
+            color: var(--gold); text-align: center; z-index: 200; font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hologram-layer"></div>
+    <canvas id="matrix"></canvas>
+
+    <div class="quantum-hologram">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+    </div>
+
+    <header>
+        <h1 style="margin:0; letter-spacing:10px; font-size: 2.2em; text-shadow: 0 0 15px var(--blue);">ARC-314 QUANTUM CORE</h1>
+        <div style="color: var(--gold); font-size: 0.9em;">GCV VALUATION: $314,159 | NETWORK: PI MAINNET</div>
+    </header>
+
+    <div class="hud-container">
+        <div class="cyber-panel">
+            <h3 style="color:var(--gold); margin:0;">[ CONVERSION GCV ]</h3>
+            <div class="lcd">
+                <div style="font-size: 0.7em; opacity: 0.7;">INPUT_USD</div>
+                <input type="number" id="usdIn" placeholder="0.00" oninput="calc()">
+                <div style="font-size: 0.7em; opacity: 0.7; margin-top: 20px;">OUTPUT_PI</div>
+                <div id="piOut" style="font-size: 2.5em; color: var(--gold); text-shadow: 0 0 10px var(--gold);">0.000000</div>
+            </div>
+            <p style="font-size: 0.6em; margin-top: 20px; line-height: 1.5;">
+                ARCHITECTURE : KOSASIH<br>STATUT : GLT ACTIF<br>AUTH : ARC-314 UNIT
+            </p>
+        </div>
+
+        <div></div> <div class="cyber-panel">
+            <h3 style="color:var(--gold); margin:0;">[ LIVE BLOCKCHAIN ]</h3>
+            <div id="ticker">SYNCHRONISATION AU
