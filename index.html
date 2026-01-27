@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 // HYPER-GLOW CORE</title>
+    <title>ARC-314 // STEALTH CORE</title>
     <style>
         :root { 
             --neon: #00f2ff; 
             --gold: #FFD700; 
-            /* Multiples couches d'ombre pour un effet de néon réel */
-            --neon-glow: 0 0 5px #00f2ff, 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.7);
-            --gold-glow: 0 0 5px #FFD700, 0 0 15px rgba(255, 215, 0, 0.6);
+            --neon-glow: 0 0 10px #00f2ff, 0 0 20px rgba(0, 242, 255, 0.6);
+            --gold-glow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.5);
         }
         
         body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; filter: contrast(1.5) brightness(1.2); }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; filter: brightness(1.2); }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.85) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
             z-index: 2; pointer-events: none;
         }
 
@@ -28,43 +27,44 @@
             display: flex; align-items: center; justify-content: center; padding: 10px;
         }
 
-        /* TERMINAL ARC-314 AVEC EFFET DE LUMIÈRE RADIANTE */
+        /* TERMINAL RECTANGULAIRE SANS ANGLES COUPÉS */
         .terminal {
-            width: 100%; max-width: 480px;
-            background: rgba(0, 5, 10, 0.85);
+            width: 100%; max-width: 500px;
+            background: rgba(0, 5, 10, 0.9);
             border: 2px solid var(--neon);
-            /* Le secret de la luminosité est ici */
-            box-shadow: var(--neon-glow), inset 0 0 20px rgba(0, 242, 255, 0.3);
-            padding: 25px;
-            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
-            filter: drop-shadow(0 0 10px var(--neon));
+            box-shadow: var(--neon-glow), inset 0 0 25px rgba(0, 242, 255, 0.2);
+            padding: 30px;
+            /* Suppression du clip-path pour garder les angles droits */
         }
 
-        header { border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; box-shadow: 0 5px 10px -5px var(--gold); }
-        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: var(--gold-glow); letter-spacing: 3px; }
+        header { border-bottom: 2px solid var(--gold); margin-bottom: 25px; padding-bottom: 10px; }
+        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: var(--gold-glow); letter-spacing: 4px; }
 
-        /* ENGINE BOXES */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        /* ENGINE BOXES RECTANGULAIRES */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .box { 
-            border: 1px solid var(--neon); background: rgba(0,0,0,0.8); padding: 15px; text-align: center;
-            clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
-            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.4);
+            border: 1px solid var(--neon); 
+            background: rgba(0,0,0,0.85); 
+            padding: 15px; 
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.3);
         }
         
-        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; text-shadow: 0 0 5px var(--gold); font-weight: bold; }
+        label { font-size: 0.65em; color: var(--gold); display: block; margin-bottom: 8px; text-shadow: 0 0 5px var(--gold); font-weight: bold; }
         input { 
             background: transparent; border: none; border-bottom: 1px solid var(--gold); 
-            color: var(--gold); width: 90%; font-size: 1.5em; text-align: center; outline: none;
+            color: var(--gold); width: 90%; font-size: 1.6em; text-align: center; outline: none;
             text-shadow: var(--gold-glow);
         }
-        .res { font-size: 1.2em; font-weight: bold; color: var(--gold); margin-top: 10px; text-shadow: var(--gold-glow); }
+        .res { font-size: 1.3em; font-weight: bold; color: var(--gold); margin-top: 10px; text-shadow: var(--gold-glow); }
 
-        /* BLOCKCHAIN STREAM LUMINEUX */
-        .stream { height: 100px; overflow: hidden; font-size: 0.75em; border-top: 1px solid rgba(0,242,255,0.4); padding-top: 10px; }
-        .tx { display: flex; justify-content: space-between; padding: 5px 0; color: #fff; text-shadow: 0 0 5px #fff; }
+        .stream { height: 110px; overflow: hidden; font-size: 0.8em; border-top: 1px solid rgba(0,242,255,0.4); padding-top: 10px; }
+        .tx { display: flex; justify-content: space-between; padding: 5px 0; color: #fff; text-shadow: 0 0 8px #fff; }
 
-        footer { margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 3.2em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: var(--gold-glow); line-height: 1; }
+        footer { margin-top: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .signature { font-size: 3.5em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: var(--gold-glow); line-height: 1; }
+        
+        .status-info { font-size: 0.6em; color: var(--neon); line-height: 1.6; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -75,77 +75,14 @@
 <div class="container">
     <div class="terminal">
         <header>
-            <div style="font-size: 0.5em; color: var(--neon); text-shadow: var(--neon-glow); margin-bottom: 5px;">TUESDAY, JANUARY 27, 2026 // 14:30</div>
+            <div style="font-size: 0.55em; color: var(--neon); text-shadow: var(--neon-glow); margin-bottom: 5px;">
+                SYSTEM_DATE: JANUARY 27, 2026 // SECURITY_LEVEL: MAXIMUM
+            </div>
             <div class="title">ARC-314 // CORE</div>
-            <div style="font-size: 0.6em; color: var(--neon); font-weight: bold;">GCV: $314,159 | ARCHITECTURE KOSASIH</div>
+            <div style="font-size: 0.65em; color: var(--neon); font-weight: bold;">GCV: $314,159 | PROTOCOL: GLT-314</div>
         </header>
 
         <div class="grid">
             <div class="box">
                 <label>SEARCH USD</label>
-                <input type="number" id="uIn" placeholder="0" oninput="calc()">
-                <div id="pOut" class="res">0.00 Π</div>
-            </div>
-            <div class="box">
-                <label>SEARCH PI</label>
-                <input type="number" id="pIn" placeholder="0" oninput="calc()">
-                <div id="uOut" class="res">$ 0.00</div>
-            </div>
-        </div>
-
-        <div class="stream" id="st"></div>
-
-        <footer>
-            <div style="font-size: 0.5em; color: var(--neon); line-height: 1.4; text-shadow: 0 0 5px var(--neon);">
-                LOC: KOH SAMUI, TH<br>
-                STATUS: ENCRYPTED<br>
-                PIMAN: ACTIVE
-            </div>
-            <div class="signature">ARC314</div>
-        </footer>
-    </div>
-</div>
-
-<script>
-    const GCV = 314159;
-    const canvas = document.getElementById('m'), ctx = canvas.getContext('2d');
-    let w = canvas.width = window.innerWidth, h = canvas.height = window.innerHeight;
-    const columns = Array(Math.floor(w/12)).fill(1);
-
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-        ctx.fillRect(0, 0, w, h);
-        
-        // Pluie Matrix plus lumineuse
-        ctx.fillStyle = "#00f2ff";
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = "#00f2ff";
-        ctx.font = "16px monospace";
-        
-        columns.forEach((y, i) => {
-            const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-            ctx.fillText(char, i * 12, y * 12);
-            if (y * 12 > h && Math.random() > 0.98) columns[i] = 0;
-            columns[i]++;
-        });
-    }
-    setInterval(draw, 50);
-
-    function calc() {
-        const u = document.getElementById('uIn').value;
-        const p = document.getElementById('pIn').value;
-        document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
-        document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
-    }
-
-    const st = document.getElementById('st');
-    function addTx() {
-        const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold); text-shadow: var(--gold-glow);">+${(Math.random()*10).toFixed(4)} Π</span></div>`;
-        st.innerHTML = row + st.innerHTML;
-        if(st.children.length > 5) st.lastChild.remove();
-    }
-    setInterval(addTx, 2000);
-</script>
-
-</body>
-</html>
+                <input type="number" id="uIn
