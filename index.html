@@ -3,98 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 // CORE</title>
+    <title>ARC-314 | QUANTUM CORE</title>
     <style>
-        :root { --neon: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.8); }
-        body, html { background: #000; margin: 0; padding: 0; overflow: hidden; height: 100vh; font-family: 'Courier New', monospace; }
+        :root { --cyan: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.4); }
+        body, html { background: #000; color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        /* MATRIX ULTRA-DENSE (COMME SUR L'IMAGE) */
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.9; filter: blur(0.5px); }
+        /* MATRIX DENSE & COLORÉE */
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; filter: contrast(1.2); }
 
-        /* EFFET DE VIGNETTE BLEUE POUR LA PROFONDEUR */
-        .overlay {
+        /* FILTRE DE PROFONDEUR (L'OMBRE SUR LES BORDURES DE L'IMAGE) */
+        .scanline-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0, 242, 255, 0.1) 40%, rgba(0,0,0,0.9) 90%);
+            background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.85) 100%);
             z-index: 2; pointer-events: none;
         }
 
-        .scene {
+        .main-wrapper {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            perspective: 1000px; /* Force la profondeur */
+            display: flex; align-items: center; justify-content: center; padding: 20px;
         }
 
-        /* LE BLOC CENTRAL AVEC INCLINAISON RÉELLE */
+        /* TERMINAL ARC-314 - LOOK CINÉMATIQUE */
         .terminal {
-            width: 90%; max-width: 450px;
-            background: rgba(0, 15, 25, 0.96);
-            border: 3px solid var(--neon);
-            box-shadow: 0 0 50px var(--glow), inset 0 0 20px var(--glow);
-            padding: 25px;
-            transform: rotateY(-10deg) rotateX(5deg); /* L'inclinaison de ton image */
-            border-radius: 4px;
+            width: 100%; max-width: 460px;
+            background: rgba(0, 10, 20, 0.92);
+            border: 2px solid var(--cyan);
+            box-shadow: 0 0 40px var(--glow), inset 0 0 20px var(--glow);
+            padding: 25px; border-radius: 4px;
+            /* TRICHE VISUELLE POUR L'INCLINAISON SANS CRASH */
+            transform: perspective(1000px) rotateY(-5deg) skewY(-1deg);
+            position: relative;
         }
 
-        header { border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; position: relative; }
-        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: 3px; }
-        .timestamp { position: absolute; right: 0; top: 0; font-size: 0.6em; color: var(--gold); }
+        /* PETIT TEXTE DE DÉTAIL COMME SUR L'IMAGE */
+        .sub-header { font-size: 0.5em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; opacity: 0.7; }
 
-        /* CALCULATEUR DUAL-ENGINE GCV */
-        .engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .engine-box { border: 1px solid var(--neon); background: rgba(0,0,0,0.8); padding: 12px; text-align: center; position: relative; }
-        .engine-box::before { content: "ENGINE ACTIVE"; position: absolute; top: -8px; left: 5px; background: #000; font-size: 0.5em; padding: 0 3px; color: var(--neon); }
+        header { border-bottom: 3px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; }
+        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: 4px; }
+
+        /* DUAL-ENGINE CALCULATOR */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .box { border: 1px solid var(--cyan); background: rgba(0,0,0,0.8); padding: 12px; text-align: center; position: relative; }
+        .box::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; box-shadow: inset 0 0 10px var(--glow); pointer-events: none; }
         
-        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; font-weight: bold; }
-        input { 
-            background: transparent; border: none; border-bottom: 2px solid var(--gold); 
-            color: var(--gold); width: 100%; font-size: 1.5em; text-align: center; outline: none;
-        }
-        .res { font-size: 1.2em; font-weight: bold; color: var(--gold); margin-top: 10px; text-shadow: 0 0 10px var(--gold); }
+        label { font-size: 0.55em; color: var(--gold); display: block; margin-bottom: 5px; font-weight: bold; }
+        input { background: transparent; border: none; border-bottom: 2px solid var(--gold); color: var(--gold); width: 100%; font-size: 1.4em; text-align: center; outline: none; }
+        .res { font-size: 1.1em; font-weight: bold; color: var(--gold); margin-top: 8px; text-shadow: 0 0 5px var(--gold); }
 
-        /* BLOCKCHAIN STREAM DYNAMIQUE */
-        .blockchain { height: 120px; overflow: hidden; font-size: 0.75em; border-top: 1px solid rgba(0, 242, 255, 0.4); padding-top: 10px; color: #fff; }
-        .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 6px 0; }
+        /* BLOCKCHAIN STREAM */
+        .stream { height: 110px; overflow: hidden; font-size: 0.75em; border-top: 1px solid rgba(0, 242, 255, 0.4); padding-top: 10px; color: #fff; }
+        .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 5px 0; }
 
-        /* SIGNATURE ARC314 MASSIVE */
+        /* SIGNATURE ARC314 GOLD */
         footer { margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 3em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 30px var(--gold); line-height: 0.8; }
-        .details { font-size: 0.5em; line-height: 1.5; color: var(--neon); text-transform: uppercase; }
+        .signature { font-size: 3em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 25px var(--gold); line-height: 1; }
     </style>
 </head>
 <body>
 
     <canvas id="m"></canvas>
-    <div class="overlay"></div>
+    <div class="scanline-overlay"></div>
 
-    <div class="scene">
+    <div class="main-wrapper">
         <div class="terminal">
+            <div class="sub-header">System: Encrypted | Architecture: Kosasih</div>
             <header>
                 <div class="title">ARC-314 // CORE</div>
-                <div class="timestamp">JAN 27, 2026<br>14:14:39</div>
-                <div style="font-size: 0.6em; color: var(--neon); margin-top: 5px;">ARCHITECTURE: KOSASIH | GCV: $314,159</div>
+                <div style="font-size: 0.65em; color: var(--cyan); font-weight: bold;">GCV: $314,159 | TOKEN: GLT-314</div>
             </header>
 
-            <div class="engine-grid">
-                <div class="engine-box">
-                    <label>USD TO PI</label>
-                    <input type="number" id="uIn" placeholder="0" oninput="runCalc()">
+            <div class="grid">
+                <div class="box">
+                    <label>USD -> PI</label>
+                    <input type="number" id="uIn" placeholder="0" oninput="calc()">
                     <div id="pOut" class="res">0.00 Π</div>
                 </div>
-                <div class="engine-box">
-                    <label>PI TO USD</label>
-                    <input type="number" id="pIn" placeholder="0" oninput="runCalc()">
+                <div class="box">
+                    <label>PI -> USD</label>
+                    <input type="number" id="pIn" placeholder="0" oninput="calc()">
                     <div id="uOut" class="res">$ 0.00</div>
                 </div>
             </div>
 
-            <div style="font-size: 0.6em; color: var(--gold); margin-bottom: 5px;">>> LIVE_BLOCKCHAIN_STREAM</div>
-            <div class="blockchain" id="st"></div>
+            <div style="font-size: 0.6em; color: var(--gold); margin-bottom: 5px; font-weight: bold;">>> LIVE_BLOCKCHAIN_FEED</div>
+            <div class="stream" id="st"></div>
 
             <footer>
-                <div class="details">
-                    LOC: TH_SANCTUARY<br>
-                    NET: PI_MAINNET<br>
-                    STATUS: ENCRYPTED
+                <div style="font-size: 0.5em; color: var(--cyan); line-height: 1.5; font-weight: bold;">
+                    LOC: Koh Samui, TH<br>
+                    STATUS: ACTIVE<br>
+                    PIMAN: INFLUENCE_ACTIVE
                 </div>
                 <div class="signature">ARC314</div>
             </footer>
@@ -103,43 +101,41 @@
 
     <script>
         const GCV = 314159;
-        const canvas = document.getElementById('m'), ctx = canvas.getContext('2d');
-        let w = canvas.width = window.innerWidth, h = canvas.height = window.innerHeight;
+        const c = document.getElementById('m'), x = c.getContext('2d');
+        let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
         
-        // DENSITÉ EXTRÊME (Colonnes de 10px)
-        const cols = Array(Math.floor(w/10)).fill(1);
+        // DENSITÉ MAXIMALE POUR COPIER L'IMAGE
+        const columns = Array(Math.floor(w/10)).fill(1);
 
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-            ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = "#00f2ff";
-            ctx.font = "14px monospace";
+        function draw() {
+            x.fillStyle = "rgba(0, 0, 0, 0.12)";
+            x.fillRect(0, 0, w, h);
+            x.fillStyle = "#00f2ff";
+            x.font = "14px monospace";
             
-            cols.forEach((y, i) => {
+            columns.forEach((y, i) => {
                 const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-                ctx.fillText(char, i * 10, y * 10);
-                if (y * 10 > h && Math.random() > 0.985) cols[i] = 0;
-                cols[i]++;
+                x.fillText(char, i * 10, y * 10);
+                if (y * 10 > h && Math.random() > 0.985) columns[i] = 0;
+                columns[i]++;
             });
         }
-        setInterval(drawMatrix, 50);
+        setInterval(draw, 45);
 
-        function runCalc() {
+        function calc() {
             const u = document.getElementById('uIn').value;
             const p = document.getElementById('pIn').value;
-            // On met à jour les deux selon l'input actif
             document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
             document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
         }
 
         const st = document.getElementById('st');
-        function addTx() {
-            const id = "TX-" + Math.random().toString(36).substr(7).toUpperCase();
-            const amt = (100.3140).toFixed(4); // Valeur clin d'oeil à ton image
-            st.innerHTML = `<div class="tx"><span>${id}</span><span style="color:var(--gold)">${amt} Π</span></div>` + st.innerHTML;
-            if(st.children.length > 6) st.lastChild.remove();
+        function add() {
+            const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold)">+${(Math.random()*15).toFixed(4)} Π</span></div>`;
+            st.innerHTML = row + st.innerHTML;
+            if(st.children.length > 5) st.lastChild.remove();
         }
-        setInterval(addTx, 1500);
+        setInterval(add, 2200);
     </script>
 </body>
 </html>
