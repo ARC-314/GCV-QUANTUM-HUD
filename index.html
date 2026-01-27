@@ -3,130 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 | CINEMATIC CORE</title>
+    <title>ARC-314 | QUANTUM INTERFACE</title>
     <style>
-        :root { --neon: #00f2ff; --gold: #FFD700; --bg: #000; }
-        body, html { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+        :root { --neon: #00f2ff; --gold: #FFD700; }
+        body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        /* MATRIX DENSE SANS FILTRES LOURDS */
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; }
+        /* MATRIX BACKGROUND */
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.7; }
 
-        /* EFFET DE VIGNETTE POUR LA PROFONDEUR */
-        .vignette {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.95) 100%);
-            z-index: 2; pointer-events: none;
-        }
-
-        /* HUD CENTRAL */
-        .hud-wrapper {
+        /* HUD WRAPPER AVEC PERSPECTIVE */
+        .viewport {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 10px; box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
+            perspective: 800px;
         }
 
-        .terminal-box {
-            width: 100%; max-width: 480px;
+        /* LE TERMINAL (INCLINÉ COMME SUR L'IMAGE) */
+        .terminal {
+            width: 90%; max-width: 450px;
             background: rgba(0, 15, 25, 0.9);
             border: 2px solid var(--neon);
-            box-shadow: 0 0 40px rgba(0, 242, 255, 0.6);
-            padding: 20px; position: relative;
+            padding: 20px;
+            transform: rotateY(-10deg) rotateX(5deg);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5), inset 0 0 15px rgba(0, 242, 255, 0.3);
+            border-radius: 4px;
         }
 
         header { border-bottom: 2px solid var(--gold); margin-bottom: 15px; padding-bottom: 10px; }
-        .title { font-size: 1.6em; font-weight: bold; color: var(--gold); letter-spacing: 4px; text-shadow: 0 0 10px var(--gold); }
+        .title { font-size: 1.4em; font-weight: bold; color: var(--gold); letter-spacing: 3px; text-shadow: 0 0 10px var(--gold); }
 
-        /* DOUBLE CALCULATEUR */
-        .engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .engine { background: #000; border: 1px solid var(--neon); padding: 10px; text-align: center; }
+        /* CALCULATEUR DUAL-ENGINE GCV */
+        .engine-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .engine-box { background: rgba(0,0,0,0.7); border: 1px solid var(--neon); padding: 10px; text-align: center; }
         label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; }
-        input { background: transparent; border: none; border-bottom: 1px solid var(--gold); color: var(--gold); width: 100%; font-size: 1.4em; text-align: center; outline: none; }
-        .res { font-size: 1.1em; font-weight: bold; color: var(--gold); margin-top: 5px; text-shadow: 0 0 5px var(--gold); }
+        input { background: transparent; border: none; border-bottom: 1px solid var(--gold); color: var(--gold); width: 100%; font-size: 1.3em; text-align: center; outline: none; }
+        .res { font-size: 1.1em; font-weight: bold; color: var(--gold); margin-top: 5px; }
 
-        /* STREAM BLOCKCHAIN */
-        .blockchain-stream { 
-            height: 100px; overflow: hidden; font-size: 0.75em; 
-            border-top: 1px solid rgba(0, 242, 255, 0.3); padding-top: 10px;
-        }
-        .tx-line { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.1); padding: 4px 0; }
+        /* LIVE STREAM */
+        .stream { height: 100px; overflow: hidden; font-size: 0.7em; border-top: 1px solid rgba(0,242,255,0.2); padding-top: 10px; }
+        .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.05); padding: 4px 0; }
 
-        /* FOOTER SIGNATURE ARC314 */
         footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 2.5em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: 0 0 20px var(--gold); }
+        .sig { font-size: 2.5em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: 0 0 20px var(--gold); }
     </style>
 </head>
 <body>
 
-    <canvas id="m"></canvas>
-    <div class="vignette"></div>
+<canvas id="m"></canvas>
 
-    <div class="hud-wrapper">
-        <div class="terminal-box">
-            <header>
-                <div class="title">ARC-314 // CORE</div>
-                <div style="font-size: 0.6em; color: var(--neon); letter-spacing: 1px;">GCV: $314,159 | GLT TOKEN ACTIVE</div>
-            </header>
+<div class="viewport">
+    <div class="terminal">
+        <header>
+            <div class="title">ARC-314 // CORE</div>
+            <div style="font-size: 0.6em;">GCV: $314,159 | PROTOCOL GLT-314</div>
+        </header>
 
-            <div class="engine-grid">
-                <div class="engine">
-                    <label>USD INPUT</label>
-                    <input type="number" id="uIn" placeholder="0" oninput="toPi()">
-                    <div id="pOut" class="res">0.00 Π</div>
-                </div>
-                <div class="engine">
-                    <label>PI INPUT</label>
-                    <input type="number" id="pIn" placeholder="0" oninput="toUsd()">
-                    <div id="uOut" class="res">$ 0.00</div>
-                </div>
+        <div class="engine-container">
+            <div class="engine-box">
+                <label>USD -> PI</label>
+                <input type="number" id="usdIn" placeholder="0" oninput="calcToPi()">
+                <div id="piOut" class="res">0.00 Π</div>
             </div>
-
-            <div style="font-size: 0.6em; color: var(--gold); margin-bottom: 5px;">>> LIVE_BLOCKCHAIN_DATA_FEED</div>
-            <div class="blockchain-stream" id="st"></div>
-
-            <footer>
-                <div style="font-size: 0.5em; line-height: 1.4; color: var(--neon);">
-                    ARCHITECTURE: KOSASIH<br>
-                    LOC: TH_SANCTUARY<br>
-                    STATUS: ENCRYPTED
-                </div>
-                <div class="signature">ARC314</div>
-            </footer>
+            <div class="engine-box">
+                <label>PI -> USD</label>
+                <input type="number" id="piIn" placeholder="0" oninput="calcToUsd()">
+                <div id="usdOut" class="res">$ 0.00</div>
+            </div>
         </div>
+
+        <div style="font-size: 0.6em; color: var(--gold); margin-bottom: 5px;">>> LIVE_BLOCKCHAIN_STREAM</div>
+        <div class="stream" id="st"></div>
+
+        <footer>
+            <div style="font-size: 0.5em; line-height: 1.4;">
+                LOC: TH_SANCTUARY<br>
+                STATUS: ENCRYPTED<br>
+                PIMAN: ACTIVE
+            </div>
+            <div class="sig">ARC314</div>
+        </footer>
     </div>
+</div>
 
-    <script>
-        const c = document.getElementById('m'), x = c.getContext('2d');
-        let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
-        const d = Array(Math.floor(w/18)).fill(1);
-        const GCV = 314159;
+<script>
+    const c = document.getElementById('m'), x = c.getContext('2d');
+    let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
+    const d = Array(Math.floor(w/20)).fill(1);
+    const GCV = 314159;
 
-        function draw() {
-            x.fillStyle = "rgba(0,0,0,0.15)"; x.fillRect(0,0,w,h);
-            x.fillStyle = "#00f2ff"; x.font = "18px monospace";
-            d.forEach((y, i) => {
-                const txt = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-                x.fillText(txt, i*18, y*18);
-                if(y*18 > h && Math.random() > 0.985) d[i] = 0; d[i]++;
-            });
-        }
-        setInterval(draw, 50);
+    function draw() {
+        x.fillStyle = "rgba(0,0,0,0.15)"; x.fillRect(0,0,w,h);
+        x.fillStyle = "#00f2ff"; x.font = "16px monospace";
+        d.forEach((y, i) => {
+            x.fillText("ARC314π$GLT"[Math.floor(Math.random()*11)], i*20, y*20);
+            if(y*20 > h && Math.random() > 0.98) d[i] = 0; d[i]++;
+        });
+    }
+    setInterval(draw, 50);
 
-        function toPi() {
-            const v = document.getElementById('uIn').value;
-            document.getElementById('pOut').innerText = (v > 0 ? (v / GCV).toFixed(7) : "0.00") + " Π";
-        }
-        function toUsd() {
-            const v = document.getElementById('pIn').value;
-            document.getElementById('uOut').innerText = "$ " + (v > 0 ? (v * GCV).toLocaleString() : "0.00");
-        }
+    function calcToPi() {
+        const v = document.getElementById('usdIn').value;
+        document.getElementById('piOut').innerText = (v > 0 ? (v / GCV).toFixed(7) : "0.00") + " Π";
+    }
 
-        const st = document.getElementById('st');
-        function add() {
-            const row = `<div class="tx-line"><span>ID:${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold)">+${(Math.random()*10).toFixed(4)} Π</span></div>`;
-            st.innerHTML = row + st.innerHTML;
-            if(st.children.length > 5) st.lastChild.remove();
-        }
-        setInterval(add, 2500);
-    </script>
+    function calcToUsd() {
+        const v = document.getElementById('piIn').value;
+        document.getElementById('usdOut').innerText = "$ " + (v > 0 ? (v * GCV).toLocaleString() : "0.00");
+    }
+
+    const st = document.getElementById('st');
+    function addTx() {
+        const id = "TX-" + Math.random().toString(36).substr(7).toUpperCase();
+        const amt = (Math.random() * 10).toFixed(4);
+        st.innerHTML = `<div class="tx"><span>${id}</span><span style="color:var(--gold)">${amt} Π</span></div>` + st.innerHTML;
+        if(st.children.length > 5) st.lastChild.remove();
+    }
+    setInterval(addTx, 2000);
+</script>
+
 </body>
 </html>
