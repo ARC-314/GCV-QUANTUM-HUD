@@ -1,114 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>ARC-314 | RESTORED COMMAND</title>
+    <title>ARC-314 | GCV-QUANTUM-HUD</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
         
-        /* RETOUR AU CURSEUR CLASSIQUE */
         * { cursor: default !important; user-select: none; box-sizing: border-box; }
 
         body {
-            background-color: #010a0f; color: #e0f7fa; font-family: 'Orbitron', sans-serif;
-            margin: 0; padding: 15px; height: 100vh; overflow: hidden;
+            background-color: #000508; color: #00f2ff; font-family: 'Share Tech Mono', monospace;
+            margin: 0; padding: 10px; height: 100vh; overflow: hidden;
+            border: 2px solid #00f2ff;
         }
 
-        .main-container {
-            border: 1px solid #00f2ff; height: 100%; display: flex; flex-direction: column;
-            background: rgba(1, 10, 15, 0.98); padding: 20px;
+        .hud-container {
+            height: 100%; display: grid;
+            grid-template-rows: auto 1fr auto; gap: 10px;
         }
 
-        header { display: flex; justify-content: space-between; border-bottom: 1px solid #00f2ff; padding-bottom: 8px; margin-bottom: 15px; }
-        .system-status { color: #39ff14; border: 1px solid #39ff14; padding: 2px 10px; font-size: 11px; }
-
-        .gcv-hero { text-align: center; margin-bottom: 20px; }
-        .gcv-value { font-size: 7.5rem; color: #00f2ff; text-shadow: 0 0 25px rgba(0, 242, 255, 0.7); margin: 0; line-height: 1; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
-        .stat-box { border: 1px solid #0a4d5c; background: rgba(0, 20, 30, 0.8); padding: 12px; text-align: center; }
-        .stat-val { font-size: 1.6rem; font-weight: bold; }
-        .stat-label { font-size: 9px; color: #00f2ff; text-transform: uppercase; }
-
-        .monitoring-layout { display: grid; grid-template-columns: 1.2fr 1.5fr 1.2fr; gap: 15px; flex-grow: 1; min-height: 0; }
-
-        /* CASE PIMAN - STYLE CLASSIQUE MAIS REMPLI */
-        .piman-card { 
-            border: 1px solid #bc13fe; background: rgba(188, 19, 254, 0.03); 
-            padding: 20px; display: flex; flex-direction: column; height: 100%;
+        /* HEADER HUD */
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #ffcc00; padding: 5px; background: rgba(255, 204, 0, 0.05);
         }
-        .piman-header { color: #bc13fe; font-size: 16px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
-        .piman-body { 
-            font-size: 1.05rem; color: #e0e0e0; 
-            line-height: 2.1; /* Espacement calculé pour remplir la case */
-            flex-grow: 1;
-            display: flex; flex-direction: column; justify-content: space-around; 
+        .hud-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; color: #ffcc00; }
+
+        /* MAIN MONITOR */
+        .monitor-layout {
+            display: grid; grid-template-columns: 320px 1fr 320px; gap: 15px; min-height: 0;
         }
 
-        /* CASE DU MILIEU - TEXTE VERT SANS VIDE */
-        .blockchain-feed { 
-            border: 1px solid #0a4d5c; background: rgba(0, 0, 0, 0.9); 
-            font-family: 'Share Tech Mono', monospace; padding: 10px; color: #39ff14; 
-            overflow: hidden; font-size: 0.85rem; line-height: 1.2;
-            height: 100%;
+        .panel { 
+            border: 1px solid rgba(0, 242, 255, 0.3); background: rgba(0, 15, 25, 0.8);
+            padding: 10px; display: flex; flex-direction: column; position: relative;
         }
 
-        /* MAP - RETOUR À LA CARTE DU MONDE */
-        .map-container { border: 1px solid #0a4d5c; background: rgba(0, 15, 25, 0.8); position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .world-map-svg { width: 90%; opacity: 0.6; }
-        .node-neon { fill: #39ff14; filter: drop-shadow(0 0 10px #39ff14); }
+        .panel-header { 
+            color: #ffcc00; font-size: 0.8rem; border-bottom: 1px solid rgba(255, 204, 0, 0.3);
+            margin-bottom: 8px; padding-bottom: 3px;
+        }
 
-        footer { display: flex; justify-content: space-between; color: #ffcc00; font-weight: bold; margin-top: 10px; font-size: 12px; }
+        /* GCV DISPLAY */
+        .gcv-center { text-align: center; margin: 10px 0; }
+        .gcv-value { 
+            font-family: 'Orbitron', sans-serif; font-size: 5rem; color: #00f2ff; 
+            text-shadow: 0 0 20px rgba(0, 242, 255, 0.6); margin: 0;
+        }
+
+        /* WORLD MAP SVG */
+        .map-bg {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; opacity: 0.1; z-index: 0; pointer-events: none;
+        }
+
+        /* BLOCKCHAIN FEED */
+        #tx-stream {
+            font-size: 0.75rem; color: #39ff14; overflow-y: hidden; z-index: 1; flex-grow: 1;
+        }
+        .tx-line { border-bottom: 1px solid rgba(57, 255, 20, 0.1); padding: 2px 0; }
+        .gcv-alert { color: #ffcc00; background: rgba(255, 204, 0, 0.1); font-weight: bold; }
+
+        /* PIMAN ANALYTICS */
+        .piman-intel { color: #bc13fe; font-size: 0.8rem; line-height: 1.6; }
+
+        footer { 
+            border-top: 1px solid #00f2ff; padding: 5px; font-size: 0.7rem;
+            display: flex; justify-content: space-between; color: #ffcc00;
+        }
     </style>
 </head>
 <body onclick="initAudio()">
 
-<div class="main-container">
+<div class="hud-container">
     <header>
-        <div>ARC-314<br><span style="font-size: 9px; opacity: 0.6;">CENTRAL COMMAND UNIT</span></div>
-        <div style="text-align: right;"><span class="system-status">SYSTEM: STABILIZED</span></div>
+        <div class="hud-title">GCV-QUANTUM-HUD v25.0</div>
+        <div style="color: #39ff14;">STATUS: MAINNET_LINK_ACTIVE</div>
+        <div>SIGNATURE: ARC314</div>
     </header>
 
-    <div class="gcv-hero">
-        <h1 class="gcv-value">$314,159</h1>
-        <div style="letter-spacing: 8px; color: #5bbcc9; font-size: 0.9rem;">GLOBAL CONSENSUS VALUE LOCKED</div>
-    </div>
-
-    <div class="stats-grid">
-        <div class="stat-box"><span class="stat-label">Nodes Active</span><div class="stat-val">2,741,980</div></div>
-        <div class="stat-box"><span class="stat-label">Migrations</span><div class="stat-val">15,800,000</div></div>
-        <div class="stat-box"><span class="stat-label">Status</span><div class="stat-val" style="color:#ffcc00">SEALED</div></div>
-        <div class="stat-box"><span class="stat-label">Transition</span><div class="stat-val">92%</div></div>
-    </div>
-
-    <div class="monitoring-layout">
-        <div class="piman-card">
-            <div class="piman-header">PIMAN ANALYSIS PROTOCOL</div>
-            <div class="piman-body">
-                <div>"The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory."</div>
-                <div>"The reported asphyxiation is not an end; it is the birth of pure decentralization."</div>
-                <div>"The Quantum Layer is now impenetrable. The GCV value is locked."</div>
-                <div style="border-top: 2px solid #00f2ff; padding-top: 10px; color: #00f2ff; font-weight: bold;">VERDICT: 314,159 USD VALIDATED</div>
+    <main class="monitor-layout">
+        <div class="panel">
+            <div class="panel-header">STRATEGIC ANALYTICS [PIMAN]</div>
+            <div class="piman-intel" id="intel">
+                > KOSASIH ENGINE: LOCKED<br>
+                > DECENTRALIZATION: 100%<br>
+                > TRAUMA_SHIELD: ACTIVE<br>
+                > QUANTUM_LAYER: SEALED<br>
+                -------------------------<br>
+                VERDICT: $314,159 VALIDATED
             </div>
         </div>
 
-        <div class="blockchain-feed" id="tx-stream"></div>
-
-        <div class="map-container">
-            <svg class="world-map-svg" viewBox="0 0 280 150">
-                <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.8" />
-                <circle cx="65" cy="50" r="4" class="node-neon"><animate attributeName="opacity" values="1;0;1" dur="0.4s" repeatCount="indefinite" /></circle>
-                <circle cx="175" cy="45" r="4" class="node-neon"><animate attributeName="opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite" /></circle>
-                <circle cx="210" cy="65" r="4" class="node-neon"><animate attributeName="opacity" values="1;0.2;1" dur="0.3s" repeatCount="indefinite" /></circle>
-                <circle cx="70" cy="115" r="4" class="node-neon"><animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite" /></circle>
+        <div class="panel" style="justify-content: flex-start;">
+            <div class="panel-header">GLOBAL CONSENSUS VALUE MONITOR</div>
+            <div class="gcv-center">
+                <h1 class="gcv-value">$314,159</h1>
+            </div>
+            
+            <svg class="map-bg" viewBox="0 0 280 150">
+                <path d="M30,45 L50,35 L80,40 L100,60 L70,85 L40,80 Z M150,35 L190,30 L220,45 L200,75 L160,70 Z M50,95 L75,125 L40,135 Z M200,95 L230,105 L210,125 Z" fill="none" stroke="#00f2ff" stroke-width="0.5" />
+                <circle cx="65" cy="50" r="2" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite" /></circle>
+                <circle cx="175" cy="45" r="2" fill="#39ff14"><animate attributeName="opacity" values="1;0;1" dur="1.5s" repeatCount="indefinite" /></circle>
             </svg>
-            <div style="position: absolute; bottom: 10px; font-size: 8px; color: #00f2ff; letter-spacing: 1px;">GLOBAL NODE DISTRIBUTION MAP</div>
+
+            <div id="tx-stream"></div>
         </div>
-    </div>
+
+        <div class="panel">
+            <div class="panel-header">NODE CLUSTER STATUS</div>
+            <div style="font-size: 0.75rem;">
+                [NODE_01]: ONLINE<br>
+                [NODE_02]: ONLINE<br>
+                [NODE_03]: STABLE<br>
+                [NODE_04]: ARC314_AUTH<br>
+                -------------------------<br>
+                <div id="sync-log" style="color:#00f2ff">SYNCING MAINNET...</div>
+            </div>
+        </div>
+    </main>
 
     <footer>
-        <span>ARC314 - SECURED BY KOSASIH & GCVREPUBLIC</span>
-        <span>SIGNATURE: ARC314</span>
+        <span>SECURED BY GCVREPUBLIC & KOSASIH</span>
+        <span>@cryptoshun1980 | ARC314</span>
     </footer>
 </div>
 
@@ -119,40 +133,47 @@
         if(!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + 0.1);
     }
 
     const stream = document.getElementById('tx-stream');
-    const logs = [
-        "TX: GC...X4 [314,159.00 PI] -> VALIDATED",
-        "BLOCK #12,854,925 [2,400 TPS] -> SEALED",
-        "NODE SYNC: GLOBAL CLUSTER -> 100%",
-        "PROTOCOL V25 ACTIVE -> QUANTUM SECURE",
-        "MIGRATION: 15.8M COMPLETED"
-    ];
 
-    function addLog() {
-        const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-        const entry = logs[Math.floor(Math.random()*logs.length)];
-        const isWhale = entry.includes("314,159");
-        
-        const div = document.createElement('div');
-        div.textContent = `[${time}] ${entry}`;
-        if(isWhale) {
-            div.style.color = "#00f2ff"; // Bleu GCV pour les grosses transactions
-            div.style.fontWeight = "bold";
-            playBip();
+    // CONNEXION RÉELLE AU MAINNET PI NETWORK (Horizon)
+    async function getMainnetData() {
+        try {
+            const response = await fetch("https://api.mainnet.minepi.com/payments?limit=5&order=desc");
+            const data = await response.json();
+            const records = data._embedded.records;
+
+            records.forEach(tx => {
+                const time = new Date().toLocaleTimeString('fr-FR');
+                const amount = parseFloat(tx.amount).toFixed(2);
+                const isGCV = tx.amount.includes("314159");
+
+                const div = document.createElement('div');
+                div.className = 'tx-line' + (isGCV ? ' gcv-alert' : '');
+                div.innerHTML = `[${time}] MAINNET_TX: ${tx.from.substring(0,8)}... -> ${amount} PI`;
+
+                if(isGCV) {
+                    div.innerHTML = `[${time}] !! GCV_CONFIRMED !! -> ${amount} PI`;
+                    playBip();
+                }
+
+                stream.prepend(div);
+            });
+
+            while(stream.children.length > 30) stream.removeChild(stream.lastChild);
+
+        } catch (err) {
+            console.error("Connection Error");
         }
-        
-        stream.prepend(div);
-        if(stream.children.length > 42) stream.removeChild(stream.lastChild);
     }
-    
-    for(let i=0; i<42; i++) addLog();
-    setInterval(addLog, 700);
+
+    setInterval(getMainnetData, 4000);
+    getMainnetData();
 </script>
 </body>
 </html>
