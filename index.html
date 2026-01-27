@@ -3,44 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 | TRUE CORE</title>
+    <title>ARC-314 | CORE</title>
     <style>
-        :root { --neon: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.6); }
-        body, html { background: #000; margin: 0; padding: 0; overflow: hidden; height: 100vh; font-family: 'Courier New', monospace; }
+        :root { --cyan: #00f2ff; --gold: #FFD700; }
+        body, html { background: #000; color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        /* 1. FOND MATRIX ULTRA-DENSE */
-        #m { position: fixed; top: 0; left: 0; z-index: 1; filter: brightness(0.8); }
+        /* MATRIX - DENSE ET RAPIDE */
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; }
 
-        /* 2. EFFET DE PROFONDEUR ET LUEUR BLEUE (VIGNETTE) */
-        .overlay {
+        /* VIGNETTE CINÉMATIQUE (SIMULE LA PROFONDEUR) */
+        .depth-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 10%, rgba(0, 242, 255, 0.15) 50%, rgba(0,0,0,0.9) 100%);
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%);
             z-index: 2; pointer-events: none;
         }
 
-        /* 3. PERSPECTIVE 3D DU TERMINAL */
-        .scene {
+        .main-container {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            perspective: 1200px;
+            display: flex; align-items: center; justify-content: center; padding: 10px;
         }
 
+        /* TERMINAL ARC-314 (SANS ROTATION 3D POUR ÉVITER L'ÉCRAN NOIR) */
         .terminal {
-            width: 92%; max-width: 460px;
-            background: rgba(0, 8, 15, 0.95);
-            border: 3px solid var(--neon);
-            box-shadow: 0 0 40px var(--glow), inset 0 0 20px var(--glow);
-            padding: 25px;
-            transform: rotateY(-8deg) rotateX(4deg); /* L'inclinaison exacte de l'image */
-            border-radius: 5px;
-            position: relative;
+            width: 100%; max-width: 440px;
+            background: rgba(0, 10, 20, 0.95);
+            border: 2px solid var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+            padding: 20px; border-radius: 4px;
+            /* On remplace la rotation par un léger décalage visuel */
+            border-left: 4px solid var(--cyan);
         }
 
-        /* DÉTAILS TECHNIQUES (LES PETITS TEXTES) */
-        .tech-info { font-size: 0.55em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; }
-        
         header { border-bottom: 2px solid var(--gold); margin-bottom: 15px; padding-bottom: 10px; }
-        .title { font-size: 1.7em; font-weight: bold; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: 2px; }
+        .title { font-size: 1.6em; font-weight: bold; color: var(--gold); letter-spacing: 3px; text-shadow: 0 0 10px var(--gold); }
 
-        /* DUAL-ENGINE GCV CALCULATOR */
-        .dual-engine { display: grid; grid-template-columns: 1fr
+        /* ENGINE CALCULATOR GCV */
+        .dual-calc { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .engine-box { border: 1px solid var(--cyan); padding: 10px; background: rgba(0,0,0,0.8); text-align: center; }
+        label { font-size: 0.5em; color: var(--gold); display: block; margin-bottom: 5px; }
+        input { background: transparent; border: none; border-bottom: 1px solid var(--gold); color: var(--gold); width: 90%; font-size: 1.3em; text-align: center; outline: none; }
+        .res { font-size: 1em; font-weight: bold; color: var(--gold); margin-top: 5px; }
+
+        /* BLOCKCHAIN STREAM */
+        .blockchain { height: 90px; overflow: hidden; font-size: 0.7em; border-top: 1px solid rgba(0, 242, 255, 0.3); padding-top: 10px; }
+        .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 4px 0; }
+
+        /* SIGNATURE ARC314 */
+        footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .signature { font-size: 2.6em; font-weight: bold; color: var(--gold); letter-spacing: 10px; text-shadow: 0 0 20px var(--gold); line-height: 1; }
+    </style>
+</head>
+<body>
+
+    <canvas id="m"></canvas>
+    <div class="depth-layer"></div>
+
+    <div class="main-container">
+        <div class="terminal">
+            <header>
+                <div class="title">ARC-314 // CORE</div>
+                <div style="font-size: 0.6em; color: var(--cyan);">GCV: $314,159 | ARCHITECTURE KOSASIH</div>
+            </header>
+
+            <div class="dual-calc">
+                <div class="engine-box">
+                    <label>USD -> PI</label>
+                    <input type="number" id="uIn" placeholder="0" oninput="calc()">
+                    <div id="pOut" class="res">0.00 Π</div>
+                </div>
+                <div class="engine-box">
+                    <label>PI -> USD</label>
+                    <input type="number" id="pIn" placeholder="0" oninput="calc()">
+                    <div id="uOut" class="res">$ 0.00</div>
+                </div>
+            </div>
+
+            <div class="blockchain" id="st"></div>
+
+            <footer>
+                <div style="font-size: 0.5em; color: var(--cyan); line-height: 1.4;">
+                    LOC: TH_SANCTUARY<br>
+                    STATUS: ENCRYPTED<br>
+                    PIMAN: ACTIVE
+                </div>
+                <div class="signature">ARC314</div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const GCV = 314159;
+        const c = document.getElementById('m'), x = c.getContext('2d');
+        let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
+        
+        // Densité maximale comme sur l'image
+        const columns = Array(Math.floor(w/12)).fill(1);
+
+        function draw() {
+            x.fillStyle = "rgba(0, 0, 0, 0.15)";
+            x.fillRect(0, 0, w, h);
+            x.fillStyle = "#00f2ff";
+            x.font = "15px monospace";
+            
+            columns.forEach((y, i) => {
+                const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
+                x.fillText(char, i * 12, y * 12);
+                if (y * 12 > h && Math.random() > 0.98) columns[i] = 0;
+                columns[i]++;
+            });
+        }
+        setInterval(draw, 50);
+
+        function calc() {
+            const u = document.getElementById('uIn').value;
+            const p = document.getElementById('pIn').value;
+            document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
+            document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
+        }
+
+        const st = document.getElementById('st');
+        function add() {
+            const row = `<div class="tx"><span>TX-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold)">+${(Math.random()*8).toFixed(4)} Π</span></div>`;
+            st.innerHTML = row + st.innerHTML;
+            if(st.children.length > 5) st.lastChild.remove();
+        }
+        setInterval(add, 2000);
+    </script>
+</body>
+</html>
