@@ -4,150 +4,155 @@
     <meta charset="UTF-8">
     <title>ARC-314 | PIMAN DECODED INTERFACE</title>
     <style>
-        :root {
-            --neon-blue: #00f2ff;
-            --neon-purple: #bc13fe;
-            --dark-bg: #01080b;
-            --panel-border: #0a2d37;
-            --success-green: #39ff14;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
         body {
-            background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Arial', sans-serif;
+            background-color: #010a0f;
+            color: #e0f7fa;
+            font-family: 'Orbitron', sans-serif;
             margin: 0;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            height: 94vh;
+            padding: 20px;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90px, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
-        /* Header Bar */
+        #dashboard {
+            border: 1px solid #0a2d37;
+            padding: 20px;
+            background: rgba(1, 10, 15, 0.8);
+            position: relative;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--neon-blue);
+            border-bottom: 1px solid #00f2ff;
             padding-bottom: 10px;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
-        .brand { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
-        .auth-status { font-size: 14px; color: #ccc; }
-        .status-tag { color: var(--success-green); font-weight: bold; }
-
-        /* GCV Hero */
-        .gcv-section {
+        .gcv-main {
             text-align: center;
-            margin-bottom: 60px;
+            margin: 40px 0;
         }
 
         .gcv-value {
-            font-size: 10rem;
-            color: var(--neon-blue);
-            text-shadow: 0 0 40px rgba(0, 242, 255, 0.5);
+            font-size: 8rem;
+            color: #00f2ff;
+            text-shadow: 0 0 20px #00f2ff, 0 0 40px rgba(0, 242, 255, 0.5);
             margin: 0;
-            font-weight: 800;
         }
 
         .gcv-label {
-            font-size: 1.4rem;
-            color: #8a9ba8;
-            letter-spacing: 6px;
+            letter-spacing: 8px;
+            color: #88f2ff;
             text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        .live-monitor-bar {
+            background: rgba(0, 242, 255, 0.1);
+            padding: 10px 20px;
+            margin: 20px 0;
+            font-size: 0.8rem;
+            border-left: 4px solid #00f2ff;
+        }
+
+        .grid-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding: 0 50px;
-            margin-bottom: 150px;
+            gap: 15px;
+            margin-top: 20px;
         }
 
-        .stat-box {
-            background: rgba(0, 30, 40, 0.4);
-            border: 1px solid var(--panel-border);
-            padding: 25px;
+        .stat-card {
+            border: 1px solid #0a4d5c;
+            background: rgba(0, 20, 30, 0.6);
+            padding: 15px;
             text-align: center;
         }
 
-        .stat-label { font-size: 11px; color: #8a9ba8; margin-bottom: 15px; letter-spacing: 1px; }
-        .stat-value { font-size: 28px; font-weight: bold; }
-        .stat-sub { font-size: 12px; color: var(--success-green); margin-top: 5px; }
-        .stat-value.gold { color: #ffcc00; }
+        .stat-label { font-size: 0.6rem; color: #00f2ff; margin-bottom: 10px; opacity: 0.7; }
+        .stat-val { font-size: 1.4rem; font-weight: bold; }
 
-        /* Piman Analysis Bottom Left */
-        .piman-protocol {
-            width: 450px;
-            border: 1px solid var(--neon-purple);
-            padding: 20px;
-            background: rgba(188, 19, 254, 0.03);
+        .bottom-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .piman-header { color: var(--neon-purple); font-weight: bold; font-size: 15px; margin-bottom: 15px; }
-        .piman-text { font-style: italic; color: #ddd; font-size: 13px; line-height: 1.5; margin-bottom: 15px; }
-        .piman-verdict { color: var(--neon-blue); font-weight: bold; font-size: 14px; }
+        .piman-box {
+            border: 1px solid #bc13fe;
+            background: rgba(188, 19, 254, 0.05);
+            padding: 15px;
+        }
 
-        /* Footer */
+        .piman-title { color: #bc13fe; border-bottom: 1px solid #bc13fe; margin-bottom: 10px; padding-bottom: 5px; }
+        .piman-content { font-size: 0.7rem; font-style: italic; line-height: 1.4; color: #d1d1d1; }
+        
+        .map-placeholder {
+            border: 1px solid #0a4d5c;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') center/contain no-repeat;
+            opacity: 0.4;
+            height: 200px;
+        }
+
         footer {
-            margin-top: auto;
+            margin-top: 30px;
             text-align: right;
-            padding-top: 20px;
+            color: #ffcc00;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
-
-        .signature { color: #ffcc00; font-size: 14px; font-weight: bold; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
+<div id="dashboard">
     <header>
-        <div class="brand">ARC-314 | CENTRAL COMMAND UNIT</div>
-        <div class="auth-status">AUTH_ID: @CRYPTOSHUN1980 | <span class="status-tag">SYSTEM: STABILIZED</span></div>
+        <div>ARC-314 <br><small>CENTRAL COMMAND UNIT</small></div>
+        <div style="text-align: right;">
+            <small>AUTH_ID: @CRYPTOSHUN1980</small><br>
+            <span style="color:#39ff14; border: 1px solid #39ff14; padding: 2px 5px;">SYSTEM: STABILIZED</span>
+        </div>
     </header>
 
-    <main>
-        <section class="gcv-section">
-            <h1 class="gcv-value">$314,159</h1>
-            <div class="gcv-label">Global Consensus Value Locked</div>
-        </section>
+    <div class="gcv-main">
+        <h1 class="gcv-value">$314,159</h1>
+        <div class="gcv-label">Global Consensus Value Locked</div>
+    </div>
 
-        <section class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-label">NODES ACTIVE</div>
-                <div class="stat-value">2,741,980</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">LAST BLOCK</div>
-                <div class="stat-value">#12,854,921</div>
-                <div class="stat-sub">0.5s ago</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">LAYER STATUS</div>
-                <div class="stat-value gold">SEALED</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">TRANSITION</div>
-                <div class="stat-value">92%</div>
-            </div>
-        </section>
+    <div class="live-monitor-bar">
+        PI NETWORK LIVE MONITOR (JAN 27, 2026 - 22:03:30 +07)
+    </div>
 
-        <section class="piman-protocol">
-            <div class="piman-header">PIMAN ANALYSIS PROTOCOL</div>
-            <div class="piman-text">
+    <div class="grid-container">
+        <div class="stat-card"><div class="stat-label">NODES ACTIVE</div><div class="stat-val">2,741,980</div></div>
+        <div class="stat-card"><div class="stat-label">LAST BLOCK</div><div class="stat-val">#12,854,921</div><small style="color:#39ff14">0.5s ago</small></div>
+        <div class="stat-card"><div class="stat-label">LAYER STATUS</div><div class="stat-val" style="color:#ffcc00">SEALED</div></div>
+        <div class="stat-card"><div class="stat-label">TRANSITION</div><div class="stat-val">92%</div></div>
+    </div>
+
+    <div class="bottom-section">
+        <div class="piman-box">
+            <div class="piman-title">PIMAN ANALYSIS PROTOCOL</div>
+            <div class="piman-content">
                 "The system has reached its critical point of autonomy. Kosasih has sealed the Laboratory. 
                 The reported asphyxiation is not an end; it is the birth of pure decentralization. 
                 The Quantum Layer is now impenetrable. The GCV value is locked."
             </div>
-            <div class="piman-verdict">VERDICT: 314,159 USD VALIDATED</div>
-        </section>
-    </main>
+            <div style="color:#00f2ff; margin-top:10px; font-size: 0.8rem;">VERDICT: 314,159 USD VALIDATED</div>
+        </div>
+        <div class="map-placeholder"></div>
+    </div>
 
     <footer>
-        <div class="signature">ARC314 - SECURED BY KOSASIH & GCVREPUBLIC</div>
+        ARC314 - SECURED BY KOSASIH & GCVREPUBLIC
     </footer>
+</div>
 
 </body>
 </html>
