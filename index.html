@@ -3,89 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 | DUAL QUANTUM ENGINE</title>
+    <title>ARC-314 | BLOCKCHAIN LIVE TERMINAL</title>
     <style>
-        :root { --cyan: #00f2ff; --gold: #FFD700; --bg: #00080a; }
+        :root { --cyan: #00f2ff; --gold: #FFD700; }
         body, html { background: #000; color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
 
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.15; }
+        /* MATRIX CODE DYNAMIQUE - PLUS VISIBLE */
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.4; filter: brightness(1.2); }
 
-        .hud-frame {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            border: 2px solid var(--cyan); box-sizing: border-box; z-index: 100;
-            pointer-events: none; box-shadow: inset 0 0 30px rgba(0, 242, 255, 0.2);
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 5px 5px, 5px calc(100% - 5px), calc(100% - 5px) calc(100% - 5px), calc(100% - 5px) 5px, 5px 5px);
-        }
-
-        .interface {
+        .hud-overlay {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;
+            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%);
         }
 
-        header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; }
-        .title { font-size: 1.4em; font-weight: bold; letter-spacing: 4px; color: var(--gold); }
-
-        .main-container { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
-
-        .quantum-panel {
-            background: rgba(0, 20, 35, 0.85); border: 1px solid var(--cyan);
-            padding: 15px; position: relative; backdrop-filter: blur(5px);
+        /* TOP HEADER: GCV & GLT */
+        header { 
+            border-bottom: 2px solid var(--gold); padding-bottom: 10px; 
+            display: flex; justify-content: space-between; align-items: flex-end;
         }
-        .quantum-panel::before { content: "DATA_CORE"; position: absolute; top: -10px; right: 10px; background: var(--cyan); color: #000; font-size: 0.6em; padding: 2px 5px; }
+        .protocol { font-size: 0.8em; color: var(--gold); letter-spacing: 2px; }
 
-        label { display: block; font-size: 0.7em; margin-bottom: 5px; color: var(--gold); }
+        /* DOUBLE CALCULATEUR COMPACT */
+        .calc-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;
+        }
+        .engine-box {
+            background: rgba(0, 15, 25, 0.9); border: 1px solid var(--cyan); padding: 10px;
+            box-shadow: 0 0 15px var(--cyan);
+        }
         input { 
             width: 100%; background: #000; border: 1px solid var(--gold); color: var(--gold); 
-            font-size: 2em; text-align: center; outline: none; padding: 10px; box-sizing: border-box;
+            font-size: 1.2em; text-align: center; outline: none; margin-top: 5px;
         }
+        .res { font-size: 1.1em; color: var(--gold); font-weight: bold; text-align: center; margin-top: 5px; }
 
-        .convert-label { text-align: center; font-size: 0.8em; margin: 5px 0; color: var(--cyan); font-weight: bold; }
+        /* BLOCKCHAIN LIVE STREAM - CENTRE */
+        .blockchain-core {
+            flex: 1; border: 1px solid var(--cyan); background: rgba(0,10,20,0.7);
+            margin: 10px 0; overflow: hidden; position: relative;
+            backdrop-filter: blur(4px);
+        }
+        .blockchain-core::before { content: "LIVE_BLOCKCHAIN_SYNC"; position: absolute; top: 5px; right: 10px; font-size: 0.6em; color: var(--gold); z-index: 20; }
+        
+        #stream { padding: 10px; font-size: 0.75em; }
+        .tx-line { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.2); padding: 8px 0; animation: flash 0.5s ease-out; }
+        @keyframes flash { from { background: rgba(0,242,255,0.3); } to { background: transparent; } }
 
-        .status-box { font-size: 0.65em; line-height: 1.6; border-left: 3px solid var(--gold); padding-left: 10px; margin-top: 10px; }
+        /* FOOTER SIGNATURE */
+        footer { 
+            border-top: 2px solid var(--gold); padding-top: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .sig { font-size: 2em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 15px var(--gold); }
 
-        footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; border-top: 1px solid var(--cyan); padding-top: 10px; }
-        .arc-sig { font-size: 1.6em; font-weight: bold; color: var(--gold); letter-spacing: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="hud-frame"></div>
     <canvas id="m"></canvas>
 
-    <div class="interface">
+    <div class="hud-overlay">
         <header>
-            <div class="title">ARC-314 // DUAL-ENGINE</div>
-            <div style="font-size: 0.6em;">KOSASIH ARCHITECTURE | GCV: $314,159</div>
+            <div>
+                <div style="font-size: 1.5em; font-weight: bold; color: var(--gold);">ARC-314 // CORE</div>
+                <div style="font-size: 0.6em;">ARCHITECTURE: KOSASIH</div>
+            </div>
+            <div class="protocol">
+                GCV: $314,159<br>
+                TOKEN: GLT-314
+            </div>
         </header>
 
-        <div class="main-container">
-            <div class="quantum-panel">
-                <label>> FIAT_INPUT (USD $)</label>
-                <input type="number" id="usdIn" placeholder="0.00" oninput="toPi()">
-                <div class="convert-label">▼ CONVERT_TO_PI ▼</div>
-                <div id="piOut" style="font-size: 2.2em; text-align: center; font-weight: bold; color: var(--gold);">0.000000 Π</div>
+        <div class="calc-grid">
+            <div class="engine-box">
+                <div style="font-size: 0.6em;">USD TO PI</div>
+                <input type="number" id="uIn" placeholder="USD" oninput="toPi()">
+                <div id="pOut" class="res">0.00 Π</div>
             </div>
-
-            <div class="quantum-panel">
-                <label>> PI_INPUT (Π)</label>
-                <input type="number" id="piIn" placeholder="0.000000" oninput="toUsd()">
-                <div class="convert-label">▲ CONVERT_TO_USD ▲</div>
-                <div id="usdOut" style="font-size: 2.2em; text-align: center; font-weight: bold; color: var(--gold);">$ 0.00</div>
-            </div>
-
-            <div class="status-box">
-                NETWORK: MAINNET_LIVE<br>
-                AUTH: ARC-314_UNIT<br>
-                LOC: THAILAND_SANCTUARY_ALPHA
+            <div class="engine-box">
+                <div style="font-size: 0.6em;">PI TO USD</div>
+                <input type="number" id="pIn" placeholder="PI" oninput="toUsd()">
+                <div id="uOut" class="res">$ 0.00</div>
             </div>
         </div>
 
+        <div class="blockchain-core">
+            <div id="stream"></div>
+        </div>
+
         <footer>
-            <div style="font-size: 0.55em; opacity: 0.7;">
-                SYSTEM_ID: CRYPTOSHUN1980<br>
-                PROTOCOL: GLT-314
+            <div style="font-size: 0.5em; line-height: 1.4;">
+                STATUS: ENCRYPTED<br>
+                LOCATION: TH_SANCTUARY<br>
+                PIMAN_INFLUENCE: ACTIVE
             </div>
-            <div class="arc-sig">ARC314</div>
+            <div class="sig">ARC314</div>
         </footer>
     </div>
 
@@ -96,24 +109,35 @@
         const GCV = 314159;
 
         function draw() {
-            x.fillStyle = "rgba(0,0,0,0.15)"; x.fillRect(0,0,w,h);
-            x.fillStyle = "#00f2ff"; x.font = "14px monospace";
+            x.fillStyle = "rgba(0,0,0,0.1)"; x.fillRect(0,0,w,h);
+            x.fillStyle = "#00f2ff"; x.font = "16px monospace";
             d.forEach((y, i) => {
-                x.fillText("ARC314"[Math.floor(Math.random()*6)], i*20, y*20);
+                const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
+                x.fillText(char, i*20, y*20);
                 if(y*20 > h && Math.random() > 0.98) d[i] = 0; d[i]++;
             });
         }
-        setInterval(draw, 50);
+        setInterval(draw, 40);
 
         function toPi() {
-            const val = document.getElementById('usdIn').value;
-            document.getElementById('piOut').innerText = (val > 0 ? (val / GCV).toFixed(7) : "0.000000") + " Π";
+            const v = document.getElementById('uIn').value;
+            document.getElementById('pOut').innerText = (v > 0 ? (v / GCV).toFixed(7) : "0.00") + " Π";
+        }
+        function toUsd() {
+            const v = document.getElementById('pIn').value;
+            document.getElementById('uOut').innerText = "$ " + (v > 0 ? (v * GCV).toLocaleString() : "0.00");
         }
 
-        function toUsd() {
-            const val = document.getElementById('piIn').value;
-            document.getElementById('usdOut').innerText = "$ " + (val > 0 ? (val * GCV).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "0.00");
+        // SIMULATION TRANSACTIONS BLOCKCHAIN REALISTES
+        const s = document.getElementById('stream');
+        function addTx() {
+            const id = "PI-TX-" + Math.random().toString(36).substring(7).toUpperCase();
+            const amt = (Math.random() * 100).toFixed(4);
+            const line = `<div class="tx-line"><span>${id}</span><span style="color:#FFD700">${amt} Π</span></div>`;
+            s.innerHTML = line + s.innerHTML;
+            if(s.children.length > 12) s.lastChild.remove();
         }
+        setInterval(addTx, 2000);
     </script>
 </body>
 </html>
