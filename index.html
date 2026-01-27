@@ -3,114 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC-314 | QUANTUM HOLOGRAM TERMINAL</title>
+    <title>ARC-314 | QUANTUM CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.4); }
+        :root { --blue: #00f2ff; --gold: #FFD700; }
         
         body { 
             background: #000; color: var(--blue); 
             font-family: 'Orbitron', sans-serif; margin: 0; 
-            overflow: hidden; height: 100vh;
-            text-transform: uppercase;
+            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* EFFET HOLOGRAPHIQUE & SCANLINES */
-        .hologram-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 100; pointer-events: none; background-size: 100% 3px, 3px 100%;
-            animation: flicker 0.15s infinite;
+        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
+
+        /* HEADER FIXE ET CENTRÉ */
+        header {
+            width: 100%; padding: 15px 0; text-align: center;
+            background: rgba(0, 10, 25, 0.95); border-bottom: 2px solid var(--gold);
+            z-index: 100;
         }
 
-        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; filter: blur(0.5px); }
+        /* CONTAINER PRINCIPAL CENTRÉ */
+        .viewport {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: space-evenly;
+            position: relative; padding: 10px; z-index: 10;
+        }
 
-        /* QUANTUM CORE 3D */
-        .quantum-hologram {
+        /* CORE QUANTIQUE (ANNEAUX) */
+        .quantum-core {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(60deg);
-            z-index: 1; perspective: 1000px;
+            z-index: -1; pointer-events: none;
         }
         .ring {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             border-radius: 50%; border: 2px solid var(--blue);
-            animation: rotate 12s linear infinite; box-shadow: 0 0 30px var(--glow), inset 0 0 30px var(--glow);
+            animation: rotate 12s linear infinite;
         }
-        .r1 { width: 750px; height: 750px; border-style: dashed; opacity: 0.2; }
-        .r2 { width: 500px; height: 500px; border: 8px double var(--gold); animation-direction: reverse; box-shadow: 0 0 50px rgba(255,215,0,0.4); }
-        .r3 { width: 300px; height: 300px; border: 1px solid var(--blue); box-shadow: 0 0 80px var(--blue); }
+        .r1 { width: 320px; height: 320px; border-style: dashed; opacity: 0.3; }
+        .r2 { width: 220px; height: 220px; border: 6px double var(--gold); animation-direction: reverse; box-shadow: 0 0 40px rgba(255,215,0,0.4); }
+
+        /* PANNEAUX HUD */
+        .panel { 
+            background: rgba(0, 20, 40, 0.85); border: 1px solid var(--blue);
+            padding: 15px; width: 90%; max-width: 400px;
+            backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            text-align: center;
+        }
+
+        input { 
+            width: 80%; background: transparent; border: none; border-bottom: 2px solid var(--gold);
+            color: var(--gold); font-size: 1.8em; text-align: center; outline: none; margin: 10px 0;
+        }
+
+        #ticker { height: 120px; overflow: hidden; font-size: 0.8em; margin-top: 10px; }
+        .tx-line { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 5px 0; }
+
+        footer { 
+            width: 100%; padding: 10px 0; background: #000; border-top: 2px solid var(--gold);
+            color: var(--gold); text-align: center; font-size: 0.7em; letter-spacing: 2px;
+        }
 
         @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes flicker { 0% { opacity: 0.97; } 100% { opacity: 1; } }
-
-        /* INTERFACE HUD ARC-314 */
-        header {
-            background: rgba(0, 10, 25, 0.9); border-bottom: 2px solid var(--gold);
-            padding: 20px; text-align: center; position: relative; z-index: 150;
-        }
-
-        .hud-container {
-            display: grid; grid-template-columns: 400px 1fr 400px;
-            padding: 30px; gap: 40px; position: relative; z-index: 150;
-        }
-
-        .cyber-panel {
-            background: rgba(0, 20, 40, 0.7); border: 1px solid var(--blue);
-            padding: 25px; backdrop-filter: blur(10px);
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
-        }
-
-        .lcd {
-            background: #000; border: 1px solid var(--gold);
-            padding: 15px; margin-top: 15px; text-align: center;
-        }
-
-        input {
-            background: transparent; border: none; border-bottom: 2px solid var(--gold);
-            color: var(--gold); width: 100%; font-size: 2.2em; text-align: center; outline: none;
-        }
-
-        #ticker { height: 320px; overflow: hidden; font-size: 0.85em; }
-        .tx-line { border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 10px 0; display: flex; justify-content: space-between; }
-        .tx-amount { color: var(--gold); font-weight: bold; }
-
-        footer {
-            position: fixed; bottom: 0; width: 100%; padding: 15px;
-            background: rgba(0,0,0,0.95); border-top: 2px solid var(--gold);
-            color: var(--gold); text-align: center; z-index: 200; font-size: 0.9em;
-        }
     </style>
 </head>
 <body>
 
-    <div class="hologram-layer"></div>
     <canvas id="matrix"></canvas>
 
-    <div class="quantum-hologram">
-        <div class="ring r1"></div>
-        <div class="ring r2"></div>
-        <div class="ring r3"></div>
-    </div>
-
     <header>
-        <h1 style="margin:0; letter-spacing:10px; font-size: 2.2em; text-shadow: 0 0 15px var(--blue);">ARC-314 QUANTUM CORE</h1>
-        <div style="color: var(--gold); font-size: 0.9em;">GCV VALUATION: $314,159 | NETWORK: PI MAINNET</div>
+        <h1 style="margin:0; font-size: 1.2em; letter-spacing: 5px;">ARC-314 QUANTUM HUD</h1>
+        <div style="font-size: 0.6em; color: var(--gold);">GCV: $314,159 | KOSASIH ARCHITECTURE</div>
     </header>
 
-    <div class="hud-container">
-        <div class="cyber-panel">
-            <h3 style="color:var(--gold); margin:0;">[ CONVERSION GCV ]</h3>
-            <div class="lcd">
-                <div style="font-size: 0.7em; opacity: 0.7;">INPUT_USD</div>
-                <input type="number" id="usdIn" placeholder="0.00" oninput="calc()">
-                <div style="font-size: 0.7em; opacity: 0.7; margin-top: 20px;">OUTPUT_PI</div>
-                <div id="piOut" style="font-size: 2.5em; color: var(--gold); text-shadow: 0 0 10px var(--gold);">0.000000</div>
-            </div>
-            <p style="font-size: 0.6em; margin-top: 20px; line-height: 1.5;">
-                ARCHITECTURE : KOSASIH<br>STATUT : GLT ACTIF<br>AUTH : ARC-314 UNIT
-            </p>
+    <div class="viewport">
+        <div class="quantum-core">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
         </div>
 
-        <div></div> <div class="cyber-panel">
-            <h3 style="color:var(--gold); margin:0;">[ LIVE BLOCKCHAIN ]</h3>
-            <div id="ticker">SYNCHRONISATION AU
+        <div class="panel">
+            <div style="font-size: 0.7em;">VENTE (USD $)</div>
+            <input type="number" id="usd" placeholder="0.00" oninput="calc()">
+            <div id="pi" style="font-size: 2em; color: var(--gold); font-weight: bold; margin-top: 5px;">0.000000 Π</div>
+        </div>
+
+        <div class="panel">
+            <h3 style="color:var(--gold); margin:0; font-size: 0.8em;">LIVE BLOCKCHAIN</h3>
+            <div id="ticker">CHARGEMENT...</div>
+        </div>
+    </div>
+
+    <footer>
+        ARC-314 TERMINAL | ARC314
+    </footer>
+
+    <script>
+        // Matrix
+        const c = document.getElementById('matrix'), ctx = c.getContext('2d');
+        c.width = window.innerWidth; c.height = window.innerHeight;
+        const drops = Array(Math.floor(c.width / 20)).fill(1);
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.fillStyle = "#00f2ff"; ctx.font = "15px monospace";
+            drops.forEach((y, i) => {
+                ctx.fillText("π", i * 20, y * 20);
+                if(y * 20 > c.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
+            });
+        }
+        setInterval(draw, 50);
+
+        // Calc GCV
+        function calc() {
+            const v = document.getElementById('usd').value;
+            document.getElementById('pi').innerText = (v > 0 ? (v / 314159).toFixed(7) : "0.000000") + " Π";
+        }
+
+        // Transactions temps réel
+        async function fetchTX() {
+            try {
+                const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://api.mainnet.minepi.com/payments?limit=4&order=desc'));
+                const j = await r.json();
+                const t = document.getElementById('ticker'); t.innerHTML = "";
+                j._embedded.records.forEach(v => {
+                    t.innerHTML += `<div class="tx-line"><span>${v.from.substring(0,4)}...</span><span style="color:#FFD700">${v.amount} Π</span></div>`;
+                });
+            } catch(e) {}
+        }
+        setInterval(fetchTX, 8000); fetchTX();
+    </script>
+</body>
+</html>
