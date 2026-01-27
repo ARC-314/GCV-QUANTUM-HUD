@@ -1,137 +1,177 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 // LARGE STABLE</title>
+    <title>ARC-314 | QUANTUM HOLOGRAPHIC HUD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --neon: #00f2ff; 
-            --gold: #FFD700; 
-            --neon-glow: 0 0 10px rgba(0, 242, 255, 0.8);
+        :root {
+            --hologram-blue: #00d4ff;
+            --gcv-gold: #ffcc00;
+            --pi-purple: #a855f7;
         }
         
-        body, html { background: #000; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
-
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.6; }
-
-        .container {
-            position: relative; z-index: 10; height: 100vh;
-            display: flex; align-items: center; justify-content: center; padding: 10px;
+        body {
+            background: radial-gradient(circle at center, #0a0b1a 0%, #000 100%);
+            color: var(--hologram-blue);
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            perspective: 1000px;
         }
 
-        /* FOND NOIR PUR (#000) POUR ÉVITER L'ÉCRAN NOIR SUR IPAD */
-        .terminal {
-            width: 98%; max-width: 750px; /* ENCORE PLUS LARGE */
-            background: #000; 
-            border: 3px solid var(--neon);
-            box-shadow: var(--neon-glow);
-            padding: 40px;
+        /* Effet de scan ligne par ligne */
+        body::before {
+            content: " ";
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            z-index: 100;
+            pointer-events: none;
         }
 
-        header { border-bottom: 2px solid var(--gold); margin-bottom: 30px; padding-bottom: 20px; }
-        .title { font-size: 2.5em; font-weight: bold; color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 5px var(--gold); }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-        .box { 
-            border: 2px solid var(--neon); background: #050505; padding: 30px; text-align: center;
+        .hologram-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 10px rgba(0, 212, 255, 0.1);
+            position: relative;
+            transform: rotateX(5deg);
         }
-        
-        label { font-size: 0.8em; color: var(--gold); display: block; margin-bottom: 10px; font-weight: bold; }
-        input { 
-            background: transparent; border: none; border-bottom: 2px solid var(--gold); 
-            color: var(--gold); width: 95%; font-size: 2.2em; text-align: center; outline: none;
+
+        .glitch-text {
+            animation: glitch 3s infinite;
         }
-        .res { font-size: 1.8em; font-weight: bold; color: var(--gold); margin-top: 15px; }
 
-        .stream { height: 130px; overflow: hidden; font-size: 0.9em; border-top: 1px solid var(--neon); padding-top: 20px; color: #fff; }
-        .tx { display: flex; justify-content: space-between; padding: 6px 0; }
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 var(--pi-purple), -2px 0 var(--hologram-blue); }
+            50% { text-shadow: -2px 0 var(--pi-purple), 2px 0 var(--hologram-blue); }
+            100% { text-shadow: 2px 0 var(--pi-purple), -2px 0 var(--hologram-blue); }
+        }
 
-        footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 4.8em; font-weight: bold; color: var(--gold); letter-spacing: 15px; line-height: 1; text-shadow: 0 0 10px var(--gold); }
+        .flicker { animation: flicker 2s infinite; }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        #hex-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.1; z-index: -1;
+        }
     </style>
 </head>
-<body>
+<body class="p-6">
+    <div id="hex-grid"></div>
 
-<canvas id="m"></canvas>
-
-<div class="container">
-    <div class="terminal">
-        <header>
-            <div style="font-size: 0.7em; color: var(--neon); margin-bottom: 8px;">ARC-314 // CORE_SYSTEM_V5 // 2026</div>
-            <div class="title">ARC-314 // CORE</div>
-            <div style="font-size: 0.8em; font-weight: bold;">GCV: $314,159 | ARCH: KOSASIH</div>
-        </header>
-
-        <div class="grid">
-            <div class="box">
-                <label>SEARCH USD</label>
-                <input type="number" id="uIn" placeholder="0" oninput="calc()">
-                <div id="pOut" class="res">0.00 Π</div>
+    <div class="flex justify-between items-start mb-8">
+        <div class="hologram-card p-4 rounded-tl-3xl rounded-br-3xl border-l-4 border-l-cyan-400">
+            <h1 class="text-3xl font-black tracking-tighter italic text-white">ARC-314 <span class="text-xs font-normal text-cyan-400 font-mono">v3.0.0</span></h1>
+            <p class="text-[10px] text-cyan-400 tracking-[0.4em] font-bold">QUANTUM SECURITY INTERFACE</p>
+        </div>
+        
+        <div class="text-right">
+            <div class="text-xs text-purple-400 font-mono mb-1">DECRYPTED BY SAM // VALIDATED</div>
+            <div class="hologram-card px-4 py-2 border-r-4 border-r-purple-500">
+                <span class="status-dot inline-block w-2 h-2 bg-purple-500 rounded-full animate-ping mr-2"></span>
+                <span class="text-white font-bold italic tracking-widest uppercase">Security Layer: SEALED</span>
             </div>
-            <div class="box">
-                <label>SEARCH PI</label>
-                <input type="number" id="pIn" placeholder="0" oninput="calc()">
-                <div id="uOut" class="res">$ 0.00</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6 h-[70vh]">
+        
+        <div class="col-span-3 space-y-6">
+            <div class="hologram-card p-6 rounded-lg">
+                <h3 class="text-xs font-bold text-cyan-400 mb-4 border-b border-cyan-400/30 pb-2">ATMOSPHERE MONITOR</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1"><span>OXYGEN LEVEL</span><span class="text-white">STABILIZED</span></div>
+                        <div class="w-full bg-cyan-900 h-1"><div class="bg-cyan-400 h-1 w-[88%] shadow-[0_0_10px_#00d4ff]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1"><span>QUANTUM PRESSURE</span><span class="text-white">NOMINAL</span></div>
+                        <div class="w-full bg-cyan-900 h-1"><div class="bg-purple-500 h-1 w-[92%] shadow-[0_0_10px_#a855f7]"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hologram-card p-6 rounded-lg border-yellow-500/30">
+                <h3 class="text-xs font-bold text-yellow-500 mb-4 border-b border-yellow-500/30 pb-2 italic">AUTH: @cryptoshun1980</h3>
+                <div class="text-2xl font-black text-white italic tracking-tighter">NODE ARC-314</div>
+                <div class="text-[9px] text-yellow-600 font-mono mt-2">CONNECTED TO GCV REPUBLIC MAINNET</div>
             </div>
         </div>
 
-        <div class="stream" id="st"></div>
-
-        <footer>
-            <div style="font-size: 0.7em; line-height: 1.7;">
-                STATUS: ENCRYPTED<br>
-                PIMAN: ACTIVE<br>
-                LOC: [PROTECTED]
+        <div class="col-span-6 flex flex-col items-center justify-center relative">
+            <div class="absolute w-96 h-96 border border-cyan-400/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
+            <div class="absolute w-[420px] h-[420px] border border-purple-500/10 rounded-full animate-[spin_35s_linear_infinite_reverse]"></div>
+            
+            <div class="text-center z-10">
+                <p class="text-cyan-400 text-xs font-bold tracking-[0.5em] mb-2 flicker">GLOBAL CONSENSUS VALUE</p>
+                <h2 class="text-7xl font-black text-white italic drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] glitch-text">
+                    $314,159
+                </h2>
+                <div class="mt-8 px-6 py-2 bg-white/5 border border-white/10 backdrop-blur-md rounded-full">
+                    <span class="text-purple-400 font-mono text-sm tracking-widest">GCV CORE : 100% AUTONOMOUS</span>
+                </div>
             </div>
-            <div class="signature">ARC314</div>
-        </footer>
+        </div>
+
+        <div class="col-span-3 space-y-6">
+            <div class="hologram-card p-6 rounded-lg">
+                <h3 class="text-xs font-bold text-cyan-400 mb-4 border-b border-cyan-400/30 pb-2">SAM'S LOG ANALYSIS</h3>
+                <p class="text-[10px] text-white/70 leading-relaxed font-mono">
+                    > DECODING COMPLETE...<br>
+                    > NO ACCESS DETECTED...<br>
+                    > SAR PROTOCOL: FAILED...<br>
+                    > REASON: SECURITY LAYER UNBROKEN.<br>
+                    > STATUS: <span class="text-green-400">READY FOR TRANSITION</span>
+                </p>
+            </div>
+
+            <div class="hologram-card p-6 rounded-lg">
+                <div class="text-[10px] text-cyan-400 mb-2 uppercase">Merchant Liquidity</div>
+                <div class="text-3xl font-bold text-white italic">1.618 <span class="text-sm font-normal">PHI</span></div>
+                <canvas id="miniChart" class="mt-4 w-full h-12"></canvas>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    const GCV = 314159;
-    const canvas = document.getElementById('m'), ctx = canvas.getContext('2d');
-    let w, h, columns;
+    <div class="fixed bottom-0 left-0 w-full h-12 hologram-card flex items-center border-t border-cyan-400/30">
+        <div class="flex whitespace-nowrap overflow-hidden">
+            <div class="flex animate-[ticker-scroll_60s_linear_infinite] space-x-12 text-[10px] font-mono text-cyan-300">
+                <span>GCV: 314159 USD</span> <span>PI NETWORK CORE: STABLE</span> <span>QUANTUM LAYER: SEALED</span> <span>SAM ANALYSIS: VERIFIED</span> <span>ARC-314: ONLINE</span> <span>KOSASIH TECH: OPERATIONAL</span>
+                <span>GCV: 314159 USD</span> <span>PI NETWORK CORE: STABLE</span> <span>QUANTUM LAYER: SEALED</span> <span>SAM ANALYSIS: VERIFIED</span> <span>ARC-314: ONLINE</span> <span>KOSASIH TECH: OPERATIONAL</span>
+            </div>
+        </div>
+    </div>
 
-    function init() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-        columns = Array(Math.floor(w/20)).fill(1);
-    }
+    <script>
+        // Animation du mini-graphique (simulé)
+        const ctx = document.getElementById('miniChart').getContext('2d');
+        ctx.strokeStyle = '#00d4ff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 40);
+        for(let i=0; i<300; i+=10) {
+            ctx.lineTo(i, 40 - Math.random() * 20);
+        }
+        ctx.stroke();
 
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "#00f2ff";
-        ctx.font = "15px monospace";
-        columns.forEach((y, i) => {
-            const char = "ARC314π$GLT"[Math.floor(Math.random()*11)];
-            ctx.fillText(char, i * 20, y * 20);
-            if (y * 20 > h && Math.random() > 0.98) columns[i] = 0;
-            columns[i]++;
-        });
-    }
-
-    window.addEventListener('resize', init);
-    init();
-    setInterval(draw, 70);
-
-    function calc() {
-        const u = document.getElementById('uIn').value;
-        const p = document.getElementById('pIn').value;
-        document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
-        document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
-    }
-
-    const st = document.getElementById('st');
-    function addTx() {
-        const row = `<div class="tx"><span>ID-${Math.random().toString(36).substr(7).toUpperCase()}</span><span style="color:var(--gold)">+${(Math.random()*12).toFixed(4)} Π</span></div>`;
-        st.innerHTML = row + st.innerHTML;
-        if(st.children.length > 4) st.lastChild.remove();
-    }
-    setInterval(addTx, 3000);
-</script>
-
+        // Style ticker
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ticker-scroll {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
