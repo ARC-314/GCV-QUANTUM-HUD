@@ -3,100 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARC-314 | CORE GCV</title>
+    <title>ARC-314 | CORE</title>
     <style>
-        :root { --cyan: #00f2ff; --gold: #FFD700; --glow: rgba(0, 242, 255, 0.6); }
-        body, html { background: #000; color: var(--cyan); font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow: hidden; height: 100vh; }
-
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; opacity: 0.8; }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.9) 100%);
-            z-index: 2; pointer-events: none;
-        }
-
-        .hud {
+        body, html { background: #000; margin: 0; padding: 0; overflow: hidden; height: 100vh; font-family: monospace; }
+        #c { position: fixed; top: 0; left: 0; z-index: 1; }
+        
+        /* Interface de saisie ultra-simple pour éviter les bugs */
+        .ui-layer {
             position: relative; z-index: 10; height: 100vh;
-            display: flex; align-items: center; justify-content: center; padding: 15px;
-            perspective: 1000px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            pointer-events: none;
         }
-
-        .terminal {
-            width: 100%; max-width: 480px;
-            background: rgba(0, 15, 30, 0.95);
-            border: 2px solid var(--cyan);
-            box-shadow: 0 0 30px var(--glow), inset 0 0 20px var(--glow);
-            padding: 25px;
-            transform: rotateY(-5deg); /* Légère inclinaison comme sur l'image */
-            border-radius: 5px;
+        .input-wrap {
+            pointer-events: auto; background: rgba(0, 20, 30, 0.8);
+            border: 2px solid #00f2ff; padding: 20px; width: 85%; max-width: 400px;
+            box-shadow: 0 0 20px #00f2ff;
         }
-
-        header { border-bottom: 2px solid var(--gold); margin-bottom: 20px; padding-bottom: 10px; text-align: left; }
-        .title { font-size: 1.8em; font-weight: bold; color: var(--gold); text-shadow: 0 0 15px var(--gold); letter-spacing: 3px; }
-
-        /* LES CHAMPS DE RECHERCHE / CALCUL (LES "ENGINE" DE L'IMAGE) */
-        .dual-engine { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        
-        .engine-box {
-            position: relative;
-            background: rgba(0, 242, 255, 0.05);
-            border: 1px solid var(--cyan);
-            padding: 15px;
-            /* Coupe les coins pour faire la forme technologique de l'image */
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-            box-shadow: inset 0 0 15px var(--glow);
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        input { 
+            background: #000; border: 1px solid #FFD700; color: #FFD700; 
+            width: 100%; text-align: center; font-size: 1.2em; padding: 5px 0; outline: none;
         }
-
-        label { font-size: 0.6em; color: var(--gold); display: block; margin-bottom: 5px; font-weight: bold; }
-        
-        input {
-            background: transparent; border: none; 
-            border-bottom: 1px solid var(--gold);
-            color: var(--gold); width: 100%; font-size: 1.5em; 
-            text-align: center; outline: none; font-weight: bold;
-        }
-
-        .res { font-size: 1.2em; font-weight: bold; color: var(--gold); margin-top: 10px; text-shadow: 0 0 8px var(--gold); }
-
-        .stream { height: 100px; overflow: hidden; font-size: 0.7em; border-top: 1px solid rgba(0, 242, 255, 0.3); padding-top: 10px; }
-        .tx { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0, 242, 255, 0.1); padding: 5px 0; }
-
-        footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .signature { font-size: 2.8em; font-weight: bold; color: var(--gold); letter-spacing: 12px; text-shadow: 0 0 25px var(--gold); }
+        label { color: #FFD700; font-size: 0.7em; display: block; margin-bottom: 5px; }
+        .res { color: #FFD700; font-weight: bold; margin-top: 5px; font-size: 0.9em; text-align: center; }
+        .sig-text { color: #FFD700; font-size: 3em; font-weight: bold; letter-spacing: 10px; margin-top: 20px; text-shadow: 0 0 15px #FFD700; }
     </style>
 </head>
 <body>
 
-    <canvas id="m"></canvas>
-    <div class="overlay"></div>
+<canvas id="c"></canvas>
 
-    <div class="hud">
-        <div class="terminal">
-            <header>
-                <div class="title">ARC-314 // CORE</div>
-                <div style="font-size: 0.6em; color: var(--cyan); font-weight: bold;">GCV CONSENSUS: $314,159</div>
-            </header>
-
-            <div class="dual-engine">
-                <div class="engine-box">
-                    <label>SEARCH USD</label>
-                    <input type="number" id="uIn" placeholder="0" oninput="calc()">
-                    <div id="pOut" class="res">0.00 Π</div>
-                </div>
-                <div class="engine-box">
-                    <label>SEARCH PI</label>
-                    <input type="number" id="pIn" placeholder="0" oninput="calc()">
-                    <div id="uOut" class="res">$ 0.00</div>
-                </div>
+<div class="ui-layer">
+    <div class="input-wrap">
+        <div style="color:#FFD700; border-bottom: 1px solid #FFD700; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold;">
+            ARC-314 // GCV ENGINE
+        </div>
+        
+        <div class="row">
+            <div>
+                <label>SEARCH USD</label>
+                <input type="number" id="uIn" placeholder="0" oninput="calc()">
+                <div id="pOut" class="res">0.00 Π</div>
             </div>
+            <div>
+                <label>SEARCH PI</label>
+                <input type="number" id="pIn" placeholder="0" oninput="calc()">
+                <div id="uOut" class="res">$ 0.00</div>
+            </div>
+        </div>
 
-            <div class="stream" id="st"></div>
+        <div style="font-size: 0.6em; color: #00f2ff; line-height: 1.4;">
+            ARCHITECTURE: KOSASIH<br>
+            LOC: KOH SAMUI, TH<br>
+            STATUS: ACTIVE
+        </div>
+    </div>
+    <div class="sig-text">ARC314</div>
+</div>
 
-            <footer>
-                <div style="font-size: 0.5em; line-height: 1.4; color: var(--cyan); font-weight: bold;">
-                    LOCATION: KOH SAMUI, TH<br>
-                    STATUS: ENCRYPTED<br>
-                    PIMAN: ACTIVE
-                </div>
-                <div class="signature">ARC314</div>
+<script>
+    const GCV = 314159;
+    const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+    let w, h, cols;
+
+    function init() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        cols = Array(Math.floor(w / 15)).fill(0);
+    }
+
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#00f2ff";
+        ctx.font = "15px monospace";
+
+        cols.forEach((y, i) => {
+            const char = "ARC314π$GLT"[Math.floor(Math.random() * 11)];
+            ctx.fillText(char, i * 15, y);
+            if (y > h && Math.random() > 0.975) cols[i] = 0;
+            else cols[i] += 15;
+        });
+    }
+
+    function calc() {
+        const u = document.getElementById('uIn').value;
+        const p = document.getElementById('pIn').value;
+        document.getElementById('pOut').innerText = (u > 0 ? (u / GCV).toFixed(7) : "0.00") + " Π";
+        document.getElementById('uOut').innerText = "$ " + (p > 0 ? (p * GCV).toLocaleString() : "0.00");
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    setInterval(draw, 50);
+</script>
+
+</body>
+</html>
