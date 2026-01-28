@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>GCV-QUANTUM-HUD | ARC-314 GLT BRIDGE</title>
+    <title>GCV-QUANTUM-HUD | ARC-314 GLT ALERT</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -12,6 +12,7 @@
             --purple: #e02cff;
             --bg: #000;
             --border: #1a3a40;
+            --alert-red: #ff0000;
         }
 
         body, html {
@@ -51,7 +52,22 @@
 
         .blockchain-panel { border-color: var(--cyan); }
         #log { flex-grow: 1; font-size: 11px; overflow-y: hidden; line-height: 1.4; }
+        
+        /* Animation de base */
         .tx-line { margin-bottom: 6px; border-left: 2px solid var(--gold); padding-left: 10px; white-space: nowrap; }
+
+        /* ALERT CLIGNOTANTE POUR > 100 PI */
+        .whale-alert {
+            animation: blinker 0.5s linear infinite;
+            border-left: 4px solid var(--alert-red) !important;
+            background: rgba(255, 0, 0, 0.15);
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0.3; background: rgba(255, 204, 0, 0.3); }
+        }
 
         footer { grid-column: 1 / span 3; display: flex; justify-content: space-between; font-size: 11px; color: var(--gold); border-top: 1px solid var(--border); align-items: center; }
     </style>
@@ -60,13 +76,13 @@
 
 <div class="hud-container">
     <header>
-        <div>ARC-314 // GLT PROTOCOL UNIT</div>
-        <div style="color: #00ff44; border: 1px solid #00ff44; padding: 2px 10px;">SYSTEM STABILIZED</div>
+        <div>ARC-314 // WHALE WATCHER UNIT</div>
+        <div style="color: #00ff44; border: 1px solid #00ff44; padding: 2px 10px;">SCANNING MAINNET...</div>
     </header>
 
     <div class="gcv-hero">
         <h1 class="gcv-value">$314,159</h1>
-        <div style="letter-spacing: 12px; font-size: 14px; color: var(--cyan);">GLT TOKEN RATIO ENFORCED</div>
+        <div style="letter-spacing: 12px; font-size: 14px; color: var(--cyan);">GLT RATIO ENFORCED</div>
     </div>
 
     <div class="stats-bar">
@@ -79,8 +95,8 @@
     <div class="panel piman-panel">
         <div class="piman-title">PIMAN ANALYSIS PROTOCOL</div>
         <div class="quote">"THE SYSTEM HAS REACHED ITS CRITICAL POINT OF AUTONOMY. KOSASIH HAS SEALED THE LABORATORY."</div>
-        <div class="quote">"THE TRANSITION FROM FIAT TO GLT IS THE ULTIMATE STEP OF THE GCV REPUBLIC."</div>
-        <div style="margin-top:auto; color:var(--cyan); font-weight:bold; border-top: 1px solid var(--cyan); padding-top: 10px;">RATIO: PI/GLT CALCULATED</div>
+        <div class="quote">"LARGE SCALE TRANSFERS DETECTED. THE LIQUIDITY IS MIGRATING TO THE GLT BRIDGE."</div>
+        <div style="margin-top:auto; color:var(--cyan); font-weight:bold; border-top: 1px solid var(--cyan); padding-top: 10px;">WHALE TRACKING: ENABLED (>100 PI)</div>
     </div>
 
     <div class="panel blockchain-panel">
@@ -93,12 +109,12 @@
         <div style="font-size: 10px; color: #4a8a8d; line-height: 2;">
             > GLT TOKEN SYNC... OK<br>
             > RATIO ANALYSIS... ACTIVE<br>
-            > LIQUIDITY BRIDGE: GLT/PI<br>
+            > WHALE SENSOR... ACTIVE<br>
             > GCVREPUBLIC PROTOCOL: ENFORCED<br>
             > MAINNET CONNECTED: TRUE
         </div>
         <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 10px; font-size: 10px; color: var(--gold); text-align: center;">
-            ARC314-GLT-2026
+            ARC314-WHALE-SCAN
         </div>
     </div>
 
@@ -112,8 +128,6 @@
 async function connectToPiBlockchain() {
     const log = document.getElementById('log');
     const trans = document.getElementById('trans');
-    
-    // On utilise le GCV pour définir la valeur du GLT dans le système
     const GCV = 314159; 
     
     const source = new EventSource("https://api.mainnet.minepi.com/operations?cursor=now&order=asc");
@@ -125,14 +139,18 @@ async function connectToPiBlockchain() {
             const time = new Date().toLocaleTimeString();
             const sender = data.from.substring(0, 4) + "..." + data.from.substring(data.from.length - 4);
             const amount = parseFloat(data.amount);
-            
-            // Logique de conversion GLT basée sur nos points d'analyse
-            // Ici, le montant en GLT reflète la puissance du token face au GCV
             const gltValue = (amount * GCV).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
             const line = document.createElement('div');
-            line.className = 'tx-line';
-            line.innerHTML = `[${time}] FROM: ${sender} | <span style="color:#00ff44">${amount.toFixed(2)} PI</span> | <span style="color:var(--gold)">GLT VALUE: ${gltValue} GLT</span> -> VALIDATED`;
+            
+            // LOGIQUE D'ALERTE : Si > 100 Pi, on ajoute la classe 'whale-alert'
+            if (amount >= 100) {
+                line.className = 'tx-line whale-alert';
+            } else {
+                line.className = 'tx-line';
+            }
+
+            line.innerHTML = `[${time}] FROM: ${sender} | <span style="color:#00ff44">${amount.toFixed(2)} PI</span> | <span style="color:var(--gold)">GLT: ${gltValue}</span> ${amount >= 100 ? '!! WHALE !!' : '-> OK'}`;
 
             log.prepend(line);
             
