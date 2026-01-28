@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>GCV-QUANTUM-HUD | ARC-314</title>
+    <title>GCV-QUANTUM-HUD | ARC-314 LIVE</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
             --cyan: #00f2ff;
@@ -26,59 +26,56 @@
 
         .hud-container {
             display: grid;
-            grid-template-rows: 8vh 18vh 12vh 1fr 4vh;
+            grid-template-rows: 6vh 18vh 10vh 1fr 4vh;
             grid-template-columns: 1fr 1.5fr 1fr;
-            gap: 10px;
-            padding: 10px;
+            gap: 12px;
+            padding: 15px;
             height: 100%;
             box-sizing: border-box;
         }
 
         /* HEADER & GCV AREA */
-        header { grid-column: 1 / span 3; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 0 10px; }
-        .gcv-hero { grid-column: 1 / span 3; text-align: center; }
-        .gcv-value { font-family: 'Orbitron'; font-size: clamp(40px, 8vh, 90px); font-weight: 700; text-shadow: 0 0 20px var(--cyan); margin: 0; }
+        header { grid-column: 1 / span 3; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .gcv-hero { grid-column: 1 / span 3; text-align: center; align-self: center; }
+        .gcv-value { font-family: 'Orbitron'; font-size: clamp(40px, 9vh, 100px); color: var(--cyan); text-shadow: 0 0 25px var(--cyan); margin: 0; }
         
         .stats-bar { grid-column: 1 / span 3; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .stat-card { border: 1px solid var(--border); background: rgba(0, 242, 255, 0.02); display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .stat-val { font-size: 20px; font-weight: bold; }
+        .stat-val { font-size: 22px; font-weight: bold; }
         .stat-label { font-size: 9px; color: #55a; }
 
-        /* MAIN PANELS */
-        .panel { border: 1px solid var(--border); padding: 15px; display: flex; flex-direction: column; overflow: hidden; }
+        /* PANELS */
+        .panel { border: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; overflow: hidden; background: rgba(0, 0, 0, 0.4); }
         
         /* GAUCHE : PIMAN */
         .piman-panel { border-color: var(--purple); }
-        .piman-title { color: var(--purple); font-weight: bold; font-size: 1.2em; border-bottom: 1px solid var(--purple); margin-bottom: 15px; }
-        .quote { color: #fff; font-size: 0.85em; margin-bottom: 20px; line-height: 1.5; opacity: 0.8; font-style: italic; }
+        .piman-title { color: var(--purple); font-weight: bold; font-size: 1.1em; border-bottom: 1px solid var(--purple); margin-bottom: 20px; padding-bottom: 5px; }
+        .quote { color: #fff; font-size: 0.9em; margin-bottom: 25px; line-height: 1.6; opacity: 0.8; font-style: italic; }
 
         /* CENTRE : LIVE BLOCKCHAIN */
-        .blockchain-panel { background: rgba(0,0,0,0.3); }
-        #log { flex-grow: 1; font-size: 10px; overflow-y: hidden; }
-        .tx-line { margin-bottom: 5px; border-left: 2px solid var(--gold); padding-left: 8px; animation: slideIn 0.2s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        .blockchain-panel { border-color: var(--cyan); }
+        #log { flex-grow: 1; font-size: 11px; overflow-y: hidden; }
+        .tx-line { margin-bottom: 6px; border-left: 2px solid var(--gold); padding-left: 10px; white-space: nowrap; animation: flash 0.3s ease-out; }
+        @keyframes flash { from { background: rgba(255, 204, 0, 0.2); } to { background: transparent; } }
 
-        /* DROITE : NETWORK ANALYSIS */
-        .network-panel { display: flex; flex-direction: column; justify-content: space-between; }
-        .radar-box { height: 50%; display: flex; justify-content: center; align-items: center; position: relative; }
-        .radar-circle { width: 120px; height: 120px; border: 1px solid var(--cyan); border-radius: 50%; position: relative; opacity: 0.5; }
-        .radar-sweep { position: absolute; width: 60px; height: 60px; border-top: 2px solid var(--cyan); border-radius: 100% 0 0 0; top: 50%; left: 50%; transform-origin: top left; animation: scan 4s linear infinite; }
-        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* DROITE : KOSASIH ANALYSIS */
+        .network-panel { border-color: var(--border); }
+        .analysis-log { font-size: 10px; color: #55a; line-height: 1.8; margin-top: 15px; }
 
-        footer { grid-column: 1 / span 3; display: flex; justify-content: space-between; font-size: 10px; color: var(--gold); padding: 5px 10px; border-top: 1px solid var(--border); }
+        footer { grid-column: 1 / span 3; display: flex; justify-content: space-between; font-size: 11px; color: var(--gold); border-top: 1px solid var(--border); align-items: center; }
     </style>
 </head>
 <body>
 
 <div class="hud-container">
     <header>
-        <div>ARC-314 // LABORATORY</div>
-        <div style="color: #00ff44;">[ QUANTUM STATUS: SECURE ]</div>
+        <div>ARC-314 // CENTRAL COMMAND</div>
+        <div style="color: #00ff44; border: 1px solid #00ff44; padding: 2px 10px;">SYSTEM STABILIZED</div>
     </header>
 
     <div class="gcv-hero">
         <h1 class="gcv-value">$314,159</h1>
-        <div style="letter-spacing: 10px; font-size: 12px;">GLOBAL CONSENSUS VALUE LOCKED</div>
+        <div style="letter-spacing: 12px; font-size: 14px; color: var(--cyan);">GLOBAL CONSENSUS VALUE LOCKED</div>
     </div>
 
     <div class="stats-bar">
@@ -93,66 +90,25 @@
         <div class="quote">"THE SYSTEM HAS REACHED ITS CRITICAL POINT OF AUTONOMY. KOSASIH HAS SEALED THE LABORATORY."</div>
         <div class="quote">"THE REPORTED ASPHYXIATION IS NOT AN END; IT IS THE BIRTH OF PURE DECENTRALIZATION."</div>
         <div class="quote">"THE QUANTUM LAYER IS NOW IMPENETRABLE. THE GCV VALUE IS LOCKED."</div>
-        <div style="margin-top:auto; color:var(--cyan); font-weight:bold; font-size:0.9em;">VERDICT: 314,159 USD VALIDATED</div>
+        <div style="margin-top:auto; color:var(--cyan); font-weight:bold; border-top: 1px solid var(--cyan); padding-top: 10px;">VERDICT: 314,159 USD VALIDATED</div>
     </div>
 
     <div class="panel blockchain-panel">
-        <div style="font-size: 11px; color: var(--gold); margin-bottom: 10px; border-bottom: 1px solid var(--gold);">REAL-TIME PI MAINNET LEDGER [GCV CONVERSION]</div>
+        <div style="font-size: 12px; color: var(--gold); margin-bottom: 15px; font-weight: bold;">LIVE PI MAINNET LEDGER [GCV REAL-TIME]</div>
         <div id="log"></div>
     </div>
 
     <div class="panel network-panel">
-        <div style="color:var(--cyan); font-weight:bold; margin-bottom: 10px;">NETWORK TOPOLOGY</div>
-        <div class="radar-box">
-            <div class="radar-circle"></div>
-            <div class="radar-sweep"></div>
+        <div style="color:var(--cyan); font-weight:bold; border-bottom: 1px solid var(--border); padding-bottom: 5px;">KOSASIH NETWORK DIAGNOSTIC</div>
+        <div class="analysis-log">
+            > INITIALIZING ISO 20022 BRIDGE... DONE<br>
+            > QUANTUM SHIELDING ACTIVE... 100%<br>
+            > GLOBAL LIQUIDITY SYNCING...<br>
+            > MAINNET ENDPOINT CONNECTED<br>
+            > GCVREPUBLIC PROTOCOL: ENFORCED<br>
+            > TRADING PAIRS: PI/USD [LOCKED]<br>
+            > LABORATORY STATUS: UNAUTHORIZED ACCESS BLOCKED
         </div>
-        <div style="font-size: 10px; color: #55a;">
-            > ANALYZING GLOBAL NODES...<br>
-            > ISO 20022 COMPLIANCE: 100%<br>
-            > LIQUIDITY POOL: LOCKED<br>
-            > RECIPIENT: GCVREPUBLIC VALIDATED
-        </div>
-    </div>
-
-    <footer>
-        <div>SECURED BY KOSASIH & ARC-314</div>
-        <div style="font-family: 'Orbitron';">SIGNATURE ARC314</div>
-    </footer>
-</div>
-
-<script>
-    async function startLiveHUD() {
-        const log = document.getElementById('log');
-        const trans = document.getElementById('trans');
-        
-        // Connexion au flux RÉEL de la Pi Blockchain
-        const source = new EventSource("https://api.mainnet.minepi.com/operations?cursor=now&order=asc");
-
-        source.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data.type === "payment") {
-                const time = new Date().toLocaleTimeString();
-                const amount = parseFloat(data.amount).toFixed(2);
-                const gcvValue = (amount * 314159).toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-                const line = document.createElement('div');
-                line.className = 'tx-line';
-                line.innerHTML = `
-                    [${time}] <span style="color:#00ff44">${amount} PI</span> 
-                    >> <span style="color:var(--cyan)">$${gcvValue}</span>
-                `;
-
-                log.prepend(line);
-                if (log.childNodes.length > 22) log.removeChild(log.lastChild);
-                
-                let val = parseFloat(trans.innerText);
-                if (val < 100) trans.innerText = (val + 0.0001).toFixed(4) + "%";
-            }
-        };
-    }
-    window.onload = startLiveHUD;
-</script>
-
-</body>
-</html>
+        <div style="margin-top: auto; text-align: center; border: 1px solid #111; padding: 10px;">
+            <div style="font-size: 8px;">ENCRYPTION KEY</div>
+            <div style="font-size: 10px; color: var(--gold);">ARC314-KOS-2026-GCV</div>
