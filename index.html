@@ -1,44 +1,158 @@
-// Remplace la fonction addTx du script précédent par celle-ci pour le LIVE réel
-async function connectToPiBlockchain() {
-    const log = document.getElementById('log');
-    const trans = document.getElementById('trans');
-    
-    // Connexion au flux d'opérations réel du Mainnet Pi
-    const source = new EventSource("https://api.mainnet.minepi.com/operations?cursor=now&order=asc");
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>GCV-QUANTUM-HUD | ARC-314</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300;500&display=swap');
 
-    source.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        
-        // On ne filtre que les paiements (transactions de jetons)
-        if (data.type === "payment") {
-            const time = new Date().toLocaleTimeString();
-            const sender = data.from.substring(0, 4) + "..." + data.from.substring(data.from.length - 4);
-            const amount = parseFloat(data.amount).toFixed(2);
-            
-            // Calcul GCV Réel
-            const gcvTotal = (amount * 314159).toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-            const line = document.createElement('div');
-            line.className = 'tx-line';
-            line.innerHTML = `
-                [${time}] <span style="color:var(--gold)">FROM: ${sender}</span> | 
-                <span style="color:#00ff44">${amount} PI</span> | 
-                GCV VALUE: <span style="color:var(--cyan)">$${gcvTotal}</span> -> VALIDATED
-            `;
-
-            log.prepend(line);
-            if (log.childNodes.length > 30) log.removeChild(log.lastChild);
-            
-            // Mise à jour de la transition système
-            let val = parseFloat(trans.innerText);
-            if (val < 100) trans.innerText = (val + 0.0001).toFixed(4) + "%";
+        :root {
+            --cyan: #00f2ff;
+            --gold: #ffcc00;
+            --purple: #e02cff;
+            --bg: #000;
+            --border: #1a3a40;
         }
-    };
 
-    source.onerror = function() {
-        console.log("Reconnecting to Pi Mainnet...");
-    };
-}
+        body, html {
+            background-color: var(--bg);
+            color: var(--cyan);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0; padding: 0;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
 
-// Lancer la connexion au chargement
-window.onload = connectToPiBlockchain;
+        .hud-container {
+            display: grid;
+            grid-template-rows: 8vh 18vh 12vh 1fr 4vh;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 10px;
+            padding: 10px;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        /* HEADER & GCV AREA */
+        header { grid-column: 1 / span 3; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 0 10px; }
+        .gcv-hero { grid-column: 1 / span 3; text-align: center; }
+        .gcv-value { font-family: 'Orbitron'; font-size: clamp(40px, 8vh, 90px); font-weight: 700; text-shadow: 0 0 20px var(--cyan); margin: 0; }
+        
+        .stats-bar { grid-column: 1 / span 3; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .stat-card { border: 1px solid var(--border); background: rgba(0, 242, 255, 0.02); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .stat-val { font-size: 20px; font-weight: bold; }
+        .stat-label { font-size: 9px; color: #55a; }
+
+        /* MAIN PANELS */
+        .panel { border: 1px solid var(--border); padding: 15px; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* GAUCHE : PIMAN */
+        .piman-panel { border-color: var(--purple); }
+        .piman-title { color: var(--purple); font-weight: bold; font-size: 1.2em; border-bottom: 1px solid var(--purple); margin-bottom: 15px; }
+        .quote { color: #fff; font-size: 0.85em; margin-bottom: 20px; line-height: 1.5; opacity: 0.8; font-style: italic; }
+
+        /* CENTRE : LIVE BLOCKCHAIN */
+        .blockchain-panel { background: rgba(0,0,0,0.3); }
+        #log { flex-grow: 1; font-size: 10px; overflow-y: hidden; }
+        .tx-line { margin-bottom: 5px; border-left: 2px solid var(--gold); padding-left: 8px; animation: slideIn 0.2s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* DROITE : NETWORK ANALYSIS */
+        .network-panel { display: flex; flex-direction: column; justify-content: space-between; }
+        .radar-box { height: 50%; display: flex; justify-content: center; align-items: center; position: relative; }
+        .radar-circle { width: 120px; height: 120px; border: 1px solid var(--cyan); border-radius: 50%; position: relative; opacity: 0.5; }
+        .radar-sweep { position: absolute; width: 60px; height: 60px; border-top: 2px solid var(--cyan); border-radius: 100% 0 0 0; top: 50%; left: 50%; transform-origin: top left; animation: scan 4s linear infinite; }
+        @keyframes scan { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        footer { grid-column: 1 / span 3; display: flex; justify-content: space-between; font-size: 10px; color: var(--gold); padding: 5px 10px; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<div class="hud-container">
+    <header>
+        <div>ARC-314 // LABORATORY</div>
+        <div style="color: #00ff44;">[ QUANTUM STATUS: SECURE ]</div>
+    </header>
+
+    <div class="gcv-hero">
+        <h1 class="gcv-value">$314,159</h1>
+        <div style="letter-spacing: 10px; font-size: 12px;">GLOBAL CONSENSUS VALUE LOCKED</div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-card"><span class="stat-label">NODES ACTIVE</span><span class="stat-val">2,741,980</span></div>
+        <div class="stat-card"><span class="stat-label">MIGRATIONS</span><span class="stat-val">15,800,000</span></div>
+        <div class="stat-card"><span class="stat-label">STATUS</span><span class="stat-val" style="color:var(--gold)">SEALED</span></div>
+        <div class="stat-card"><span class="stat-label">TRANSITION</span><span id="trans" class="stat-val">92.0000%</span></div>
+    </div>
+
+    <div class="panel piman-panel">
+        <div class="piman-title">PIMAN ANALYSIS PROTOCOL</div>
+        <div class="quote">"THE SYSTEM HAS REACHED ITS CRITICAL POINT OF AUTONOMY. KOSASIH HAS SEALED THE LABORATORY."</div>
+        <div class="quote">"THE REPORTED ASPHYXIATION IS NOT AN END; IT IS THE BIRTH OF PURE DECENTRALIZATION."</div>
+        <div class="quote">"THE QUANTUM LAYER IS NOW IMPENETRABLE. THE GCV VALUE IS LOCKED."</div>
+        <div style="margin-top:auto; color:var(--cyan); font-weight:bold; font-size:0.9em;">VERDICT: 314,159 USD VALIDATED</div>
+    </div>
+
+    <div class="panel blockchain-panel">
+        <div style="font-size: 11px; color: var(--gold); margin-bottom: 10px; border-bottom: 1px solid var(--gold);">REAL-TIME PI MAINNET LEDGER [GCV CONVERSION]</div>
+        <div id="log"></div>
+    </div>
+
+    <div class="panel network-panel">
+        <div style="color:var(--cyan); font-weight:bold; margin-bottom: 10px;">NETWORK TOPOLOGY</div>
+        <div class="radar-box">
+            <div class="radar-circle"></div>
+            <div class="radar-sweep"></div>
+        </div>
+        <div style="font-size: 10px; color: #55a;">
+            > ANALYZING GLOBAL NODES...<br>
+            > ISO 20022 COMPLIANCE: 100%<br>
+            > LIQUIDITY POOL: LOCKED<br>
+            > RECIPIENT: GCVREPUBLIC VALIDATED
+        </div>
+    </div>
+
+    <footer>
+        <div>SECURED BY KOSASIH & ARC-314</div>
+        <div style="font-family: 'Orbitron';">SIGNATURE ARC314</div>
+    </footer>
+</div>
+
+<script>
+    async function startLiveHUD() {
+        const log = document.getElementById('log');
+        const trans = document.getElementById('trans');
+        
+        // Connexion au flux RÉEL de la Pi Blockchain
+        const source = new EventSource("https://api.mainnet.minepi.com/operations?cursor=now&order=asc");
+
+        source.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === "payment") {
+                const time = new Date().toLocaleTimeString();
+                const amount = parseFloat(data.amount).toFixed(2);
+                const gcvValue = (amount * 314159).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const line = document.createElement('div');
+                line.className = 'tx-line';
+                line.innerHTML = `
+                    [${time}] <span style="color:#00ff44">${amount} PI</span> 
+                    >> <span style="color:var(--cyan)">$${gcvValue}</span>
+                `;
+
+                log.prepend(line);
+                if (log.childNodes.length > 22) log.removeChild(log.lastChild);
+                
+                let val = parseFloat(trans.innerText);
+                if (val < 100) trans.innerText = (val + 0.0001).toFixed(4) + "%";
+            }
+        };
+    }
+    window.onload = startLiveHUD;
+</script>
+
+</body>
+</html>
