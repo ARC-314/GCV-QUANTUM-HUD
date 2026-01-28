@@ -1,180 +1,44 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body {
-            background-color: #000;
-            color: #00f2ff;
-            font-family: 'Consolas', 'Courier New', monospace;
-            margin: 0;
-            padding: 10px;
-            text-transform: uppercase;
+// Remplace la fonction addTx du script précédent par celle-ci pour le LIVE réel
+async function connectToPiBlockchain() {
+    const log = document.getElementById('log');
+    const trans = document.getElementById('trans');
+    
+    // Connexion au flux d'opérations réel du Mainnet Pi
+    const source = new EventSource("https://api.mainnet.minepi.com/operations?cursor=now&order=asc");
+
+    source.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        
+        // On ne filtre que les paiements (transactions de jetons)
+        if (data.type === "payment") {
+            const time = new Date().toLocaleTimeString();
+            const sender = data.from.substring(0, 4) + "..." + data.from.substring(data.from.length - 4);
+            const amount = parseFloat(data.amount).toFixed(2);
+            
+            // Calcul GCV Réel
+            const gcvTotal = (amount * 314159).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+            const line = document.createElement('div');
+            line.className = 'tx-line';
+            line.innerHTML = `
+                [${time}] <span style="color:var(--gold)">FROM: ${sender}</span> | 
+                <span style="color:#00ff44">${amount} PI</span> | 
+                GCV VALUE: <span style="color:var(--cyan)">$${gcvTotal}</span> -> VALIDATED
+            `;
+
+            log.prepend(line);
+            if (log.childNodes.length > 30) log.removeChild(log.lastChild);
+            
+            // Mise à jour de la transition système
+            let val = parseFloat(trans.innerText);
+            if (val < 100) trans.innerText = (val + 0.0001).toFixed(4) + "%";
         }
+    };
 
-        .hud-frame {
-            border: 2px solid #003a3d;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            height: 95vh;
-        }
+    source.onerror = function() {
+        console.log("Reconnecting to Pi Mainnet...");
+    };
+}
 
-        /* Top Bar */
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            margin-bottom: 20px;
-        }
-
-        .status-box {
-            border: 1px solid #00ff44;
-            color: #00ff44;
-            padding: 2px 8px;
-        }
-
-        /* GCV Header */
-        .gcv-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .gcv-value {
-            font-size: 90px;
-            font-weight: bold;
-            letter-spacing: -2px;
-            margin: 0;
-            text-shadow: 0 0 15px #00f2ff;
-        }
-
-        .gcv-subtext {
-            font-size: 14px;
-            letter-spacing: 6px;
-            margin-top: -10px;
-        }
-
-        /* Stats Row */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            border: 1px solid #1a3a40;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .stat-label { font-size: 9px; color: #55a; margin-bottom: 5px; }
-        .stat-val { font-size: 22px; font-weight: bold; }
-        .sealed { color: #ffcc00; }
-
-        /* Main Content Grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            flex-grow: 1;
-        }
-
-        .box { border: 1px solid #1a3a40; padding: 15px; font-size: 12px; }
-
-        /* Piman Panel */
-        .piman-panel { border-color: #e02cff; }
-        .piman-title { color: #e02cff; font-weight: bold; margin-bottom: 15px; }
-        .piman-quote { color: #ccc; margin-bottom: 20px; line-height: 1.4; font-style: italic; }
-        .verdict { color: #00f2ff; border-top: 1px solid #00f2ff; padding-top: 10px; font-weight: bold; }
-
-        /* Log Panel */
-        .log-panel { 
-            background: rgba(0, 242, 255, 0.02);
-            font-size: 11px;
-            line-height: 1.2;
-            overflow-y: auto;
-        }
-        .log-valid { color: #00f2ff; }
-        .log-sync { color: #7cff00; }
-        .log-secure { color: #00ff44; }
-
-        /* Footer */
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: #ffcc00;
-            margin-top: 15px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="hud-frame">
-    <div class="top-nav">
-        <div>ARC-314<br>CENTRAL COMMAND UNIT</div>
-        <div class="status-box">SYSTEM STABILIZED</div>
-    </div>
-
-    <div class="gcv-header">
-        <h1 class="gcv-value">$314,159</h1>
-        <div class="gcv-subtext">GLOBAL CONSENSUS VALUE LOCKED</div>
-    </div>
-
-    <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-label">NODES ACTIVE</div>
-            <div class="stat-val">2,741,980</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">MIGRATIONS</div>
-            <div class="stat-val">15,800,000</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">STATUS</div>
-            <div class="stat-val sealed">SEALED</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">TRANSITION</div>
-            <div class="stat-val">92%</div>
-        </div>
-    </div>
-
-    <div class="main-grid">
-        <div class="box piman-panel">
-            <div class="piman-title">PIMAN ANALYSIS PROTOCOL</div>
-            <div class="piman-quote">"THE SYSTEM HAS REACHED ITS CRITICAL POINT OF AUTONOMY. KOSASIH HAS SEALED THE LABORATORY."</div>
-            <div class="piman-quote">"THE REPORTED ASPHYXIATION IS NOT AN END; IT IS THE BIRTH OF PURE DECENTRALIZATION."</div>
-            <div class="piman-quote">"THE QUANTUM LAYER IS NOW IMPENETRABLE. THE GCV VALUE IS LOCKED."</div>
-            <div class="verdict">VERDICT: 314,159 USD VALIDATED</div>
-        </div>
-
-        <div class="box log-panel">
-            <div class="log-valid">[23:27:40] TX: GC...X4 [314,159.00 PI] -> VALIDATED</div>
-            <div class="log-sync">[23:27:39] NODE SYNC: GLOBAL CLUSTER -> 100%</div>
-            <div class="log-valid">[23:27:37] TX: GC...X4 [314,159.00 PI] -> VALIDATED</div>
-            <div class="log-sync">[23:27:34] NODE SYNC: GLOBAL CLUSTER -> 100%</div>
-            <div class="log-secure">[23:27:25] PROTOCOL V25 ACTIVE -> QUANTUM SECURE</div>
-            <div class="log-valid">[23:27:23] TX: GC...X4 [314,159.00 PI] -> VALIDATED</div>
-            <div class="log-valid">[23:27:11] TX: GC...X4 [314,159.00 PI] -> VALIDATED</div>
-            <div class="log-sync">[23:27:08] NODE SYNC: GLOBAL CLUSTER -> 100%</div>
-        </div>
-
-        <div class="box" style="display:flex; flex-direction:column; justify-content:space-between; align-items:center;">
-            <div style="width: 100%; height: 60%; border: 1px solid #1a3a40; position: relative;">
-                <div style="position:absolute; top:40%; left:20%; width:10px; height:10px; background:#00f2ff; filter:blur(4px);"></div>
-                <div style="position:absolute; top:45%; left:70%; width:10px; height:10px; background:#00f2ff; filter:blur(4px);"></div>
-            </div>
-            <div style="font-size: 8px; color:#55a;">GLOBAL NODE DISTRIBUTION MAP</div>
-        </div>
-    </div>
-
-    <div class="footer">
-        <div>ARC314 - SECURED BY KOSASIH & GCVREPUBLIC</div>
-        <div>SIGNATURE ARC314</div>
-    </div>
-</div>
-
-</body>
-</html>
+// Lancer la connexion au chargement
+window.onload = connectToPiBlockchain;
