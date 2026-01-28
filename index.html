@@ -112,3 +112,57 @@
         <div style="margin-top: auto; text-align: center; border: 1px solid #111; padding: 10px;">
             <div style="font-size: 8px;">ENCRYPTION KEY</div>
             <div style="font-size: 10px; color: var(--gold);">ARC314-KOS-2026-GCV</div>
+        </div>
+    </div>
+
+    <footer>
+        <div>SECURED BY KOSASIH & GCVREPUBLIC</div>
+        <div style="font-family: 'Orbitron';">SIGNATURE ARC314</div>
+    </footer>
+</div>
+
+<script>
+async function connectToPiBlockchain() {
+    const log = document.getElementById('log');
+    const trans = document.getElementById('trans');
+    
+    // Connexion au flux d'opérations réel du Mainnet Pi
+    const source = new EventSource("https://api.mainnet.minepi.com/operations?cursor=now&order=asc");
+
+    source.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === "payment") {
+            const time = new Date().toLocaleTimeString();
+            const sender = data.from.substring(0, 4) + "..." + data.from.substring(data.from.length - 4);
+            const amount = parseFloat(data.amount).toFixed(2);
+            
+            // Calcul GCV Réel basé sur 314,159 USD
+            const gcvTotal = (amount * 314159).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+            const line = document.createElement('div');
+            line.className = 'tx-line';
+            line.innerHTML = `
+                [${time}] <span style="color:var(--gold)">FROM: ${sender}</span> | 
+                <span style="color:#00ff44">${amount} PI</span> | 
+                GCV: <span style="color:var(--cyan)">$${gcvTotal}</span>
+            `;
+
+            log.prepend(line);
+            if (log.childNodes.length > 25) log.removeChild(log.lastChild);
+            
+            let val = parseFloat(trans.innerText);
+            if (val < 100) trans.innerText = (val + 0.0001).toFixed(4) + "%";
+        }
+    };
+
+    source.onerror = function() {
+        console.log("Reconnecting to Pi Mainnet...");
+    };
+}
+
+window.onload = connectToPiBlockchain;
+</script>
+
+</body>
+</html>
